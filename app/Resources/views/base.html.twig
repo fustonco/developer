@@ -308,7 +308,7 @@
                     
                         
                     <!-- Menu Home -->
-                    <li class="active">
+                    <li class="{% if app.request.requestUri == "/admin/" %}active{% endif %}">
                         <a href="{{ path('admin') }}">
                             <i class="material-icons">home</i>
                             <span>Dashboard</span>
@@ -316,16 +316,16 @@
                     </li>
                         
                     <!-- Menu Grupo -->
-                    <li>
+                    <li class="{% if app.request.requestUri == "/admin/grupo/new" or app.request.requestUri == "/admin/grupo/"%}active{% endif %}">
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">home</i>
                             <span>Grupo</span>
                         </a>
                         <ul class="ml-menu">
-                            <li >
+                            <li class="{% if app.request.requestUri == "/admin/grupo/new" %}active{% endif %}">
                                 <a href="{{ path('grupo_new') }}">Cadastrar</a>
                             </li>
-                            <li>
+                            <li class="{% if app.request.requestUri == "/admin/grupo/" %}active{% endif %}">
                                 <a href="{{ path('grupo') }}">Listar</a>
                             </li>
                         </ul>
@@ -334,16 +334,16 @@
                     
                     
                     <!-- Menu Empresa -->
-                    <li >
+                    <li class="{% if app.request.requestUri == "/admin/empresa/new" or app.request.requestUri == "/admin/empresa/"%}active{% endif %}">
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">home</i>
                             <span>Empresa</span>
                         </a>
                         <ul class="ml-menu">
-                            <li >
+                            <li class="{% if app.request.requestUri == "/admin/empresa/new" %}active{% endif %}">
                                 <a href="{{ path('empresa_new') }}">Cadastrar</a>
                             </li>
-                            <li>
+                            <li class="{% if app.request.requestUri == "/admin/empresa/" %}active{% endif %}">
                                 <a href="{{ path('empresa') }}">Listar</a>
                             </li>
                         </ul>
@@ -353,16 +353,16 @@
                         
                         
                     <!-- Menu Departamento -->
-                    <li >
+                    <li class="{% if app.request.requestUri == "/admin/departamento/new" or app.request.requestUri == "/admin/departamento/"%}active{% endif %}">
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">home</i>
                             <span>Departamento</span>
                         </a>
                         <ul class="ml-menu">
-                            <li >
+                            <li class="{% if app.request.requestUri == "/admin/departamento/new" %}active{% endif %}">
                                 <a href="{{ path('departamento_new') }}">Cadastrar</a>
                             </li>
-                            <li>
+                            <li class="{% if app.request.requestUri == "/admin/departamento/" %}active{% endif %}">
                                 <a href="{{ path('departamento') }}">Listar</a>
                             </li>
                         </ul>
@@ -371,16 +371,16 @@
                     
                     <!-- Menu Funcionario -->
                     
-                    <li>
+                    <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"%}active{% endif %}">
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">home</i>
                             <span>Funcionario</span>
                         </a>
                         <ul class="ml-menu">
-                            <li>
+                            <li class="{% if app.request.requestUri == "/admin/funcionario/new" %}active{% endif %}">
                                 <a href="{{ path('funcionario_new') }}">Cadastrar</a>
                             </li>
-                            <li>
+                            <li class="{% if app.request.requestUri == "/admin/funcionario/" %}active{% endif %}">
                                 <a href="{{ path('funcionario') }}">Listar</a>
                             </li>
                             
@@ -388,6 +388,13 @@
                             
                     </li>
 
+                    <!-- Menu Home -->
+                    <li>
+                        <a href="{{ path('logout') }}">
+                            <i class="material-icons">home</i>
+                            <span>Sair</span>
+                        </a>
+                    </li>
                     
                     
                     {% endif %}
