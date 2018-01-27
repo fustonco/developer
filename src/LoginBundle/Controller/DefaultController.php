@@ -25,15 +25,6 @@ class DefaultController extends Controller
         ));
     }
     
-    
-    /**
-     * @Route("/admin" , name="admin")
-     */
-    public function AdminAction()
-    {
-        return $this->render("AppBundle:Default:index.html.twig");
-    }
-    
      /**
      * @Route("/redirectlogin" , name="redirectlogin")
      */
