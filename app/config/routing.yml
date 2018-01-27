@@ -1,3 +1,18 @@
+financeiro:
+    resource: "@FinanceiroBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+funcionario:
+    resource: "@FuncionarioBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+admin:
+    resource: "@AdminBundle/Controller/"
+    type:     annotation
+    prefix:   /admin
+
 login:
     resource: "@LoginBundle/Controller/"
     type:     annotation

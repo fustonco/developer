@@ -4,8 +4,10 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "AppBundle\\": "src/AppBundle",
-            "LoginBundle\\": "src/LoginBundle"
+            "LoginBundle\\": "src/LoginBundle",
+            "AdminBundle\\": "src/AdminBundle",
+            "FuncionarioBundle\\": "src/FuncionarioBundle",
+            "FinanceiroBundle\\": "src/FinanceiroBundle"
         }
     },
     "autoload-dev": {
