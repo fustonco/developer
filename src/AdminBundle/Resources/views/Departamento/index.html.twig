@@ -1,7 +1,9 @@
 {% extends '::base.html.twig' %}
 
-{% block body -%}
-    <h1>Departamento list</h1>
+{% block body %}
+    <div class="block-header">
+        <h2>Departamento list</h2>
+    </div>
 
     <table class="records_list">
         <thead>
@@ -20,26 +22,9 @@
                 <td>{{ entity.descricao }}</td>
                 <td>{{ entity.ativo }}</td>
                 <td>{{ entity.id }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('departamento_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('departamento_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
+                <td><a href="{{ path('departamento_edit', { 'id': entity.id }) }}">edit</a></td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
-        <ul>
-        <li>
-            <a href="{{ path('departamento_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
     {% endblock %}

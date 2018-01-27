@@ -291,7 +291,7 @@
                             {# <li><a href="javascript:void(0);"><i class="material-icons">shopping_cart</i>Sales</a></li> #}
                             {# <li><a href="javascript:void(0);"><i class="material-icons">favorite</i>Likes</a></li> #}
                             {# <li role="seperator" class="divider"></li> #}
-                            <li><a href="javascript:void(0);"><i class="material-icons">input</i>Sign Out</a></li>
+                            <li><a href="/logout"><i class="material-icons">input</i>Sign Out</a></li>
                         </ul>
                     </div>
                 </div>
@@ -308,14 +308,14 @@
                         </a>
                         <ul class="ml-menu">
                             <li>
-                                <a href="">Cadastrar</a>
+                                <a href="{{ path('departamento_new') }}">Cadastrar</a>
                             </li>
                             <li>
-                                <a href="">Listar</a>
+                                <a href="{{ path('departamento') }}">Listar</a>
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    {# <li>
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">layers</i>
                             <span>Funcionario</span>
@@ -328,7 +328,7 @@
                                 <a href="">Listar</a>
                             </li>
                         </ul>
-                    </li>
+                    </li> #}
                     {# <li class="active">
                         <a href="index.html">
                             <i class="material-icons">home</i>
