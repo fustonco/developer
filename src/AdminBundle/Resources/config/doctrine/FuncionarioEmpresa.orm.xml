@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AdminBundle\Entity\FuncionarioEmpresa" table="funcionario_empresa">
+    <indexes>
+      <index name="fk_funcionario_empresa_funcionario_idx" columns="idFuncionario"/>
+      <index name="fk_funcionario_empresa_empresa_idx" columns="idEmpresa"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
+    <many-to-one field="idfuncionario" target-entity="Funcionario">
+      <join-columns>
+        <join-column name="idFuncionario" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idempresa" target-entity="Empresa">
+      <join-columns>
+        <join-column name="idEmpresa" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
