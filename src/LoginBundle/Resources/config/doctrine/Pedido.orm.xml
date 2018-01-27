@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="LoginBundle\Entity\Pedido" table="pedido">
+    <indexes>
+      <index name="fk_pedido_tipo_pedido_idx" columns="idTipo"/>
+      <index name="fk_pedido_fornecedor_idx" columns="idFornecedor"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="codigo" type="string" column="codigo" length="10" nullable="false"/>
+    <field name="dataVencimento" type="date" column="data_vencimento" nullable="true"/>
+    <field name="dataPedido" type="date" column="data_pedido" nullable="true"/>
+    <field name="valor" type="string" column="valor" length="45" nullable="true"/>
+    <field name="descricao" type="string" column="descricao" length="255" nullable="true"/>
+    <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
+    <field name="status" type="string" column="status" length="1" nullable="false"/>
+    <many-to-one field="idtipo" target-entity="TipoPedido">
+      <join-columns>
+        <join-column name="idTipo" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idfornecedor" target-entity="Fornecedor">
+      <join-columns>
+        <join-column name="idFornecedor" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

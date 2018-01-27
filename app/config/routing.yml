@@ -1,0 +1,7 @@
+login:
+    resource: "@LoginBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+logout:
+    path: "/logout"
