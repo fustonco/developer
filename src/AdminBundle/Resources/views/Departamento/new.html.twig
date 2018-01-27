@@ -41,7 +41,37 @@
 let ajaxForm;
 $('#form_validation').submit(function(e) {
     e.preventDefault();
-    swal('q', 'w', 'info');
-})
+    if(!ajaxForm) {
+        ajaxForm = $.ajax({
+            type: "POST",
+            url: '/admin/cadastrar/departamento/',
+            data: $('#form_validation').serialize(),
+            dataType: 'json',
+            success: function(data) {
+                ajaxForm = null;
+                console.log('success', data);
+                swal('Sucesso', 'Departamento Cadastrado com Sucesso!', 'success');
+            },
+            error: function(data) {
+                ajaxForm = null;
+                console.error('erro', data);
+                if(data.status == 404){
+                    swal('Erro', 'Entre em contato com o suporte.', 'error');
+                } else {
+                    swal('Erro', data.responseJSON.description, 'info');
+                }
+            },
+            beforeSend: function() {
+                swal({
+                    title: "Carregando...",
+                    text: "Espere por favor.",
+                    imageUrl: "{{ asset('images/ajaxloader.gif') }}",
+                    showConfirmButton: false,
+                    allowOutsideClick: false
+                });
+            }
+        });
+    }
+});
 </script>
 {% endblock %}
