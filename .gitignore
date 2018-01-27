@@ -3,6 +3,4 @@ nbproject
 bin
 app/cache
 app/logs
-app/bootstrap.php.cache
-app/phpunit.xml
 app/config/parameters.yml
