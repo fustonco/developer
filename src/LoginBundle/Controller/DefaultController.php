@@ -32,7 +32,7 @@ class DefaultController extends Controller
     {
         switch ($this->getUser()->getIdTipo()->getId()){
             case 1:
-                return $this->redirect("admin/departamento/");
+                return $this->redirect("/admin");
                 break;
             case 2:
                 return $this->redirect("/funcionario");
