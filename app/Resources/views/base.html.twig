@@ -379,7 +379,7 @@
                         
                         <!-- Menu Funcionario -->
                         
-                        <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"%}active{% endif %}">
+                        <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">home</i>
                                 <span>Funcionario</span>
@@ -388,7 +388,7 @@
                                 <li class="{% if app.request.requestUri == "/admin/funcionario/new" %}active{% endif %}">
                                     <a href="{{ path('funcionario_new') }}">Cadastrar</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/admin/funcionario/" %}active{% endif %}">
+                                <li class="{% if app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
                                     <a href="{{ path('funcionario') }}">Listar</a>
                                 </li>
                                 

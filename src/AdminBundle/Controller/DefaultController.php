@@ -359,4 +359,153 @@ class DefaultController extends Controller
             ]), 500);
         }
     }
+
+
+
+    /**
+     * @Route("/editar/funcionario/")
+     */
+    public function adminEditarFuncionarioAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
+            if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
+
+            $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
+            if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}
+
+            $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
+            if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
+
+            $funcionario = $em->getRepository("AdminBundle:Funcionario")->findOneById($request->get('id'));
+            $funcionario->setNome($request->get('nome'));
+            $funcionario->setEmail($request->get('email'));
+            $funcionario->setLimiteAprovacao($request->get('limite'));
+            $funcionario->setTelefone($request->get('telefone'));
+            $funcionario->setCelular($request->get('celular'));
+            $funcionario->setAtivo('S');
+            $funcionario->setIddepartamento($departamento);
+            $funcionario->setIdtipo($tipo);
+            $em->persist($funcionario);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Funcionario Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_cnpj':
+                    return new Response(json_encode([
+                        "description" => "CNPJ não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_tipo':
+                    return new Response(json_encode([
+                        "description" => "Tipo não encontrado!"
+                    ]), 500);
+                break;
+                case 'error_departamento':
+                    return new Response(json_encode([
+                        "description" => "Departamento não encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Funcionario!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/funcionario/")
+     */
+    public function adminExcluirFuncionarioAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $funcionario = $em->getRepository("AdminBundle:Funcionario")->findOneById($request->get('id'));
+            $em->remove($funcionario);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Funcionario Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir esse Funcionario, pois existe registros nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Empresa!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/funcionario/")
+     */
+    public function adminCadastrarFuncionarioAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
+            if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
+
+            $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
+            if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}
+
+            $grupo = $em->getRepository('AdminBundle:Grupo')->findOneById($request->get('grupo'));
+            if(!$grupo || $grupo == '') {throw new \Exception('error_grupo');}
+
+            $funcionario = new Funcionario();
+            $funcionario->setNome($request->get('nome'));
+            $funcionario->setEmail($request->get('email'));
+            $funcionario->setLimite($request->get('limite'));
+            $funcionario->setTelefone($request->get('telefone'));
+            $funcionario->setCelular($request->get('celular'));
+            $funcionario->setAtivo('S');
+            $funcionario->setIddepartamento($departamento);
+            $funcionario->setIdgrupo($grupo);
+            $em->persist($funcionario);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Funcionario Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_cnpj':
+                    return new Response(json_encode([
+                        "description" => "CNPJ não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_grupo':
+                    return new Response(json_encode([
+                        "description" => "Grupo não encontrado!"
+                    ]), 500);
+                break;
+                case 'error_departamento':
+                    return new Response(json_encode([
+                        "description" => "Departamento não encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Funcionario!"
+            ]), 500);
+        }
+    }
 }

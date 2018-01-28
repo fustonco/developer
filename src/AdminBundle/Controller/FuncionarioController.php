@@ -149,13 +149,18 @@ class FuncionarioController extends Controller
             throw $this->createNotFoundException('Unable to find Funcionario entity.');
         }
 
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
+        // $editForm = $this->createEditForm($entity);
+        // $deleteForm = $this->createDeleteForm($id);
+
+        $departamento = $em->getRepository('AdminBundle:Departamento')->findAll();
+        $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findAll();
 
         return array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            // 'edit_form'   => $editForm->createView(),
+            // 'delete_form' => $deleteForm->createView(),
+            'departamentos' => $departamento,
+            'tipos' => $tipo
         );
     }
 
