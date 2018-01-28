@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\Funcionario;
 use AdminBundle\Form\FuncionarioType;
+use AdminBundle\Form\TipoUsuario;
 
 /**
  * Funcionario controller.
@@ -44,22 +45,22 @@ class FuncionarioController extends Controller
      */
     public function createAction(Request $request)
     {
-        $entity = new Funcionario();
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
+        // $entity = new Funcionario();
+        // $form = $this->createCreateForm($entity);
+        // $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+        // if ($form->isValid()) {
+        //     $em = $this->getDoctrine()->getManager();
+        //     $em->persist($entity);
+        //     $em->flush();
 
-            return $this->redirect($this->generateUrl('funcionario_show', array('id' => $entity->getId())));
-        }
+        //     return $this->redirect($this->generateUrl('funcionario_show', array('id' => $entity->getId())));
+        // }
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+        // return array(
+        //     'entity' => $entity,
+        //     'form'   => $form->createView(),
+        // );
     }
 
     /**
@@ -71,14 +72,14 @@ class FuncionarioController extends Controller
      */
     private function createCreateForm(Funcionario $entity)
     {
-        $form = $this->createForm(new FuncionarioType(), $entity, array(
-            'action' => $this->generateUrl('funcionario_create'),
-            'method' => 'POST',
-        ));
+        // $form = $this->createForm(new FuncionarioType(), $entity, array(
+        //     'action' => $this->generateUrl('funcionario_create'),
+        //     'method' => 'POST',
+        // ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        // $form->add('submit', 'submit', array('label' => 'Create'));
 
-        return $form;
+        // return $form;
     }
 
     /**
@@ -90,12 +91,19 @@ class FuncionarioController extends Controller
      */
     public function newAction()
     {
+        $em = $this->getDoctrine()->getManager();
+
         $entity = new Funcionario();
-        $form   = $this->createCreateForm($entity);
+        // $form   = $this->createCreateForm($entity);
+
+        $departamento = $em->getRepository('AdminBundle:Departamento')->findAll();
+        $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findAll();
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            // 'form'   => $form->createView(),
+            'departamentos' => $departamento,
+            'tipos' => $tipo
         );
     }
 

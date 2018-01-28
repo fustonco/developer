@@ -13,7 +13,7 @@
                         <div class="row clearfix">
                             <div class="col-sm-12">
                                 <select class="form-control show-tick" name="grupo" id="grupo" required aria-required="true">
-                                    <option value="" disabled>-- Selecione um grupo --</option>
+                                    <option value="">-- Selecione um grupo --</option>
                                     {% for grupo in grupos %}
                                         <option value="{{ grupo.id }}" {% if grupo.id == entity.idgrupo.id %}selected{% endif %}>{{ grupo.nome }}</option>
                                     {% endfor %}
