@@ -30,6 +30,12 @@
     <!-- Morris Chart Css-->
     <link href="{{ asset('plugins/morrisjs/morris.css') }}" rel="stylesheet" />
 
+    <!-- Wait Me Css -->
+    <link href="{{ asset('plugins/waitme/waitMe.css') }}" rel="stylesheet" />
+
+    <!-- Bootstrap Select Css -->
+    <link href="{{ asset('plugins/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet">
+
     <!-- Custom Css -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
@@ -308,7 +314,6 @@
                 <ul class="list">
                     {# <li class="header">MAIN NAVIGATION</li> #}
                     {% if app.user.idtipo.id == 1 %}
-                        <li class="active"></li>
 
                         <!-- Menu Home -->
                         <li class="{% if app.request.requestUri == "/admin/" %}active{% endif %}">
@@ -319,7 +324,7 @@
                         </li>
                             
                         <!-- Menu Grupo -->
-                        <li class="{% if app.request.requestUri == "/admin/grupo/new" or app.request.requestUri == "/admin/grupo/"%}active{% endif %}">
+                        <li class="{% if app.request.requestUri == "/admin/grupo/new" or app.request.requestUri == "/admin/grupo/" or app.request.attributes.get('_route') == 'grupo_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">home</i>
                                 <span>Grupo</span>
@@ -328,7 +333,7 @@
                                 <li class="{% if app.request.requestUri == "/admin/grupo/new" %}active{% endif %}">
                                     <a href="{{ path('grupo_new') }}">Cadastrar</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/admin/grupo/" %}active{% endif %}">
+                                <li class="{% if app.request.requestUri == "/admin/grupo/" or app.request.attributes.get('_route') == 'grupo_edit' %}active{% endif %}">
                                     <a href="{{ path('grupo') }}">Listar</a>
                                 </li>
                             </ul>
@@ -337,7 +342,7 @@
                         
                         
                         <!-- Menu Empresa -->
-                        <li class="{% if app.request.requestUri == "/admin/empresa/new" or app.request.requestUri == "/admin/empresa/"%}active{% endif %}">
+                        <li class="{% if app.request.requestUri == "/admin/empresa/new" or app.request.requestUri == "/admin/empresa/" or app.request.attributes.get('_route') == 'empresa_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">home</i>
                                 <span>Empresa</span>
@@ -346,7 +351,7 @@
                                 <li class="{% if app.request.requestUri == "/admin/empresa/new" %}active{% endif %}">
                                     <a href="{{ path('empresa_new') }}">Cadastrar</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/admin/empresa/" %}active{% endif %}">
+                                <li class="{% if app.request.requestUri == "/admin/empresa/" or app.request.attributes.get('_route') == 'empresa_edit' %}active{% endif %}">
                                     <a href="{{ path('empresa') }}">Listar</a>
                                 </li>
                             </ul>
@@ -1272,6 +1277,13 @@
     <!-- Custom Js -->
     {# <script src="{{ asset('js/admin.js') }}"></script> #}
     {# <script src="{{ asset('js/pages/index.js') }}"></script> #}
+    <script src="{{ asset('js/pages/forms/basic-form-elements.js') }}"></script>
+
+    <!-- Autosize Plugin Js -->
+    <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
+
+    <!-- Moment Plugin Js -->
+    <script src="{{ asset('plugins/momentjs/moment.js') }}"></script>
 
     <!-- Jquery DataTable Plugin Js -->
     <script src="{{ asset('plugins/jquery-datatable/jquery.dataTables.js') }}"></script>
@@ -1283,6 +1295,8 @@
     <script src="{{ asset('plugins/jquery-datatable/extensions/export/vfs_fonts.js') }}"></script>
     <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.print.min.js') }}"></script>
+
+    <script src="{{ asset('plugins/bootstrap-select/js/bootstrap-select.js') }}"></script>
 
     <!-- Demo Js -->
     <script src="{{ asset('js/demo.js') }}"></script>
