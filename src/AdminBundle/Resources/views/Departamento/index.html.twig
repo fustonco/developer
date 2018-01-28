@@ -28,7 +28,7 @@
                                     <td>{{ entity.nome }}</td>
                                     <td>{{ entity.descricao }}</td>
                                     <td><a href="{{ path('departamento_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
-                                    <td><a href="{{ path('departamento_edit', { 'id': entity.id }) }}"><i class="material-icons">close</i></a></td>
+                                    <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">close</i></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -41,5 +41,69 @@
 {% endblock %}
 
 {% block javascripts %}
-<script></script>
+<script>
+let ajaxForm;
+$('.btn-excluir').click(function(e) {
+    e.preventDefault();
+    let id = $(this).attr('data-id');
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja realmente deletar?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/admin/excluir/departamento/',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data);
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = '';
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

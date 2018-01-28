@@ -38,32 +38,57 @@ let ajaxForm;
 $('#form_validation').submit(function(e) {
     e.preventDefault();
     if(!ajaxForm) {
-        ajaxForm = $.ajax({
-            type: "POST",
-            url: '/admin/editar/departamento/',
-            data: $('#form_validation').serialize(),
-            dataType: 'json',
-            success: function(data) {
-                ajaxForm = null;
-                console.log('success', data);
-                swal('Sucesso', data.description, 'success');
-            },
-            error: function(data) {
-                ajaxForm = null;
-                console.error('erro', data);
-                if(data.status == 404){
-                    swal('Erro', 'Entre em contato com o suporte.', 'error');
-                } else {
-                    swal('Erro', data.responseJSON.description, 'info');
-                }
-            },
-            beforeSend: function() {
-                swal({
-                    title: "Carregando...",
-                    text: "Espere por favor.",
-                    imageUrl: "{{ asset('images/ajaxloader.gif') }}",
-                    showConfirmButton: false,
-                    allowOutsideClick: false
+        swal({
+            title: "Atenção",
+            text: "Deseja realmente editar?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/admin/editar/departamento/',
+                    data: $('#form_validation').serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data);
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = '';
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
                 });
             }
         });
