@@ -32,7 +32,7 @@ class EmpresaController extends Controller
         $entities = $em->getRepository('AdminBundle:Empresa')->findAll();
 
         return array(
-            'entities' => $entities,
+            'entities' => $entities
         );
     }
     /**
@@ -44,22 +44,22 @@ class EmpresaController extends Controller
      */
     public function createAction(Request $request)
     {
-        $entity = new Empresa();
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
+        // $entity = new Empresa();
+        // $form = $this->createCreateForm($entity);
+        // $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+        // if ($form->isValid()) {
+        //     $em = $this->getDoctrine()->getManager();
+        //     $em->persist($entity);
+        //     $em->flush();
 
-            return $this->redirect($this->generateUrl('empresa_show', array('id' => $entity->getId())));
-        }
+        //     return $this->redirect($this->generateUrl('empresa_show', array('id' => $entity->getId())));
+        // }
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+        // return array(
+        //     'entity' => $entity,
+        //     'form'   => $form->createView()
+        // );
     }
 
     /**
@@ -71,14 +71,14 @@ class EmpresaController extends Controller
      */
     private function createCreateForm(Empresa $entity)
     {
-        $form = $this->createForm(new EmpresaType(), $entity, array(
-            'action' => $this->generateUrl('empresa_create'),
-            'method' => 'POST',
-        ));
+        // $form = $this->createForm(new EmpresaType(), $entity, array(
+        //     'action' => $this->generateUrl('empresa_create'),
+        //     'method' => 'POST',
+        // ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        // $form->add('submit', 'submit', array('label' => 'Create'));
 
-        return $form;
+        // return $form;
     }
 
     /**
@@ -91,11 +91,13 @@ class EmpresaController extends Controller
     public function newAction()
     {
         $entity = new Empresa();
-        $form   = $this->createCreateForm($entity);
+        $em = $this->getDoctrine()->getManager();
+
+        $grupo = $em->getRepository('AdminBundle:Grupo')->findAll();
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'grupos'  => $grupo
         );
     }
 
@@ -116,11 +118,11 @@ class EmpresaController extends Controller
             throw $this->createNotFoundException('Unable to find Empresa entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
+        // $deleteForm = $this->createDeleteForm($id);
 
         return array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            // 'delete_form' => $deleteForm->createView(),
         );
     }
 
@@ -141,13 +143,17 @@ class EmpresaController extends Controller
             throw $this->createNotFoundException('Unable to find Empresa entity.');
         }
 
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
+        // $editForm = $this->createEditForm($entity);
+        // $deleteForm = $this->createDeleteForm($id);
+
+        $grupo = $em->getRepository("AdminBundle:Grupo")->findAll();
 
         return array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            // 'edit_form'   => $editForm->createView(),
+            // 'delete_form' => $deleteForm->createView(),
+            'grupos'      => $grupo
+
         );
     }
 

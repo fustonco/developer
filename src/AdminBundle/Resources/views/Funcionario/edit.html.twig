@@ -1,16 +1,144 @@
 {% extends '::base.html.twig' %}
 
-{% block body -%}
-    <h1>Funcionario edit</h1>
+{% block body %}
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>Editar Funcionário</h2>
+                </div>
+                <div class="body">
+                    <form id="form_validation" method="POST" novalidate="novalidate">
+                        <input type="hidden" value="{{ entity.id }}" name="id" />
+                        <div class="row clearfix">
+                            <div class="col-sm-6">
+                                <select class="form-control show-tick" name="departamento" id="departamento" required aria-required="true">
+                                    <option value="">-- Selecione um departamento --</option>
+                                    {% for departamento in departamentos %}
+                                        <option value="{{ departamento.id }}" {% if departamento.id == entity.iddepartamento.id %}selected{% endif %}>{{ departamento.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <select class="form-control show-tick" name="tipo" id="tipo" required aria-required="true">
+                                    <option value="">-- Selecione um tipo --</option>
+                                    {% for tipo in tipos %}
+                                        <option value="{{ tipo.id }}" {% if tipo.id == entity.idtipo.id %}selected{% endif %}>{{ tipo.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" value="{{ entity.nome }}" class="form-control" name="nome" required aria-required="true">
+                                    <label class="form-label">Nome</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="email" value="{{ entity.email }}" class="form-control" name="email" required aria-required="true">
+                                    <label class="form-label">E-Mail</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" value="{{ entity.limiteAprovacao }}" class="form-control" name="limite" required aria-required="true">
+                                    <label class="form-label">Limite</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="tel" value="{{ entity.telefone }}" class="form-control" name="telefone" aria-required="true">
+                                    <label class="form-label">Telefone</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="tel" value="{{ entity.celular }}" class="form-control" name="celular" aria-required="true">
+                                    <label class="form-label">Celular</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <button class="btn btn-primary waves-effect" type="submit">EDITAR</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
-    {{ form(edit_form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('funcionario') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+{% block javascripts %}
+<script>
+let ajaxForm;
+$('#form_validation').submit(function(e) {
+    e.preventDefault();
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja realmente editar?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/admin/editar/funcionario/',
+                    data: $('#form_validation').serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data);
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = '';
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

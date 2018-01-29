@@ -21,11 +21,20 @@
     <!-- Sweet Alert Css -->
     <link href="{{ asset('plugins/sweetalert/sweetalert.css') }}" rel="stylesheet" />
 
+    <!-- JQuery DataTable Css -->
+    <link href="{{ asset('plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css') }}" rel="stylesheet">
+
     <!-- Animation Css -->
     <link href="{{ asset('plugins/animate-css/animate.css') }}" rel="stylesheet" />
 
     <!-- Morris Chart Css-->
     <link href="{{ asset('plugins/morrisjs/morris.css') }}" rel="stylesheet" />
+
+    <!-- Wait Me Css -->
+    <link href="{{ asset('plugins/waitme/waitMe.css') }}" rel="stylesheet" />
+
+    <!-- Bootstrap Select Css -->
+    <link href="{{ asset('plugins/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet">
 
     <!-- Custom Css -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
@@ -278,125 +287,122 @@
         <!-- Left Sidebar -->
         <aside id="leftsidebar" class="sidebar">
             <!-- User Info -->
-            <div class="user-info">
+            {# <div class="user-info"> #}
                 {# <div class="image">
                     <img src="images/user.png" width="48" height="48" alt="User" />
                 </div> #}
-                <div class="info-container">
-                    <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">John Doe</div>
-                    <div class="email">john.doe@example.com</div>
-                    <div class="btn-group user-helper-dropdown">
+                {# <div class="info-container"> #}
+                    {# <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">John Doe</div> #}
+                    {# <div class="email">john.doe@example.com</div> #}
+                    {# <div class="btn-group user-helper-dropdown">
                         <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                         <ul class="dropdown-menu pull-right">
-                            {# <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li> #}
-                            {# <li role="seperator" class="divider"></li> #}
-                            {# <li><a href="javascript:void(0);"><i class="material-icons">group</i>Followers</a></li> #}
-                            {# <li><a href="javascript:void(0);"><i class="material-icons">shopping_cart</i>Sales</a></li> #}
-                            {# <li><a href="javascript:void(0);"><i class="material-icons">favorite</i>Likes</a></li> #}
-                            {# <li role="seperator" class="divider"></li> #}
+                            <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
+                            <li role="seperator" class="divider"></li>
+                            <li><a href="javascript:void(0);"><i class="material-icons">group</i>Followers</a></li>
+                            <li><a href="javascript:void(0);"><i class="material-icons">shopping_cart</i>Sales</a></li>
+                            <li><a href="javascript:void(0);"><i class="material-icons">favorite</i>Likes</a></li>
+                            <li role="seperator" class="divider"></li>
                             <li><a href="/logout"><i class="material-icons">input</i>Sign Out</a></li>
                         </ul>
-                    </div>
-                </div>
-            </div>
+                    </div> #}
+                {# </div> #}
+            {# </div> #}
             <!-- #User Info -->
             <!-- Menu -->
             <div class="menu">
                 <ul class="list">
                     {# <li class="header">MAIN NAVIGATION</li> #}
                     {% if app.user.idtipo.id == 1 %}
-                    
-                        
-                    <!-- Menu Home -->
-                    <li class="{% if app.request.requestUri == "/admin/" %}active{% endif %}">
-                        <a href="{{ path('admin') }}">
-                            <i class="material-icons">home</i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                        
-                    <!-- Menu Grupo -->
-                    <li class="{% if app.request.requestUri == "/admin/grupo/new" or app.request.requestUri == "/admin/grupo/"%}active{% endif %}">
-                        <a href="javascript:void(0);" class="menu-toggle">
-                            <i class="material-icons">home</i>
-                            <span>Grupo</span>
-                        </a>
-                        <ul class="ml-menu">
-                            <li class="{% if app.request.requestUri == "/admin/grupo/new" %}active{% endif %}">
-                                <a href="{{ path('grupo_new') }}">Cadastrar</a>
-                            </li>
-                            <li class="{% if app.request.requestUri == "/admin/grupo/" %}active{% endif %}">
-                                <a href="{{ path('grupo') }}">Listar</a>
-                            </li>
-                        </ul>
-                            
-                    </li>
-                    
-                    
-                    <!-- Menu Empresa -->
-                    <li class="{% if app.request.requestUri == "/admin/empresa/new" or app.request.requestUri == "/admin/empresa/"%}active{% endif %}">
-                        <a href="javascript:void(0);" class="menu-toggle">
-                            <i class="material-icons">home</i>
-                            <span>Empresa</span>
-                        </a>
-                        <ul class="ml-menu">
-                            <li class="{% if app.request.requestUri == "/admin/empresa/new" %}active{% endif %}">
-                                <a href="{{ path('empresa_new') }}">Cadastrar</a>
-                            </li>
-                            <li class="{% if app.request.requestUri == "/admin/empresa/" %}active{% endif %}">
-                                <a href="{{ path('empresa') }}">Listar</a>
-                            </li>
-                        </ul>
-                            
-                    </li>
-                        
-                        
-                        
-                    <!-- Menu Departamento -->
-                    <li class="{% if app.request.requestUri == "/admin/departamento/new" or app.request.requestUri == "/admin/departamento/"%}active{% endif %}">
-                        <a href="javascript:void(0);" class="menu-toggle">
-                            <i class="material-icons">home</i>
-                            <span>Departamento</span>
-                        </a>
-                        <ul class="ml-menu">
-                            <li class="{% if app.request.requestUri == "/admin/departamento/new" %}active{% endif %}">
-                                <a href="{{ path('departamento_new') }}">Cadastrar</a>
-                            </li>
-                            <li class="{% if app.request.requestUri == "/admin/departamento/" %}active{% endif %}">
-                                <a href="{{ path('departamento') }}">Listar</a>
-                            </li>
-                        </ul>
-                            
-                    </li>
-                    
-                    <!-- Menu Funcionario -->
-                    
-                    <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"%}active{% endif %}">
-                        <a href="javascript:void(0);" class="menu-toggle">
-                            <i class="material-icons">home</i>
-                            <span>Funcionario</span>
-                        </a>
-                        <ul class="ml-menu">
-                            <li class="{% if app.request.requestUri == "/admin/funcionario/new" %}active{% endif %}">
-                                <a href="{{ path('funcionario_new') }}">Cadastrar</a>
-                            </li>
-                            <li class="{% if app.request.requestUri == "/admin/funcionario/" %}active{% endif %}">
-                                <a href="{{ path('funcionario') }}">Listar</a>
-                            </li>
-                            
-                        </ul>
-                            
-                    </li>
 
-                    <!-- Menu Home -->
-                    <li>
-                        <a href="{{ path('logout') }}">
-                            <i class="material-icons">exit_to_app</i>
-                            <span>Sair</span>
-                        </a>
-                    </li>
-                    
-                    
+                        <!-- Menu Home -->
+                        <li class="{% if app.request.requestUri == "/admin/" %}active{% endif %}">
+                            <a href="{{ path('admin') }}">
+                                <i class="material-icons">home</i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                            
+                        <!-- Menu Grupo -->
+                        <li class="{% if app.request.requestUri == "/admin/grupo/new" or app.request.requestUri == "/admin/grupo/" or app.request.attributes.get('_route') == 'grupo_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">home</i>
+                                <span>Grupo</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/admin/grupo/new" %}active{% endif %}">
+                                    <a href="{{ path('grupo_new') }}">Cadastrar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/admin/grupo/" or app.request.attributes.get('_route') == 'grupo_edit' %}active{% endif %}">
+                                    <a href="{{ path('grupo') }}">Listar</a>
+                                </li>
+                            </ul>
+                                
+                        </li>
+                        
+                        
+                        <!-- Menu Empresa -->
+                        <li class="{% if app.request.requestUri == "/admin/empresa/new" or app.request.requestUri == "/admin/empresa/" or app.request.attributes.get('_route') == 'empresa_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">home</i>
+                                <span>Empresa</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/admin/empresa/new" %}active{% endif %}">
+                                    <a href="{{ path('empresa_new') }}">Cadastrar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/admin/empresa/" or app.request.attributes.get('_route') == 'empresa_edit' %}active{% endif %}">
+                                    <a href="{{ path('empresa') }}">Listar</a>
+                                </li>
+                            </ul>
+                                
+                        </li>
+                            
+                            
+                            
+                        <!-- Menu Departamento -->
+                        <li class="{% if app.request.requestUri == "/admin/departamento/new" or app.request.requestUri == "/admin/departamento/" or app.request.attributes.get('_route') == 'departamento_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">home</i>
+                                <span>Departamento</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/admin/departamento/new" %}active{% endif %}">
+                                    <a href="{{ path('departamento_new') }}">Cadastrar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/admin/departamento/" or app.request.attributes.get('_route') == 'departamento_edit' %}active{% endif %}">
+                                    <a href="{{ path('departamento') }}">Listar</a>
+                                </li>
+                            </ul>
+                                
+                        </li>
+                        
+                        <!-- Menu Funcionario -->
+                        
+                        <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">home</i>
+                                <span>Funcionario</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/admin/funcionario/new" %}active{% endif %}">
+                                    <a href="{{ path('funcionario_new') }}">Cadastrar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
+                                    <a href="{{ path('funcionario') }}">Listar</a>
+                                </li>
+                                
+                            </ul>
+                                
+                        </li>
+
+                        <!-- Menu Home -->
+                        <li>
+                            <a href="{{ path('logout') }}">
+                                <i class="material-icons">exit_to_app</i>
+                                <span>Sair</span>
+                            </a>
+                        </li>
                     {% endif %}
                     {# <li>
                         <a href="javascript:void(0);" class="menu-toggle">
@@ -1272,8 +1278,33 @@
     {# <script src="{{ asset('js/admin.js') }}"></script> #}
     {# <script src="{{ asset('js/pages/index.js') }}"></script> #}
 
+    <!-- Moment Plugin Js -->
+    <script src="{{ asset('plugins/momentjs/moment.js') }}"></script>
+    
+    <!-- Bootstrap Material Datetime Picker Plugin Js -->
+    <script src="{{ asset('plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}"></script>
+
+    <script src="{{ asset('plugins/bootstrap-select/js/bootstrap-select.js') }}"></script>
+    <script src="{{ asset('js/pages/forms/basic-form-elements.js') }}"></script>
+
+    <!-- Autosize Plugin Js -->
+    <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
+
+    <!-- Jquery DataTable Plugin Js -->
+    <script src="{{ asset('plugins/jquery-datatable/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.flash.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/jszip.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.print.min.js') }}"></script>
+
+
     <!-- Demo Js -->
     <script src="{{ asset('js/demo.js') }}"></script>
+    <script src="{{ asset('js/pages/tables/jquery-datatable.js') }}"></script>
 
     {% block javascripts %}{% endblock %}
 </body>
