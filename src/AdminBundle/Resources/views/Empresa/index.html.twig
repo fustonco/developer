@@ -47,6 +47,7 @@
 let ajaxForm;
 $('.btn-excluir').click(function(e) {
     e.preventDefault();
+    if(!$(this).valid()) return false;
     let id = $(this).attr('data-id');
     if(!ajaxForm) {
         swal({

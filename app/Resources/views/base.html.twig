@@ -337,7 +337,6 @@
                                     <a href="{{ path('grupo') }}">Listar</a>
                                 </li>
                             </ul>
-                                
                         </li>
                         
                         
@@ -355,7 +354,6 @@
                                     <a href="{{ path('empresa') }}">Listar</a>
                                 </li>
                             </ul>
-                                
                         </li>
                             
                             
@@ -374,11 +372,9 @@
                                     <a href="{{ path('departamento') }}">Listar</a>
                                 </li>
                             </ul>
-                                
                         </li>
                         
                         <!-- Menu Funcionario -->
-                        
                         <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">home</i>
@@ -391,14 +387,11 @@
                                 <li class="{% if app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
                                     <a href="{{ path('funcionario') }}">Listar</a>
                                 </li>
-                                
                             </ul>
-                                
                         </li>
 
                         
                         <!-- Menu Fornecedor -->
-                        
                         <li class="{% if app.request.requestUri == "/admin/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">home</i>
@@ -411,19 +404,16 @@
                                 <li class="{% if app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
                                     <a href="{{ path('fornecedor') }}">Listar</a>
                                 </li>
-                                
                             </ul>
-                                
-                        </li>
-
-                        <!-- Menu Home -->
-                        <li>
-                            <a href="{{ path('logout') }}">
-                                <i class="material-icons">exit_to_app</i>
-                                <span>Sair</span>
-                            </a>
                         </li>
                     {% endif %}
+                    <!-- Menu Home -->
+                    <li>
+                        <a href="{{ path('logout') }}">
+                            <i class="material-icons">exit_to_app</i>
+                            <span>Sair</span>
+                        </a>
+                    </li>
                     {# <li>
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">layers</i>
