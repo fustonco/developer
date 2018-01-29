@@ -14,6 +14,8 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use AdminBundle\Entity\Empresa;
 use AdminBundle\Entity\Departamento;
 use AdminBundle\Entity\Grupo;
+use AdminBundle\Entity\Funcionario;
+use AdminBundle\Entity\Fornecedor;
 
 class DefaultController extends Controller
 {
@@ -505,6 +507,113 @@ class DefaultController extends Controller
             }
             return new Response(json_encode([
                 "description" => "Erro ao Cadastrar Funcionario!"
+            ]), 500);
+        }
+    }
+
+
+
+
+
+    /**
+     * @Route("/editar/fornecedor/")
+     */
+    public function adminEditarFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('cnpj') || $request->get('cnpj') == '') {throw new \Exception('error_cnpj');}
+
+            $fornecedor = $em->getRepository("AdminBundle:Fornecedor")->findOneById($request->get('id'));
+            $fornecedor->setNome($request->get('nome'));
+            $fornecedor->setCnpj($request->get('cnpj'));
+            $fornecedor->setAtivo('S');
+            $em->persist($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_cnpj':
+                    return new Response(json_encode([
+                        "description" => "CNPJ não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Fornecedor!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/fornecedor/")
+     */
+    public function adminExcluirFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $fornecedor = $em->getRepository("AdminBundle:Fornecedor")->findOneById($request->get('id'));
+            $em->remove($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir esse Fornecedor, pois existe registros nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Empresa!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/fornecedor/")
+     */
+    public function adminCadastrarFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('cnpj') || $request->get('cnpj') == '') {throw new \Exception('error_cnpj');}
+
+            $fornecedor = new Fornecedor();
+            $fornecedor->setNome($request->get('nome'));
+            $fornecedor->setCnpj($request->get('cnpj'));
+            $fornecedor->setAtivo('S');
+            $em->persist($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_cnpj':
+                    return new Response(json_encode([
+                        "description" => "CNPJ não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Fornecedor!"
             ]), 500);
         }
     }

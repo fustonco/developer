@@ -1,51 +1,109 @@
 {% extends '::base.html.twig' %}
 
-{% block body -%}
-    <h1>Fornecedor list</h1>
+{% block body %}
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        Lista de Fornecedores
+                    </h2>
+                </div>
+                <div class="body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover dataTable js-exportable">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Nome</th>
+                                    <th>CNPJ</th>
+                                    <th>Editar</th>
+                                    <th>Excluir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for entity in entities %}
+                                <tr>
+                                    <td>{{ entity.id }}</td>
+                                    <td>{{ entity.nome }}</td>
+                                    <td>{{ entity.cnpj }}</td>
+                                    <td><a href="{{ path('fornecedor_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
+                                    <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">close</i></a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
-    <table class="records_list">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Cnpj</th>
-                <th>Cpf</th>
-                <th>Telefone</th>
-                <th>Endereco</th>
-                <th>Ativo</th>
-                <th>Id</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('fornecedor_show', { 'id': entity.id }) }}">{{ entity.nome }}</a></td>
-                <td>{{ entity.cnpj }}</td>
-                <td>{{ entity.cpf }}</td>
-                <td>{{ entity.telefone }}</td>
-                <td>{{ entity.endereco }}</td>
-                <td>{{ entity.ativo }}</td>
-                <td>{{ entity.id }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('fornecedor_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('fornecedor_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-        <ul>
-        <li>
-            <a href="{{ path('fornecedor_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endblock %}
+{% block javascripts %}
+<script>
+let ajaxForm;
+$('.btn-excluir').click(function(e) {
+    e.preventDefault();
+    let id = $(this).attr('data-id');
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja realmente deletar?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/admin/excluir/fornecedor/',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data);
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = '';
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

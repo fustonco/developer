@@ -396,6 +396,26 @@
                                 
                         </li>
 
+                        
+                        <!-- Menu Fornecedor -->
+                        
+                        <li class="{% if app.request.requestUri == "/admin/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">home</i>
+                                <span>Fornecedor</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/admin/fornecedor/new" %}active{% endif %}">
+                                    <a href="{{ path('fornecedor_new') }}">Cadastrar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                                    <a href="{{ path('fornecedor') }}">Listar</a>
+                                </li>
+                                
+                            </ul>
+                                
+                        </li>
+
                         <!-- Menu Home -->
                         <li>
                             <a href="{{ path('logout') }}">
