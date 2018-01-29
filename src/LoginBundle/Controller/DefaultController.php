@@ -39,7 +39,7 @@ class DefaultController extends Controller
                 break;
             case 3:
                 return $this->redirect("/financeiro");
-                break;
+                break; 
         }
     }
 }
