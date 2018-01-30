@@ -6,7 +6,7 @@ financeiro:
 funcionario:
     resource: "@FuncionarioBundle/Controller/"
     type:     annotation
-    prefix:   /
+    prefix:   /funcionario
 
 admin:
     resource: "@AdminBundle/Controller/"
