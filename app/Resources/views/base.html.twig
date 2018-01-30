@@ -326,7 +326,7 @@
                         <!-- Menu Grupo -->
                         <li class="{% if app.request.requestUri == "/admin/grupo/new" or app.request.requestUri == "/admin/grupo/" or app.request.attributes.get('_route') == 'grupo_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
-                                <i class="material-icons">home</i>
+                                <i class="material-icons">group_work</i>
                                 <span>Grupo</span>
                             </a>
                             <ul class="ml-menu">
@@ -343,7 +343,7 @@
                         <!-- Menu Empresa -->
                         <li class="{% if app.request.requestUri == "/admin/empresa/new" or app.request.requestUri == "/admin/empresa/" or app.request.attributes.get('_route') == 'empresa_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
-                                <i class="material-icons">home</i>
+                                <i class="material-icons">business</i>
                                 <span>Empresa</span>
                             </a>
                             <ul class="ml-menu">
@@ -361,7 +361,7 @@
                         <!-- Menu Departamento -->
                         <li class="{% if app.request.requestUri == "/admin/departamento/new" or app.request.requestUri == "/admin/departamento/" or app.request.attributes.get('_route') == 'departamento_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
-                                <i class="material-icons">home</i>
+                                <i class="material-icons">layers</i>
                                 <span>Departamento</span>
                             </a>
                             <ul class="ml-menu">
@@ -377,7 +377,7 @@
                         <!-- Menu Funcionario -->
                         <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
-                                <i class="material-icons">home</i>
+                                <i class="material-icons">person_add</i>
                                 <span>Funcionario</span>
                             </a>
                             <ul class="ml-menu">
@@ -394,7 +394,7 @@
                         <!-- Menu Fornecedor -->
                         <li class="{% if app.request.requestUri == "/admin/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
-                                <i class="material-icons">home</i>
+                                <i class="material-icons">account_box</i>
                                 <span>Fornecedor</span>
                             </a>
                             <ul class="ml-menu">
@@ -1252,7 +1252,6 @@
     <script src="{{ asset('plugins/sweetalert/sweetalert.min.js') }}"></script>
 
     <!-- Custom Js -->
-    <script src="{{ asset('js/admin.js') }}"></script>
     <script src="{{ asset('js/pages/forms/form-validation.js') }}"></script>
 
     <!-- Select Plugin Js -->
@@ -1268,37 +1267,27 @@
     <script src="{{ asset('plugins/jquery-countto/jquery.countTo.js') }}"></script>
 
     <!-- Morris Plugin Js -->
-    {# <script src="{{ asset('plugins/raphael/raphael.min.js') }}"></script> #}
-    {# <script src="{{ asset('plugins/morrisjs/morris.js') }}"></script> #}
+    <script src="{{ asset('plugins/raphael/raphael.min.js') }}"></script>
+    <script src="{{ asset('plugins/morrisjs/morris.js') }}"></script>
 
     <!-- ChartJs -->
-    {# <script src="{{ asset('plugins/chartjs/Chart.bundle.js') }}"></script> #}
+    <script src="{{ asset('plugins/chartjs/Chart.bundle.js') }}"></script>
 
     <!-- Flot Charts Plugin Js -->
-    {# <script src="{{ asset('plugins/flot-charts/jquery.flot.js') }}"></script>
+    <script src="{{ asset('plugins/flot-charts/jquery.flot.js') }}"></script>
     <script src="{{ asset('plugins/flot-charts/jquery.flot.resize.js') }}"></script>
     <script src="{{ asset('plugins/flot-charts/jquery.flot.pie.js') }}"></script>
     <script src="{{ asset('plugins/flot-charts/jquery.flot.categories.js') }}"></script>
-    <script src="{{ asset('plugins/flot-charts/jquery.flot.time.js') }}"></script> #}
+    <script src="{{ asset('plugins/flot-charts/jquery.flot.time.js') }}"></script>
 
     <!-- Sparkline Chart Plugin Js -->
-    {# <script src="{{ asset('plugins/jquery-sparkline/jquery.sparkline.js') }}"></script> #}
-
-    <!-- Custom Js -->
-    {# <script src="{{ asset('js/admin.js') }}"></script> #}
-    {# <script src="{{ asset('js/pages/index.js') }}"></script> #}
+    <script src="{{ asset('plugins/jquery-sparkline/jquery.sparkline.js') }}"></script>
 
     <!-- Moment Plugin Js -->
     <script src="{{ asset('plugins/momentjs/moment.js') }}"></script>
     
     <!-- Bootstrap Material Datetime Picker Plugin Js -->
     <script src="{{ asset('plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}"></script>
-
-    <script src="{{ asset('plugins/bootstrap-select/js/bootstrap-select.js') }}"></script>
-    <script src="{{ asset('js/pages/forms/basic-form-elements.js') }}"></script>
-
-    <!-- Autosize Plugin Js -->
-    <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
 
     <!-- Jquery DataTable Plugin Js -->
     <script src="{{ asset('plugins/jquery-datatable/jquery.dataTables.js') }}"></script>
@@ -1311,6 +1300,14 @@
     <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('plugins/jquery-datatable/extensions/export/buttons.print.min.js') }}"></script>
 
+    <!-- Autosize Plugin Js -->
+    <script src="{{ asset('plugins/autosize/autosize.js') }}"></script>
+
+    <!-- Custom Js -->
+    <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ asset('js/pages/index.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap-select/js/bootstrap-select.js') }}"></script>
+    <script src="{{ asset('js/pages/forms/basic-form-elements.js') }}"></script>
 
     <!-- Demo Js -->
     <script src="{{ asset('js/demo.js') }}"></script>
