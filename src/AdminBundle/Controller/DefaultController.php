@@ -17,9 +17,6 @@ use AdminBundle\Entity\Grupo;
 use AdminBundle\Entity\Funcionario;
 use AdminBundle\Entity\Fornecedor;
 
-/**
- * @Route("/admin")
- */
 class DefaultController extends Controller
 {
     public function serializeJSON($entity) {
