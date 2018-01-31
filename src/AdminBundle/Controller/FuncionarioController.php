@@ -29,8 +29,14 @@ class FuncionarioController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $connection = $em->getConnection();
 
-        $entities = $em->getRepository('AdminBundle:Funcionario')->findAll();
+        $statement = $connection->prepare("SELECT f.id, f.nome, f.email, f.limite_aprovacao limiteAprovacao, f.telefone, f.celular, d.nome nomeDepartamento, tu.nome tipo FROM funcionario f
+        LEFT JOIN departamento d ON d.id = f.iddepartamento
+        LEFT JOIN funcionario_empresa fe ON fe.idfuncionario = f.id
+        LEFT JOIN tipo_usuario tu ON tu.id = f.idtipo");
+        $statement->execute();
+        $entities = $statement->fetchAll();
 
         return array(
             'entities' => $entities,

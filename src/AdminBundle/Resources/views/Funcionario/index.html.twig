@@ -22,6 +22,7 @@
                                     <th>Telefone</th>
                                     <th>Celular</th>
                                     <th>Tipo</th>
+                                    <th>Empresa</th>
                                     <th>Editar</th>
                                     <th>Excluir</th>
                                 </tr>
@@ -33,10 +34,11 @@
                                     <td>{{ entity.nome }}</td>
                                     <td>{{ entity.email }}</td>
                                     <td>{{ entity.limiteAprovacao }}</td>
-                                    <td>{{ entity.iddepartamento.nome }}</td>
+                                    <td>{{ entity.nomeDepartamento }}</td>
                                     <td>{{ entity.telefone }}</td>
                                     <td>{{ entity.celular }}</td>
-                                    <td>{{ entity.idtipo.nome }}</td>
+                                    <td>{{ entity.tipo }}</td>
+                                    <td><a href="javascript:void(0);" class="btn-empresas" data-id="{{ entity.id }}"><i class="material-icons">search</i></a></td>
                                     <td><a href="{{ path('funcionario_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
                                     <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">close</i></a></td>
                                 </tr>
@@ -48,11 +50,85 @@
             </div>
         </div>
     </div>
+
+    <div class="md-modal md-effect-17" id="modal-show">
+        <div class="md-content">
+            <h3 class="md-empresa-header">Empresas</h3>
+            <div>
+                <div class="md-empresa-body"></div>
+                <hr />
+                <button class="md-close">Fechar</button>
+            </div>
+        </div>
+    </div>
+    <div class="md-overlay"></div>
 {% endblock %}
 
 {% block javascripts %}
 <script>
 let ajaxForm;
+$('.md-close').click(function(e) {$('#modal-show').removeClass("md-show");});
+$('.btn-empresas').click(function(e) {
+    e.preventDefault();
+    let id = $(this).attr('data-id');
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja ver as empresas?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/admin/find/empresas/',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data.description);
+                        let string = '';
+                        for(emp of data.description) {
+                            string += emp.idempresa.nome+"<br/>";
+                        }
+                        $('.md-empresa-body').html(string);
+                        $('#modal-show').addClass("md-show");
+                        swal.close();
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+
 $('.btn-excluir').click(function(e) {
     e.preventDefault();
     let id = $(this).attr('data-id');

@@ -15,6 +15,7 @@ use AdminBundle\Entity\Empresa;
 use AdminBundle\Entity\Departamento;
 use AdminBundle\Entity\Grupo;
 use AdminBundle\Entity\Funcionario;
+use AdminBundle\Entity\FuncionarioEmpresa;
 use AdminBundle\Entity\Fornecedor;
 
 class DefaultController extends Controller
@@ -25,6 +26,26 @@ class DefaultController extends Controller
         $serializer = new Serializer($normalizers, $encoders);
         $jsonContent = $serializer->serialize($entity, 'json');
         return $jsonContent;
+    }
+
+    /**
+     * @Route("/find/empresas/" , name="findEmpresas")
+     */
+    public function FindEmpresasAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            $empresas = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findByIdfuncionario($request->get('id'));
+
+            return new Response(json_encode([
+                "description" => json_decode($this->serializeJSON($empresas))
+            ]), 200);
+        } catch(\Exception $e) {
+            return new Response(json_encode([
+                "description" => "Empresas nao encontradas"
+            ]), 500);
+        }
     }
 
     /**
@@ -400,6 +421,7 @@ class DefaultController extends Controller
     {
         try {
             $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
 
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
             if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
@@ -411,9 +433,9 @@ class DefaultController extends Controller
             $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
             if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
 
-            $empresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneById($request->get('empresa'));
+            $empresa = $em->getRepository('AdminBundle:Empresa')->findOneById($request->get('empresa'));
             if(!$empresa || $empresa == '') {throw new \Exception('error_empresa');}
-
+            
             $funcionario = $em->getRepository("AdminBundle:Funcionario")->findOneById($request->get('id'));
             $funcionario->setNome($request->get('nome'));
             $funcionario->setEmail($request->get('email'));
@@ -423,12 +445,32 @@ class DefaultController extends Controller
             $funcionario->setAtivo('S');
             $funcionario->setIddepartamento($departamento);
             $funcionario->setIdtipo($tipo);
+            // $funcionario->setSenha('func123');
             $em->persist($funcionario);
             $em->flush();
+
+            $myEmpresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneByIdfuncionario($funcionario->getId());
+            $funcEmpresa = null;
+            if($myEmpresa) {
+                $funcEmpresa = $myEmpresa;
+                $funcEmpresa->setIdfuncionario($funcionario);
+                $funcEmpresa->setIdempresa($empresa);
+                $funcEmpresa->setAtivo('S');
+            }else{
+                $funcEmpresa = new FuncionarioEmpresa();
+                $funcEmpresa->setIdfuncionario($funcionario);
+                $funcEmpresa->setIdempresa($empresa);
+                $funcEmpresa->setAtivo('S');
+            }
+            $em->persist($funcEmpresa);
+            $em->flush();
+
+            $em->getConnection()->commit();
             return new Response(json_encode([
                 "description" => "Funcionario Cadastrado com Sucesso!"
             ]), 200);
         } catch (\Exception $e) {
+            $em->getConnection()->rollBack();
             switch($e->getMessage()){
                 case 'error_nome':
                     return new Response(json_encode([
@@ -499,6 +541,7 @@ class DefaultController extends Controller
     {
         try {
             $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
 
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
             if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
@@ -510,21 +553,44 @@ class DefaultController extends Controller
             $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
             if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
 
+            $empresa = $em->getRepository('AdminBundle:Empresa')->findOneById($request->get('empresa'));
+            if(!$empresa || $empresa == '') {throw new \Exception('error_empresa');}
+            
             $funcionario = new Funcionario();
             $funcionario->setNome($request->get('nome'));
             $funcionario->setEmail($request->get('email'));
-            $funcionario->setLimite($request->get('limite'));
+            $funcionario->setLimiteAprovacao($request->get('limite'));
             $funcionario->setTelefone($request->get('telefone'));
             $funcionario->setCelular($request->get('celular'));
             $funcionario->setAtivo('S');
             $funcionario->setIddepartamento($departamento);
             $funcionario->setIdtipo($tipo);
+            $funcionario->setSenha('func123');
             $em->persist($funcionario);
             $em->flush();
+
+            $myEmpresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneByIdfuncionario($funcionario->getId());
+            $funcEmpresa = null;
+            if($myEmpresa) {
+                $funcEmpresa = $myEmpresa;
+                $funcEmpresa->setIdfuncionario($funcionario);
+                $funcEmpresa->setIdempresa($empresa);
+                $funcEmpresa->setAtivo('S');
+            }else{
+                $funcEmpresa = new FuncionarioEmpresa();
+                $funcEmpresa->setIdfuncionario($funcionario);
+                $funcEmpresa->setIdempresa($empresa);
+                $funcEmpresa->setAtivo('S');
+            }
+            $em->persist($funcEmpresa);
+            $em->flush();
+
+            $em->getConnection()->commit();
             return new Response(json_encode([
                 "description" => "Funcionario Cadastrado com Sucesso!"
             ]), 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            $em->getConnection()->rollBack();
             switch($e->getMessage()){
                 case 'error_nome':
                     return new Response(json_encode([
@@ -549,6 +615,11 @@ class DefaultController extends Controller
                 case 'error_departamento':
                     return new Response(json_encode([
                         "description" => "Departamento não encontrado!"
+                    ]), 500);
+                break;
+                case 'error_empresa':
+                    return new Response(json_encode([
+                        "description" => "Empresa não encontrada!"
                     ]), 500);
                 break;
             }

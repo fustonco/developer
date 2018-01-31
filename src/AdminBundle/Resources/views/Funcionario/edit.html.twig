@@ -11,7 +11,7 @@
                     <form id="form_validation" method="POST" novalidate="novalidate">
                         <input type="hidden" value="{{ entity.id }}" name="id" />
                         <div class="row clearfix">
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <select class="form-control show-tick" name="departamento" id="departamento" required aria-required="true">
                                     <option value="">-- Selecione um departamento --</option>
                                     {% for departamento in departamentos %}
@@ -19,7 +19,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <select class="form-control show-tick" name="tipo" id="tipo" required aria-required="true">
                                     <option value="">-- Selecione um tipo --</option>
                                     {% for tipo in tipos %}
@@ -27,14 +27,14 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-sm-4">
+                            {# <div class="col-sm-4">
                                 <select class="form-control show-tick" name="empresa" id="empresa" required aria-required="true">
                                     <option value="">-- Selecione uma empresa --</option>
                                     {% for empresa in empresas %}
                                         <option value="{{ empresa.id }}" {% if empresa.id == funcEmpresa %}selected{% endif %}>{{ empresa.nome }}</option>
                                     {% endfor %}
                                 </select>
-                            </div>
+                            </div> #}
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group form-float">
