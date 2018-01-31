@@ -6,14 +6,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+/**
+ * @Route("/funcionario")
+ */
 class DefaultController extends Controller
 {
     /**
-     * @Route("/hello/{name}")
-     * @Template()
+     * @Route("/", name="funcionario")
      */
-    public function indexAction($name)
+    public function FuncionarioAction()
     {
-        return array('name' => $name);
+        return $this->render("AdminBundle:Default:index.html.twig");
     }
 }

@@ -17,6 +17,9 @@ use AdminBundle\Entity\Grupo;
 use AdminBundle\Entity\Funcionario;
 use AdminBundle\Entity\Fornecedor;
 
+/**
+ * @Route("/admin")
+ */
 class DefaultController extends Controller
 {
     public function serializeJSON($entity) {
@@ -411,6 +414,9 @@ class DefaultController extends Controller
             $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
             if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
 
+            $empresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneById($request->get('empresa'));
+            if(!$empresa || $empresa == '') {throw new \Exception('error_empresa');}
+
             $funcionario = $em->getRepository("AdminBundle:Funcionario")->findOneById($request->get('id'));
             $funcionario->setNome($request->get('nome'));
             $funcionario->setEmail($request->get('email'));
@@ -450,6 +456,11 @@ class DefaultController extends Controller
                 case 'error_departamento':
                     return new Response(json_encode([
                         "description" => "Departamento não encontrado!"
+                    ]), 500);
+                break;
+                case 'error_empresa':
+                    return new Response(json_encode([
+                        "description" => "Empresa não encontrada!"
                     ]), 500);
                 break;
             }

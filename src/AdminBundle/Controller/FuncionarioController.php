@@ -98,12 +98,14 @@ class FuncionarioController extends Controller
 
         $departamento = $em->getRepository('AdminBundle:Departamento')->findAll();
         $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findAll();
+        $empresa = $em->getRepository('AdminBundle:Empresa')->findAll();
 
         return array(
             'entity' => $entity,
             // 'form'   => $form->createView(),
             'departamentos' => $departamento,
-            'tipos' => $tipo
+            'tipos' => $tipo,
+            'empresas' => $empresa
         );
     }
 
@@ -154,13 +156,19 @@ class FuncionarioController extends Controller
 
         $departamento = $em->getRepository('AdminBundle:Departamento')->findAll();
         $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findAll();
+        $empresa = $em->getRepository('AdminBundle:Empresa')->findAll();
+
+        $funcEmpresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneByIdfuncionario($entity->getId());
+        if($funcEmpresa) $funcEmpresa = $funcEmpresa->getIdempresa()->getId();
 
         return array(
             'entity'      => $entity,
             // 'edit_form'   => $editForm->createView(),
             // 'delete_form' => $deleteForm->createView(),
             'departamentos' => $departamento,
-            'tipos' => $tipo
+            'tipos' => $tipo,
+            'empresas' => $empresa,
+            'funcEmpresa' => $funcEmpresa
         );
     }
 
