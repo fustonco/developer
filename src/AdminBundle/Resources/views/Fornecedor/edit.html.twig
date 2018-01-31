@@ -10,7 +10,7 @@
                 <div class="body">
                     <form id="form_validation" method="POST" novalidate="novalidate">
                         <input type="hidden" value="{{ entity.id }}" name="id" />
-                        <div class="col-sm-6">
+                        <div class="col-sm-12">
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <input type="text" value="{{ entity.nome }}" class="form-control" name="nome" required aria-required="true">
@@ -18,16 +18,42 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-12">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="text" value="{{ entity.cnpj }}" class="form-control" name="cnpj" required aria-required="true">
+                                    <input type="text" value="{{ entity.cnpj }}" class="form-control" name="cnpj">
                                     <label class="form-label">CNPJ</label>
                                 </div>
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <button class="btn btn-primary waves-effect" type="submit">EDITAR</button>
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" value="{{ entity.cpf }}" class="form-control" name="cpf">
+                                    <label class="form-label">CPF</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" value="{{ entity.telefone }}" class="form-control" name="telefone">
+                                    <label class="form-label">Telefone</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" value="{{ entity.endereco }}" class="form-control" name="endereco">
+                                    <label class="form-label">Endereço</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div style="text-align: right;">
+                                <button class="btn btn-primary waves-effect" type="submit">EDITAR</button>
+                            </div>
                         </div>
                     </form>
                 </div>

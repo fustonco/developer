@@ -553,11 +553,13 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
-            if(!$request->get('cnpj') || $request->get('cnpj') == '') {throw new \Exception('error_cnpj');}
 
             $fornecedor = $em->getRepository("AdminBundle:Fornecedor")->findOneById($request->get('id'));
             $fornecedor->setNome($request->get('nome'));
             $fornecedor->setCnpj($request->get('cnpj'));
+            $fornecedor->setCpf($request->get('cpf'));
+            $fornecedor->setTelefone($request->get('telefone'));
+            $fornecedor->setEndereco($request->get('endereco'));
             $fornecedor->setAtivo('S');
             $em->persist($fornecedor);
             $em->flush();
@@ -569,11 +571,6 @@ class DefaultController extends Controller
                 case 'error_nome':
                     return new Response(json_encode([
                         "description" => "Nome não pode ser vazio!"
-                    ]), 500);
-                break;
-                case 'error_cnpj':
-                    return new Response(json_encode([
-                        "description" => "CNPJ não pode ser vazio!"
                     ]), 500);
                 break;
             }
@@ -617,11 +614,13 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
-            if(!$request->get('cnpj') || $request->get('cnpj') == '') {throw new \Exception('error_cnpj');}
 
             $fornecedor = new Fornecedor();
             $fornecedor->setNome($request->get('nome'));
             $fornecedor->setCnpj($request->get('cnpj'));
+            $fornecedor->setCpf($request->get('cpf'));
+            $fornecedor->setTelefone($request->get('telefone'));
+            $fornecedor->setEndereco($request->get('endereco'));
             $fornecedor->setAtivo('S');
             $em->persist($fornecedor);
             $em->flush();
@@ -633,11 +632,6 @@ class DefaultController extends Controller
                 case 'error_nome':
                     return new Response(json_encode([
                         "description" => "Nome não pode ser vazio!"
-                    ]), 500);
-                break;
-                case 'error_cnpj':
-                    return new Response(json_encode([
-                        "description" => "CNPJ não pode ser vazio!"
                     ]), 500);
                 break;
             }
