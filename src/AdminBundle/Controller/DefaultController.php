@@ -494,8 +494,8 @@ class DefaultController extends Controller
             $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
             if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}
 
-            $grupo = $em->getRepository('AdminBundle:Grupo')->findOneById($request->get('grupo'));
-            if(!$grupo || $grupo == '') {throw new \Exception('error_grupo');}
+            $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
+            if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
 
             $funcionario = new Funcionario();
             $funcionario->setNome($request->get('nome'));
@@ -505,7 +505,7 @@ class DefaultController extends Controller
             $funcionario->setCelular($request->get('celular'));
             $funcionario->setAtivo('S');
             $funcionario->setIddepartamento($departamento);
-            $funcionario->setIdgrupo($grupo);
+            $funcionario->setIdtipo($tipo);
             $em->persist($funcionario);
             $em->flush();
             return new Response(json_encode([
@@ -523,9 +523,9 @@ class DefaultController extends Controller
                         "description" => "CNPJ não pode ser vazio!"
                     ]), 500);
                 break;
-                case 'error_grupo':
+                case 'error_tipo':
                     return new Response(json_encode([
-                        "description" => "Grupo não encontrado!"
+                        "description" => "Tipo não encontrado!"
                     ]), 500);
                 break;
                 case 'error_departamento':
