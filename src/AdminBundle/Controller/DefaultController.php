@@ -432,9 +432,14 @@ class DefaultController extends Controller
                         "description" => "Nome não pode ser vazio!"
                     ]), 500);
                 break;
-                case 'error_cnpj':
+                case 'error_email':
                     return new Response(json_encode([
-                        "description" => "CNPJ não pode ser vazio!"
+                        "description" => "E-Mail não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_limite':
+                    return new Response(json_encode([
+                        "description" => "Limite não pode ser vazio!"
                     ]), 500);
                 break;
                 case 'error_tipo':
@@ -518,9 +523,14 @@ class DefaultController extends Controller
                         "description" => "Nome não pode ser vazio!"
                     ]), 500);
                 break;
-                case 'error_cnpj':
+                case 'error_email':
                     return new Response(json_encode([
-                        "description" => "CNPJ não pode ser vazio!"
+                        "description" => "E-Mail não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_limite':
+                    return new Response(json_encode([
+                        "description" => "Limite não pode ser vazio!"
                     ]), 500);
                 break;
                 case 'error_tipo':
