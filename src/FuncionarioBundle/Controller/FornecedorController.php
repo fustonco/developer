@@ -2,6 +2,7 @@
 
 namespace FuncionarioBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -21,7 +22,7 @@ class FornecedorController extends Controller
     /**
      * Lists all Fornecedor entities.
      *
-     * @Route("/", name="fornecedor_func")
+     * @Route("/", name="func_fornecedor")
      * @Method("GET")
      * @Template()
      */
@@ -38,7 +39,7 @@ class FornecedorController extends Controller
     /**
      * Creates a new Fornecedor entity.
      *
-     * @Route("/", name="fornecedor_create_func")
+     * @Route("/", name="func_fornecedor_create")
      * @Method("POST")
      * @Template("FuncionarioBundle:Fornecedor:new.html.twig")
      */
@@ -84,7 +85,7 @@ class FornecedorController extends Controller
     /**
      * Displays a form to create a new Fornecedor entity.
      *
-     * @Route("/new", name="fornecedor_new_func")
+     * @Route("/new", name="func_fornecedor_new")
      * @Method("GET")
      * @Template()
      */
@@ -102,7 +103,7 @@ class FornecedorController extends Controller
     /**
      * Finds and displays a Fornecedor entity.
      *
-     * @Route("/{id}", name="fornecedor_show_func")
+     * @Route("/{id}", name="func_fornecedor_show")
      * @Method("GET")
      * @Template()
      */
@@ -127,7 +128,7 @@ class FornecedorController extends Controller
     /**
      * Displays a form to edit an existing Fornecedor entity.
      *
-     * @Route("/{id}/edit", name="fornecedor_edit_func")
+     * @Route("/{id}/edit", name="func_fornecedor_edit")
      * @Method("GET")
      * @Template()
      */
@@ -172,7 +173,7 @@ class FornecedorController extends Controller
     /**
      * Edits an existing Fornecedor entity.
      *
-     * @Route("/{id}", name="fornecedor_update_func")
+     * @Route("/{id}", name="func_fornecedor_update")
      * @Method("PUT")
      * @Template("FuncionarioBundle:Fornecedor:edit.html.twig")
      */
@@ -205,7 +206,7 @@ class FornecedorController extends Controller
     /**
      * Deletes a Fornecedor entity.
      *
-     * @Route("/{id}", name="fornecedor_delete_func")
+     * @Route("/{id}", name="func_fornecedor_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
