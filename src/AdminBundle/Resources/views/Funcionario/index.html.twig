@@ -259,9 +259,9 @@ $('.btn-empresas').click(function(e) {
                         }
                         $('.md-empresa-body').html(string);
                         $('#modal-show').addClass("md-show");
-                        $('.btn-addemp').attr('data-funcid', data.description[0].idfuncionario.id);
                         triggerRmvBtn();
                         swal.close();
+                        $('.btn-addemp').attr('data-funcid', data.description[0].idfuncionario.id);
                     },
                     error: function(data) {
                         ajaxForm = null;

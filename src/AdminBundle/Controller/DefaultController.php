@@ -487,9 +487,6 @@ class DefaultController extends Controller
             $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
             if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
 
-            $empresa = $em->getRepository('AdminBundle:Empresa')->findOneById($request->get('empresa'));
-            if(!$empresa || $empresa == '') {throw new \Exception('error_empresa');}
-            
             $funcionario = $em->getRepository("AdminBundle:Funcionario")->findOneById($request->get('id'));
             $funcionario->setNome($request->get('nome'));
             $funcionario->setEmail($request->get('email'));
@@ -501,22 +498,6 @@ class DefaultController extends Controller
             $funcionario->setIdtipo($tipo);
             // $funcionario->setSenha('func123');
             $em->persist($funcionario);
-            $em->flush();
-
-            $myEmpresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneByIdfuncionario($funcionario->getId());
-            $funcEmpresa = null;
-            if($myEmpresa) {
-                $funcEmpresa = $myEmpresa;
-                $funcEmpresa->setIdfuncionario($funcionario);
-                $funcEmpresa->setIdempresa($empresa);
-                $funcEmpresa->setAtivo('S');
-            }else{
-                $funcEmpresa = new FuncionarioEmpresa();
-                $funcEmpresa->setIdfuncionario($funcionario);
-                $funcEmpresa->setIdempresa($empresa);
-                $funcEmpresa->setAtivo('S');
-            }
-            $em->persist($funcEmpresa);
             $em->flush();
 
             $em->getConnection()->commit();
@@ -549,11 +530,6 @@ class DefaultController extends Controller
                 case 'error_departamento':
                     return new Response(json_encode([
                         "description" => "Departamento não encontrado!"
-                    ]), 500);
-                break;
-                case 'error_empresa':
-                    return new Response(json_encode([
-                        "description" => "Empresa não encontrada!"
                     ]), 500);
                 break;
             }
@@ -607,9 +583,6 @@ class DefaultController extends Controller
             $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
             if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
 
-            $empresa = $em->getRepository('AdminBundle:Empresa')->findOneById($request->get('empresa'));
-            if(!$empresa || $empresa == '') {throw new \Exception('error_empresa');}
-            
             $funcionario = new Funcionario();
             $funcionario->setNome($request->get('nome'));
             $funcionario->setEmail($request->get('email'));
@@ -621,22 +594,6 @@ class DefaultController extends Controller
             $funcionario->setIdtipo($tipo);
             $funcionario->setSenha('func123');
             $em->persist($funcionario);
-            $em->flush();
-
-            $myEmpresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneByIdfuncionario($funcionario->getId());
-            $funcEmpresa = null;
-            if($myEmpresa) {
-                $funcEmpresa = $myEmpresa;
-                $funcEmpresa->setIdfuncionario($funcionario);
-                $funcEmpresa->setIdempresa($empresa);
-                $funcEmpresa->setAtivo('S');
-            }else{
-                $funcEmpresa = new FuncionarioEmpresa();
-                $funcEmpresa->setIdfuncionario($funcionario);
-                $funcEmpresa->setIdempresa($empresa);
-                $funcEmpresa->setAtivo('S');
-            }
-            $em->persist($funcEmpresa);
             $em->flush();
 
             $em->getConnection()->commit();
@@ -669,11 +626,6 @@ class DefaultController extends Controller
                 case 'error_departamento':
                     return new Response(json_encode([
                         "description" => "Departamento não encontrado!"
-                    ]), 500);
-                break;
-                case 'error_empresa':
-                    return new Response(json_encode([
-                        "description" => "Empresa não encontrada!"
                     ]), 500);
                 break;
             }
