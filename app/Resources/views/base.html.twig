@@ -450,6 +450,22 @@
                                 </li>
                             </ul>
                         </li>
+
+                        <!-- Menu Configurações -->
+                        <li class="{% if app.request.requestUri == "/admin/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">build</i>
+                                <span>Configurações</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/admin/fornecedor/new" %}active{% endif %}">
+                                    <a href="{{ path('fornecedor_new') }}">Tipo Pedido</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                                    <a href="{{ path('fornecedor') }}">Tipo Historico</a>
+                                </li>
+                            </ul>
+                        </li>
                     {% endif %}
                     <!-- Menu Home -->
                     <li>
