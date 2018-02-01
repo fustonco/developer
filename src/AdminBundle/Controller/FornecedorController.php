@@ -245,4 +245,101 @@ class FornecedorController extends Controller
             ->getForm()
         ;
     }
+
+    /**
+     * @Route("/editar/")
+     */
+    public function adminEditarFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+
+            $fornecedor = $em->getRepository("AdminBundle:Fornecedor")->findOneById($request->get('id'));
+            $fornecedor->setNome($request->get('nome'));
+            $fornecedor->setCnpj($request->get('cnpj'));
+            $fornecedor->setCpf($request->get('cpf'));
+            $fornecedor->setTelefone($request->get('telefone'));
+            $fornecedor->setEndereco($request->get('endereco'));
+            $fornecedor->setAtivo('S');
+            $em->persist($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Fornecedor!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/")
+     */
+    public function adminExcluirFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $fornecedor = $em->getRepository("AdminBundle:Fornecedor")->findOneById($request->get('id'));
+            $em->remove($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir esse Fornecedor, pois existe registros nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Empresa!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/")
+     */
+    public function adminCadastrarFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+
+            $fornecedor = new Fornecedor();
+            $fornecedor->setNome($request->get('nome'));
+            $fornecedor->setCnpj($request->get('cnpj'));
+            $fornecedor->setCpf($request->get('cpf'));
+            $fornecedor->setTelefone($request->get('telefone'));
+            $fornecedor->setEndereco($request->get('endereco'));
+            $fornecedor->setAtivo('S');
+            $em->persist($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Fornecedor!"
+            ]), 500);
+        }
+    }
 }

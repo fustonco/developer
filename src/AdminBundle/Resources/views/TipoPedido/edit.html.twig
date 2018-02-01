@@ -59,7 +59,7 @@ $('#form_validation').submit(function(e) {
             if (isConfirm) {
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/admin/editar/tipopedido/',
+                    url: '/admin/tipopedido/editar/',
                     data: $('#form_validation').serialize(),
                     dataType: 'json',
                     success: function(data) {

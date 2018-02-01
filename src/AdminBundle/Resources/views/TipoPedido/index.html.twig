@@ -1,49 +1,3 @@
-{# {% extends '::base.html.twig' %}
-
-{% block body -%}
-    <h1>TipoPedido list</h1>
-
-    <table class="records_list">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Descricao</th>
-                <th>Ativo</th>
-                <th>Id</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('tipopedido_show', { 'id': entity.id }) }}">{{ entity.nome }}</a></td>
-                <td>{{ entity.descricao }}</td>
-                <td>{{ entity.ativo }}</td>
-                <td>{{ entity.id }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('tipopedido_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('tipopedido_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-        <ul>
-        <li>
-            <a href="{{ path('tipopedido_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endblock %} #}
-
 {% extends '::base.html.twig' %}
 
 {% block body %}
@@ -110,7 +64,7 @@ $('.btn-excluir').click(function(e) {
             if (isConfirm) {
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/admin/excluir/tipopedido/',
+                    url: '/admin/tipopedido/excluir/',
                     data: {
                         id: id
                     },

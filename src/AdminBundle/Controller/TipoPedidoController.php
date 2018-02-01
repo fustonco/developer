@@ -245,4 +245,125 @@ class TipoPedidoController extends Controller
             ->getForm()
         ;
     }
+
+
+    /**
+     * @Route("/editar/")
+     */
+    public function adminEditarTipoPedidoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('descricao') || $request->get('descricao') == '') {throw new \Exception('error_descricao');}
+
+            $tipopedido = $em->getRepository('AdminBundle:TipoPedido')->findOneById($request->get('id'));
+            if(!$tipopedido) {throw new \Exception('error_tipopedido');}
+
+            $tipopedido->setNome($request->get('nome'));
+            $tipopedido->setDescricao($request->get('descricao'));
+            $tipopedido->setAtivo('S');
+            $em->persist($tipopedido);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Tipo de Pedido Editado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_descricao':
+                    return new Response(json_encode([
+                        "description" => "Descrição não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_tipopedido':
+                    return new Response(json_encode([
+                        "description" => "Tipo de Pedido não pode encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Editar Tipo de Pedido!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/")
+     */
+    public function adminExcluirTipoPedidoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            $tipopedido = $em->getRepository('AdminBundle:TipoPedido')->findOneById($request->get('id'));
+            if(!$tipopedido) {throw new \Exception('error_tipopedido');}
+            $em->remove($tipopedido);
+            $em->flush();
+
+            return new Response(json_encode([
+                "description" => "Tipo de Pedido Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir esse Tipo de Pedido, pois existe registrados nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            switch($e->getMessage()){
+                case 'error_tipopedido':
+                    return new Response(json_encode([
+                        "description" => "Tipo de pedido não encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Tipo de Pedido!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/")
+     */
+    public function adminCadastrarTipoPedidoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('descricao') || $request->get('descricao') == '') {throw new \Exception('error_descricao');}
+
+            $tipopedido = new TipoPedido();
+            $tipopedido->setNome($request->get('nome'));
+            $tipopedido->setDescricao($request->get('descricao'));
+            $tipopedido->setAtivo('S');
+            $em->persist($tipopedido);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Tipo de Pedido Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_descricao':
+                    return new Response(json_encode([
+                        "description" => "Descrição não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Tipo de Pedido!"
+            ]), 500);
+        }
+    }
 }

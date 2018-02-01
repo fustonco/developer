@@ -106,7 +106,7 @@ $('#form_validation').submit(function(e) {
             if (isConfirm) {
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/admin/cadastrar/funcionario/',
+                    url: '/admin/funcionario/cadastrar/',
                     data: $('#form_validation').serialize(),
                     dataType: 'json',
                     success: function(data) {

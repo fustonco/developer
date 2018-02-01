@@ -276,4 +276,173 @@ class FuncionarioController extends Controller
             ->getForm()
         ;
     }
+
+
+    /**
+     * @Route("/editar/")
+     */
+    public function adminEditarFuncionarioAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
+            if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
+
+            $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
+            if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}
+
+            $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
+            if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
+
+            $funcionario = $em->getRepository("AdminBundle:Funcionario")->findOneById($request->get('id'));
+            $funcionario->setNome($request->get('nome'));
+            $funcionario->setEmail($request->get('email'));
+            $funcionario->setLimiteAprovacao($request->get('limite'));
+            $funcionario->setTelefone($request->get('telefone'));
+            $funcionario->setCelular($request->get('celular'));
+            $funcionario->setAtivo('S');
+            $funcionario->setIddepartamento($departamento);
+            $funcionario->setIdtipo($tipo);
+            // $funcionario->setSenha('func123');
+            $em->persist($funcionario);
+            $em->flush();
+
+            $em->getConnection()->commit();
+            return new Response(json_encode([
+                "description" => "Funcionario Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            $em->getConnection()->rollBack();
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_email':
+                    return new Response(json_encode([
+                        "description" => "E-Mail não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_limite':
+                    return new Response(json_encode([
+                        "description" => "Limite não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_tipo':
+                    return new Response(json_encode([
+                        "description" => "Tipo não encontrado!"
+                    ]), 500);
+                break;
+                case 'error_departamento':
+                    return new Response(json_encode([
+                        "description" => "Departamento não encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Funcionario!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/")
+     */
+    public function adminExcluirFuncionarioAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $funcionario = $em->getRepository("AdminBundle:Funcionario")->findOneById($request->get('id'));
+            $em->remove($funcionario);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Funcionario Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir esse Funcionario, pois existe registros nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Empresa!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/")
+     */
+    public function adminCadastrarFuncionarioAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
+            if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
+
+            $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
+            if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}
+
+            $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findOneById($request->get('tipo'));
+            if(!$tipo || $tipo == '') {throw new \Exception('error_tipo');}
+
+            $funcionario = new Funcionario();
+            $funcionario->setNome($request->get('nome'));
+            $funcionario->setEmail($request->get('email'));
+            $funcionario->setLimiteAprovacao($request->get('limite'));
+            $funcionario->setTelefone($request->get('telefone'));
+            $funcionario->setCelular($request->get('celular'));
+            $funcionario->setAtivo('S');
+            $funcionario->setIddepartamento($departamento);
+            $funcionario->setIdtipo($tipo);
+            $funcionario->setSenha('func123');
+            $em->persist($funcionario);
+            $em->flush();
+
+            $em->getConnection()->commit();
+            return new Response(json_encode([
+                "description" => "Funcionario Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (Exception $e) {
+            $em->getConnection()->rollBack();
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_email':
+                    return new Response(json_encode([
+                        "description" => "E-Mail não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_limite':
+                    return new Response(json_encode([
+                        "description" => "Limite não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_tipo':
+                    return new Response(json_encode([
+                        "description" => "Tipo não encontrado!"
+                    ]), 500);
+                break;
+                case 'error_departamento':
+                    return new Response(json_encode([
+                        "description" => "Departamento não encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Funcionario!"
+            ]), 500);
+        }
+    }
+    
 }
