@@ -245,4 +245,111 @@ class TipoHistoricoController extends Controller
             ->getForm()
         ;
     }
+
+
+    /**
+     * @Route("/editar/")
+     */
+    public function adminEditarTipoHistoricoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+
+            $tipohistorico = $em->getRepository('AdminBundle:TipoHistorico')->findOneById($request->get('id'));
+            if(!$tipohistorico) {throw new \Exception('error_tipohistorico');}
+
+            $tipohistorico->setNome($request->get('nome'));
+            $tipohistorico->setAtivo('S');
+            $em->persist($tipohistorico);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Tipo de Historico Editado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_tipopedido':
+                    return new Response(json_encode([
+                        "description" => "Tipo de Historico não pode encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Editar Tipo de Historico!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/")
+     */
+    public function adminExcluirTipoHistoricoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            $tipohistorico = $em->getRepository('AdminBundle:TipoHistorico')->findOneById($request->get('id'));
+            if(!$tipohistorico) {throw new \Exception('error_tipohistorico');}
+            $em->remove($tipohistorico);
+            $em->flush();
+
+            return new Response(json_encode([
+                "description" => "Tipo de Historico Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir esse Tipo de Historico, pois existe registrados nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            switch($e->getMessage()){
+                case 'error_tipohistorico':
+                    return new Response(json_encode([
+                        "description" => "Tipo de Historico não encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Tipo de Historico!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/")
+     */
+    public function adminCadastrarTipoHistoricoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+
+            $tipohistorico = new TipoHistorico();
+            $tipohistorico->setNome($request->get('nome'));
+            $tipohistorico->setAtivo('S');
+            $em->persist($tipohistorico);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Tipo de Historico Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Tipo de Historico!"
+            ]), 500);
+        }
+    }
 }

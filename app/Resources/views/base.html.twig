@@ -452,7 +452,7 @@
                         </li>
 
                         <!-- Menu Configurações -->
-                        <li class="{% if app.request.requestUri == "/admin/tipopedido/" or app.request.requestUri == "/admin/tipohistorico/"  or app.request.attributes.get('_route') == 'tipopedido_new'  or app.request.attributes.get('_route') == 'tipopedido_edit' %}active{% endif %}">
+                        <li class="{% if app.request.requestUri == "/admin/tipopedido/" or app.request.attributes.get('_route') == 'tipopedido_new'  or app.request.attributes.get('_route') == 'tipopedido_edit' or app.request.requestUri == "/admin/tipohistorico/" or app.request.attributes.get('_route') == 'tipohistorico_new'  or app.request.attributes.get('_route') == 'tipohistorico_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">build</i>
                                 <span>Configurações</span>
@@ -461,7 +461,7 @@
                                 <li class="{% if app.request.requestUri == "/admin/tipopedido/"  or app.request.attributes.get('_route') == 'tipopedido_new'  or app.request.attributes.get('_route') == 'tipopedido_edit' %}active{% endif %}">
                                     <a href="{{ path('tipopedido') }}">Tipo Pedido</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/admin/tipohistorico/" %}active{% endif %}">
+                                <li class="{% if app.request.requestUri == "/admin/tipohistorico/"  or app.request.attributes.get('_route') == 'tipohistorico_new'  or app.request.attributes.get('_route') == 'tipohistorico_edit' %}active{% endif %}">
                                     <a href="{{ path('tipohistorico') }}">Tipo Historico</a>
                                 </li>
                             </ul>
