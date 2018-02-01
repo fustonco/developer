@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\Empresa;
 use AdminBundle\Form\EmpresaType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Empresa controller.
@@ -250,4 +251,125 @@ class EmpresaController extends Controller
             ->getForm()
         ;
     }
+
+    /**
+     * @Route("/editar/")
+     */
+    public function adminEditarEmpresaAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('cnpj') || $request->get('cnpj') == '') {throw new \Exception('error_cnpj');}
+
+            $grupo = $em->getRepository('AdminBundle:Grupo')->findOneById($request->get('grupo'));
+            if(!$grupo || $grupo == '') {throw new \Exception('error_grupo');}
+
+            $empresa = $em->getRepository("AdminBundle:Empresa")->findOneById($request->get('id'));
+            $empresa->setNome($request->get('nome'));
+            $empresa->setCnpj($request->get('cnpj'));
+            $empresa->setIdgrupo($grupo);
+            $em->persist($empresa);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Empresa Editado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_descricao':
+                    return new Response(json_encode([
+                        "description" => "Descrição não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_grupo':
+                    return new Response(json_encode([
+                        "description" => "Grupo não encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Editar Empresa!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/")
+     */
+    public function adminExcluirEmpresaAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $empresa = $em->getRepository("AdminBundle:Empresa")->findOneById($request->get('id'));
+            $em->remove($empresa);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Empresa Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir essa Empresa, pois existe funcionários registrados nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Empresa!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/")
+     */
+    public function adminCadastrarEmpresaAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('cnpj') || $request->get('cnpj') == '') {throw new \Exception('error_cnpj');}
+
+            $grupo = $em->getRepository('AdminBundle:Grupo')->findOneById($request->get('grupo'));
+            if(!$grupo || $grupo == '') {throw new \Exception('error_grupo');}
+
+            $empresa = new Empresa();
+            $empresa->setNome($request->get('nome'));
+            $empresa->setCnpj($request->get('cnpj'));
+            $empresa->setAtivo('S');
+            $empresa->setIdgrupo($grupo);
+            $em->persist($empresa);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Empresa Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_cnpj':
+                    return new Response(json_encode([
+                        "description" => "CNPJ não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_grupo':
+                    return new Response(json_encode([
+                        "description" => "Grupo não encontrado!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Empresa!"
+            ]), 500);
+        }
+    }
+
 }

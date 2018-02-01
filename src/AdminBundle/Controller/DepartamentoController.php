@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\Departamento;
 use AdminBundle\Form\DepartamentoType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Departamento controller.
@@ -243,5 +244,108 @@ class DepartamentoController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+
+
+    /**
+     * @Route("/editar/")
+     */
+    public function adminEditarDepartamentoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('descricao') || $request->get('descricao') == '') {throw new \Exception('error_descricao');}
+
+            $departamento = $em->getRepository("AdminBundle:Departamento")->findOneById($request->get('id'));
+            $departamento->setNome($request->get('nome'));
+            $departamento->setDescricao($request->get('descricao'));
+            $em->persist($departamento);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Departamento Editado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_descricao':
+                    return new Response(json_encode([
+                        "description" => "Descrição não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Editar Departamento!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/")
+     */
+    public function adminExcluirDepartamentoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $departamento = $em->getRepository("AdminBundle:Departamento")->findOneById($request->get('id'));
+            $em->remove($departamento);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Departamento Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir esse Departamento, pois existe funcionários registrados nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Departamento!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/")
+     */
+    public function adminCadastrarDepartamentoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            if(!$request->get('descricao') || $request->get('descricao') == '') {throw new \Exception('error_descricao');}
+
+            $departamento = new Departamento();
+            $departamento->setNome($request->get('nome'));
+            $departamento->setDescricao($request->get('descricao'));
+            $departamento->setAtivo('S');
+            $em->persist($departamento);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Departamento Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_descricao':
+                    return new Response(json_encode([
+                        "description" => "Descrição não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Departamento!"
+            ]), 500);
+        }
     }
 }

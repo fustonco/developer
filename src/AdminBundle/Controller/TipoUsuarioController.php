@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\TipoUsuario;
 use AdminBundle\Form\TipoUsuarioType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * TipoUsuario controller.

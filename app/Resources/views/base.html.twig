@@ -317,7 +317,8 @@
                 <ul class="list">
                     {# <li class="header">MAIN NAVIGATION</li> #}
                     {% if app.user.idtipo.id == 2 %}
-                        <li class="active">
+                        <!-- Menu Home -->
+                        <li class="{% if app.request.requestUri == "/funcionario/" %}active{% endif %}">
                             <a href="{{ path('func') }}">
                                 <i class="material-icons">home</i>
                                 <span>Dashboard</span>
@@ -325,33 +326,17 @@
                         </li>
 
                         <!-- Menu Fornecedor -->
-                        <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
-                            <a href="javascript:void(0);" class="menu-toggle">
-                                <i class="material-icons">assignment</i>
-                                <span>Pedidos</span>
-                            </a>
-                            <ul class="ml-menu">
-                                <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" %}active{% endif %}">
-                                    <a href="{{ path('fornecedor_new') }}">Efetuar</a>
-                                </li>
-                                <li class="{% if app.request.requestUri == "/funcionario/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
-                                    <a href="{{ path('fornecedor') }}">Listar</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <!-- Menu Fornecedor -->
-                        <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                        <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" or app.request.requestUri == "/funcionario/fornecedor/"  or app.request.attributes.get('_route') == 'func_fornecedor_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">account_box</i>
                                 <span>Fornecedor</span>
                             </a>
                             <ul class="ml-menu">
                                 <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" %}active{% endif %}">
-                                    <a href="{{ path('fornecedor_new') }}">Cadastrar</a>
+                                    <a href="{{ path('func_fornecedor_new') }}">Cadastrar</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/funcionario/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
-                                    <a href="{{ path('fornecedor') }}">Listar</a>
+                                <li class="{% if app.request.requestUri == "/funcionario/fornecedor/"  or app.request.attributes.get('_route') == 'func_fornecedor_edit' %}active{% endif %}">
+                                    <a href="{{ path('func_fornecedor') }}">Listar</a>
                                 </li>
                             </ul>
                         </li>
@@ -452,17 +437,17 @@
                         </li>
 
                         <!-- Menu Configurações -->
-                        <li class="{% if app.request.requestUri == "/admin/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                        <li class="{% if app.request.requestUri == "/admin/tipopedido/" or app.request.attributes.get('_route') == 'tipopedido_new'  or app.request.attributes.get('_route') == 'tipopedido_edit' or app.request.requestUri == "/admin/tipohistorico/" or app.request.attributes.get('_route') == 'tipohistorico_new'  or app.request.attributes.get('_route') == 'tipohistorico_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">build</i>
                                 <span>Configurações</span>
                             </a>
                             <ul class="ml-menu">
-                                <li class="{% if app.request.requestUri == "/admin/fornecedor/new" %}active{% endif %}">
-                                    <a href="{{ path('fornecedor_new') }}">Tipo Pedido</a>
+                                <li class="{% if app.request.requestUri == "/admin/tipopedido/"  or app.request.attributes.get('_route') == 'tipopedido_new'  or app.request.attributes.get('_route') == 'tipopedido_edit' %}active{% endif %}">
+                                    <a href="{{ path('tipopedido') }}">Tipo Pedido</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
-                                    <a href="{{ path('fornecedor') }}">Tipo Historico</a>
+                                <li class="{% if app.request.requestUri == "/admin/tipohistorico/"  or app.request.attributes.get('_route') == 'tipohistorico_new'  or app.request.attributes.get('_route') == 'tipohistorico_edit' %}active{% endif %}">
+                                    <a href="{{ path('tipohistorico') }}">Tipo Historico</a>
                                 </li>
                             </ul>
                         </li>
