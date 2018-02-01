@@ -319,7 +319,7 @@
                     {% if app.user.idtipo.id == 2 %}
                         <!-- Menu Home -->
                         <li class="{% if app.request.requestUri == "/funcionario/" %}active{% endif %}">
-                            <a href="{{ path('func') }}">
+                            <a href="/funcionario/">
                                 <i class="material-icons">home</i>
                                 <span>Dashboard</span>
                             </a>
@@ -346,7 +346,7 @@
 
                         <!-- Menu Home -->
                         <li class="{% if app.request.requestUri == "/admin/" %}active{% endif %}">
-                            <a href="{{ path('admin') }}">
+                            <a href="/admin/">
                                 <i class="material-icons">home</i>
                                 <span>Dashboard</span>
                             </a>
