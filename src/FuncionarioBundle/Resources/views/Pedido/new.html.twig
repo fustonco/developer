@@ -19,7 +19,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <select class="form-control show-tick" name="fornecedores" id="fornecedores" required aria-required="true">
+                                <select class="form-control show-tick" name="fornecedores" id="fornecedores">
                                     <option value="">-- Selecione um fornecedor --</option>
                                     {% for f in fornecedores %}
                                         <option value="{{ f.id }}">{{ f.nome }}{% if f.cnpj %} - CNPJ: {{ f.cnpj }}{% else %}{% if f.cpf %} - CPF: {{ f.cpf }}{% endif %}{% endif %}</option>
@@ -68,7 +68,7 @@
 let ajaxForm;
 $('#form_validation').submit(function(e) {
     e.preventDefault();
-    if(!$(this).valid()) return false;
+    if(!$(this).valid()) { swal('Atenção', 'Existem campos incompletos!', 'success'); return false;}
     if(!ajaxForm) {
         swal({
             title: "Atenção",
