@@ -21,7 +21,7 @@ class PedidoController extends Controller
     /**
      * Lists all Pedido entities.
      *
-     * @Route("/", name="pedido")
+     * @Route("/", name="func_pedido")
      * @Method("GET")
      * @Template()
      */
@@ -38,7 +38,7 @@ class PedidoController extends Controller
     /**
      * Creates a new Pedido entity.
      *
-     * @Route("/", name="pedido_create")
+     * @Route("/", name="func_pedido_create")
      * @Method("POST")
      * @Template("FuncionarioBundle:Pedido:new.html.twig")
      */
@@ -53,12 +53,12 @@ class PedidoController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('pedido_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('func_pedido_show', array('id' => $entity->getId())));
         }
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            // 'form'   => $form->createView(),
         );
     }
 
@@ -71,20 +71,20 @@ class PedidoController extends Controller
      */
     private function createCreateForm(Pedido $entity)
     {
-        $form = $this->createForm(new PedidoType(), $entity, array(
-            'action' => $this->generateUrl('pedido_create'),
-            'method' => 'POST',
-        ));
+        // $form = $this->createForm(new PedidoType(), $entity, array(
+        //     'action' => $this->generateUrl('func_pedido_create'),
+        //     'method' => 'POST',
+        // ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        // $form->add('submit', 'submit', array('label' => 'Create'));
 
-        return $form;
+        // return $form;
     }
 
     /**
      * Displays a form to create a new Pedido entity.
      *
-     * @Route("/new", name="pedido_new")
+     * @Route("/new", name="func_pedido_new")
      * @Method("GET")
      * @Template()
      */
@@ -95,14 +95,14 @@ class PedidoController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            // 'form'   => $form->createView(),
         );
     }
 
     /**
      * Finds and displays a Pedido entity.
      *
-     * @Route("/{id}", name="pedido_show")
+     * @Route("/{id}", name="func_pedido_show")
      * @Method("GET")
      * @Template()
      */
@@ -120,14 +120,14 @@ class PedidoController extends Controller
 
         return array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            // 'delete_form' => $deleteForm->createView(),
         );
     }
 
     /**
      * Displays a form to edit an existing Pedido entity.
      *
-     * @Route("/{id}/edit", name="pedido_edit")
+     * @Route("/{id}/edit", name="func_pedido_edit")
      * @Method("GET")
      * @Template()
      */
@@ -146,8 +146,8 @@ class PedidoController extends Controller
 
         return array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            // 'edit_form'   => $editForm->createView(),
+            // 'delete_form' => $deleteForm->createView(),
         );
     }
 
@@ -160,19 +160,19 @@ class PedidoController extends Controller
     */
     private function createEditForm(Pedido $entity)
     {
-        $form = $this->createForm(new PedidoType(), $entity, array(
-            'action' => $this->generateUrl('pedido_update', array('id' => $entity->getId())),
-            'method' => 'PUT',
-        ));
+        // $form = $this->createForm(new PedidoType(), $entity, array(
+        //     'action' => $this->generateUrl('func_pedido_update', array('id' => $entity->getId())),
+        //     'method' => 'PUT',
+        // ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        // $form->add('submit', 'submit', array('label' => 'Update'));
 
-        return $form;
+        // return $form;
     }
     /**
      * Edits an existing Pedido entity.
      *
-     * @Route("/{id}", name="pedido_update")
+     * @Route("/{id}", name="func_pedido_update")
      * @Method("PUT")
      * @Template("FuncionarioBundle:Pedido:edit.html.twig")
      */
@@ -193,19 +193,19 @@ class PedidoController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('pedido_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('func_pedido_edit', array('id' => $id)));
         }
 
         return array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            // 'edit_form'   => $editForm->createView(),
+            // 'delete_form' => $deleteForm->createView(),
         );
     }
     /**
      * Deletes a Pedido entity.
      *
-     * @Route("/{id}", name="pedido_delete")
+     * @Route("/{id}", name="func_pedido_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -225,7 +225,7 @@ class PedidoController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('pedido'));
+        return $this->redirect($this->generateUrl('func_pedido'));
     }
 
     /**
@@ -237,11 +237,11 @@ class PedidoController extends Controller
      */
     private function createDeleteForm($id)
     {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('pedido_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
+        // return $this->createFormBuilder()
+        //     ->setAction($this->generateUrl('func_pedido_delete', array('id' => $id)))
+        //     ->setMethod('DELETE')
+        //     ->add('submit', 'submit', array('label' => 'Delete'))
+        //     ->getForm()
+        // ;
     }
 }

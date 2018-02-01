@@ -35,7 +35,7 @@ class DefaultController extends Controller
                 return $this->redirect("/admin");
                 break;
             case 2:
-                return $this->redirect("/funcionario");
+                return $this->redirect("/funcionario/pedido/");
                 break;
             case 3:
                 return $this->redirect("/financeiro");

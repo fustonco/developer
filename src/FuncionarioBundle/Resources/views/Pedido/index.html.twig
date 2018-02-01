@@ -20,7 +20,7 @@
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td><a href="{{ path('pedido_show', { 'id': entity.id }) }}">{{ entity.codigo }}</a></td>
+                <td><a href="{{ path('func_pedido_show', { 'id': entity.id }) }}">{{ entity.codigo }}</a></td>
                 <td>{% if entity.dataVencimento %}{{ entity.dataVencimento|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{% if entity.dataPedido %}{{ entity.dataPedido|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>{{ entity.valor }}</td>
@@ -31,10 +31,10 @@
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('pedido_show', { 'id': entity.id }) }}">show</a>
+                        <a href="{{ path('func_pedido_show', { 'id': entity.id }) }}">show</a>
                     </li>
                     <li>
-                        <a href="{{ path('pedido_edit', { 'id': entity.id }) }}">edit</a>
+                        <a href="{{ path('func_pedido_edit', { 'id': entity.id }) }}">edit</a>
                     </li>
                 </ul>
                 </td>
@@ -45,7 +45,7 @@
 
         <ul>
         <li>
-            <a href="{{ path('pedido_new') }}">
+            <a href="{{ path('func_pedido_new') }}">
                 Create a new entry
             </a>
         </li>

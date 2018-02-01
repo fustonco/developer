@@ -315,14 +315,22 @@
             <!-- Menu -->
             <div class="menu">
                 <ul class="list">
-                    {# <li class="header">MAIN NAVIGATION</li> #}
+                    <li class="header">MENU</li>
                     {% if app.user.idtipo.id == 2 %}
-                        <!-- Menu Home -->
-                        <li class="{% if app.request.requestUri == "/funcionario/" %}active{% endif %}">
-                            <a href="/funcionario/">
-                                <i class="material-icons">home</i>
-                                <span>Dashboard</span>
+                        <!-- Menu Pedido -->
+                        <li class="{% if app.request.requestUri == "/funcionario/pedido/new" or app.request.requestUri == "/funcionario/pedido/"  or app.request.attributes.get('_route') == 'func_pedido_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">account_box</i>
+                                <span>Pedido</span>
                             </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/funcionario/pedido/new" %}active{% endif %}">
+                                    <a href="{{ path('func_pedido_new') }}">Cadastrar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/funcionario/pedido/"  or app.request.attributes.get('_route') == 'func_pedido_edit' %}active{% endif %}">
+                                    <a href="{{ path('func_pedido') }}">Listar</a>
+                                </li>
+                            </ul>
                         </li>
 
                         <!-- Menu Fornecedor -->

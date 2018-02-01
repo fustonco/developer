@@ -54,7 +54,7 @@ class FornecedorController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('fornecedor_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('func_fornecedor_show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -73,7 +73,7 @@ class FornecedorController extends Controller
     private function createCreateForm(Fornecedor $entity)
     {
         $form = $this->createForm(new FornecedorType(), $entity, array(
-            'action' => $this->generateUrl('fornecedor_create'),
+            'action' => $this->generateUrl('func_fornecedor_create'),
             'method' => 'POST',
         ));
 
@@ -162,7 +162,7 @@ class FornecedorController extends Controller
     private function createEditForm(Fornecedor $entity)
     {
         $form = $this->createForm(new FornecedorType(), $entity, array(
-            'action' => $this->generateUrl('fornecedor_update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('func_fornecedor_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -194,7 +194,7 @@ class FornecedorController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('fornecedor_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('func_fornecedor_edit', array('id' => $id)));
         }
 
         return array(
@@ -226,7 +226,7 @@ class FornecedorController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('fornecedor'));
+        return $this->redirect($this->generateUrl('func_fornecedor'));
     }
 
     /**
@@ -239,7 +239,7 @@ class FornecedorController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('fornecedor_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('func_fornecedor_delete', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
