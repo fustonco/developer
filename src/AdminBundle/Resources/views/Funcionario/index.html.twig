@@ -56,7 +56,28 @@
             <h3 class="md-empresa-header">Empresas</h3>
             <div>
                 <div class="md-empresa-body"></div>
-                <hr />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <form id="form_validation" method="POST" novalidate="novalidate">
+                    <div class="row clearfix">
+                        <div class="col-sm-11">
+                            <select class="form-control show-tick" name="empresa" id="empresa" required aria-required="true">
+                                <option value="">-- Selecione uma empresa --</option>
+                                {% for empresa in empresas %}
+                                    <option value="{{ empresa.id }}">{{ empresa.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-1">
+                            <i class="material-icons btn-addemp" data-funcid="0" style="cursor: pointer;">add</i>
+                        </div>
+                    </div>
+                </form>
+                <br />
                 <button class="md-close">Fechar</button>
             </div>
         </div>
@@ -67,6 +88,144 @@
 {% block javascripts %}
 <script>
 let ajaxForm;
+$('.btn-addemp').click(function(e) {
+    e.preventDefault();
+    let idFuncionario = $(this).attr('data-funcid');
+    let idEmpresa = $('#empresa').val();
+
+    if(!idFuncionario) return false;
+    if(!idEmpresa) return false;
+
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja adicionar essa empresa?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/admin/add/empresa/',
+                    data: {
+                        idEmpresa: idEmpresa,
+                        idFuncionario: idFuncionario
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data.description);
+                        $('#modal-show').removeClass("md-show");
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+
+function triggerRmvBtn() {
+    $('.btn-rmvemp').click(function(e) {
+        e.preventDefault();
+        let idFuncionario = $(this).attr('data-funcid');
+        let idEmpresa = $('#empresa').val();
+
+        if(!idFuncionario) return false;
+        if(!idEmpresa) return false;
+
+        if(!ajaxForm) {
+            swal({
+                title: "Atenção",
+                text: "Deseja adicionar essa empresa?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sim!",
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+                allowClickOutside: false
+            }, function(isConfirm) {
+                if (isConfirm) {
+                    ajaxForm = $.ajax({
+                        type: "POST",
+                        url: '/admin/add/empresa/',
+                        data: {
+                            idEmpresa: idEmpresa,
+                            idFuncionario: idFuncionario
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            ajaxForm = null;
+                            console.log('success', data.description);
+                            $('#modal-show').removeClass("md-show");
+                            swal({
+                                title: "Sucesso",
+                                text: data.description,
+                                type: "success",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        },
+                        error: function(data) {
+                            ajaxForm = null;
+                            console.error('erro', data);
+                            if(data.status == 404){
+                                swal({
+                                    title: "Erro",
+                                    text: 'Entre em contato com o suporte.',
+                                    type: "error",
+                                    allowClickOutside: false,
+                                    allowEscapeKey: false
+                                });
+                            } else {
+                                swal({
+                                    title: "Erro",
+                                    text: data.responseJSON.description,
+                                    type: "warning",
+                                    allowClickOutside: false,
+                                    allowEscapeKey: false
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
 $('.md-close').click(function(e) {$('#modal-show').removeClass("md-show");});
 $('.btn-empresas').click(function(e) {
     e.preventDefault();
@@ -96,10 +255,12 @@ $('.btn-empresas').click(function(e) {
                         console.log('success', data.description);
                         let string = '';
                         for(emp of data.description) {
-                            string += emp.idempresa.nome+"<br/>";
+                            string += "<div class='col-sm-11'>"+emp.idempresa.nome+"</div><div class='col-sm-1'><i class='material-icons btn-rmvemp' data-funcid='0' style='cursor: pointer;'>remove</i></div>";
                         }
                         $('.md-empresa-body').html(string);
                         $('#modal-show').addClass("md-show");
+                        $('.btn-addemp').attr('data-funcid', data.description[0].idfuncionario.id);
+                        triggerRmvBtn();
                         swal.close();
                     },
                     error: function(data) {

@@ -34,12 +34,16 @@ class FuncionarioController extends Controller
         $statement = $connection->prepare("SELECT f.id, f.nome, f.email, f.limite_aprovacao limiteAprovacao, f.telefone, f.celular, d.nome nomeDepartamento, tu.nome tipo FROM funcionario f
         LEFT JOIN departamento d ON d.id = f.iddepartamento
         LEFT JOIN funcionario_empresa fe ON fe.idfuncionario = f.id
-        LEFT JOIN tipo_usuario tu ON tu.id = f.idtipo");
+        LEFT JOIN tipo_usuario tu ON tu.id = f.idtipo
+        GROUP BY f.id");
         $statement->execute();
         $entities = $statement->fetchAll();
 
+        $empresas = $em->getRepository('AdminBundle:Empresa')->findAll();
+
         return array(
             'entities' => $entities,
+            'empresas' => $empresas
         );
     }
     /**

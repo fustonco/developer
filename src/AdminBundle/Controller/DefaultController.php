@@ -49,6 +49,60 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/add/empresa/" , name="addEmpresa")
+     */
+    public function AddEmpresaAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            $empresafuncionario = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneBy([
+                'idfuncionario' => $request->get('idFuncionario'),
+                'idempresa' => $request->get('idEmpresa')
+            ]);
+            if(!$empresafuncionario) {
+                $func = $em->getRepository('AdminBundle:Funcionario')->findOneById($request->get('idFuncionario'));
+                if(!$func) {throw new \Exception('error_func');}
+                $emp = $em->getRepository('AdminBundle:Empresa')->findOneById($request->get('idEmpresa'));
+                if(!$emp) {throw new \Exception('error_emp');}
+                $empfunc = new FuncionarioEmpresa();
+                $empfunc->setIdfuncionario($func);
+                $empfunc->setIdempresa($emp);
+                $empfunc->setAtivo('S');
+                $em->persist($empfunc);
+                $em->flush();
+            } else {
+                throw new \Exception('error_funcionarioempresa');
+            }
+
+            return new Response(json_encode([
+                "description" => "Empresa associada com sucesso!"
+            ]), 200);
+        } catch(\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_funcionarioempresa':
+                    return new Response(json_encode([
+                        "description" => "Já associados!"
+                    ]), 500);
+                break;
+                case 'error_func':
+                    return new Response(json_encode([
+                        "description" => "Funcionario não encontrado!"
+                    ]), 500);
+                break;
+                case 'error_emp':
+                    return new Response(json_encode([
+                        "description" => "Empresa não encontrada!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Não foi possível adicionar empresa para esse funcionario!"
+            ]), 500);
+        }
+    }
+
+    /**
      * @Route("/" , name="admin")
      */
     public function AdminAction()

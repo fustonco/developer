@@ -316,6 +316,15 @@
             <div class="menu">
                 <ul class="list">
                     {# <li class="header">MAIN NAVIGATION</li> #}
+                    {% if app.user.idtipo.id == 2 %}
+                        <li class="active">
+                            <a href="{{ path('func') }}">
+                                <i class="material-icons">home</i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
                     {% if app.user.idtipo.id == 1 %}
 
                         <!-- Menu Home -->
