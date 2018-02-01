@@ -33,7 +33,7 @@ class FornecedorController extends Controller
         $entities = $em->getRepository('FuncionarioBundle:Fornecedor')->findAll();
 
         return array(
-            'entities' => $entities,
+            'entities' => $entities
         );
     }
     /**
@@ -59,7 +59,7 @@ class FornecedorController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form'   => $form->createView()
         );
     }
 
@@ -96,7 +96,7 @@ class FornecedorController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form'   => $form->createView()
         );
     }
 

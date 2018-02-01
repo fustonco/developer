@@ -9,43 +9,45 @@
                 </div>
                 <div class="body">
                     <form id="form_validation" method="POST" novalidate="novalidate">
-                        <div class="col-sm-12">
+                        <div class="row clearfix">
+                            <div class="col-sm-6">
+                                <select class="form-control show-tick" name="tipopedido" id="tipopedido" required aria-required="true">
+                                    <option value="">-- Selecione um tipo de pedido --</option>
+                                    {% for tp in tipopedido %}
+                                        <option value="{{ tp.id }}">{{ tp.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <select class="form-control show-tick" name="fornecedores" id="fornecedores" required aria-required="true">
+                                    <option value="">-- Selecione um fornecedor --</option>
+                                    {% for f in fornecedores %}
+                                        <option value="{{ f.id }}">{{ f.nome }}{% if f.cnpj %} - CNPJ: {{ f.cnpj }}{% else %}{% if f.cpf %} - CPF: {{ f.cpf }}{% endif %}{% endif %}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Data Vencimento</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="date" class="form-control" name="data_vencimento" required aria-required="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Valor</label>
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="text" class="form-control" name="nome" required aria-required="true">
-                                    <label class="form-label">Nome</label>
+                                    <input type="text" class="form-control" name="valor" required aria-required="true">
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12">
+                            <label class="form-label">Descrição</label>
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="text" class="form-control" name="cnpj">
-                                    <label class="form-label">CNPJ</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group form-float">
-                                <div class="form-line">
-                                    <input type="text" class="form-control" name="cpf">
-                                    <label class="form-label">CPF</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group form-float">
-                                <div class="form-line">
-                                    <input type="text" class="form-control" name="telefone">
-                                    <label class="form-label">Telefone</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group form-float">
-                                <div class="form-line">
-                                    <input type="text" class="form-control" name="endereco">
-                                    <label class="form-label">Endereço</label>
+                                    <textarea rows="5" style="resize: none;" type="text" class="form-control" name="descricao" required aria-required="true"></textarea>
                                 </div>
                             </div>
                         </div>

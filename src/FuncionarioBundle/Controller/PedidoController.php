@@ -32,7 +32,7 @@ class PedidoController extends Controller
         $entities = $em->getRepository('FuncionarioBundle:Pedido')->findAll();
 
         return array(
-            'entities' => $entities,
+            'entities' => $entities
         );
     }
     /**
@@ -57,7 +57,7 @@ class PedidoController extends Controller
         }
 
         return array(
-            'entity' => $entity,
+            'entity' => $entity
             // 'form'   => $form->createView(),
         );
     }
@@ -91,10 +91,20 @@ class PedidoController extends Controller
     public function newAction()
     {
         $entity = new Pedido();
-        $form   = $this->createCreateForm($entity);
+        // $form   = $this->createCreateForm($entity);
+
+        $em = $this->getDoctrine()->getManager();
+        $tipopedido = $em->getRepository('FuncionarioBundle:TipoPedido')->findBy([], [
+            'nome' => 'ASC'
+        ]);
+        $fornecedores = $em->getRepository('FuncionarioBundle:Fornecedor')->findBy([], [
+            'nome' => 'ASC'
+        ]);
 
         return array(
             'entity' => $entity,
+            'tipopedido' => $tipopedido,
+            'fornecedores' => $fornecedores
             // 'form'   => $form->createView(),
         );
     }
@@ -243,5 +253,61 @@ class PedidoController extends Controller
         //     ->add('submit', 'submit', array('label' => 'Delete'))
         //     ->getForm()
         // ;
+    }
+
+    /**
+     * @Route("/cadastrar/")
+     */
+    public function cadastrarPedidoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+
+            if(!$request->get('tipopedido')) {throw new \Exception('error_tipopedido');}
+            if(!$request->get('fornecedores')) {throw new \Exception('error_fornecedores');}
+            if(!$request->get('data_vencimento')) {throw new \Exception('error_data_vencimento');}
+            if(!$request->get('valor')) {throw new \Exception('error_valor');}
+            if(!$request->get('descricao')) {throw new \Exception('error_descricao');}
+
+            
+
+            $em->getConnection()->commit();
+            return new Response(json_encode([
+                'description' => 'Pedido cadastrado com sucesso!'
+            ]), 200);
+        } catch(\Exception $e) {
+            $em->getConnection()->rollBack();
+            switch($e->getMessage()) {
+                case 'error_tipopedido':
+                    return new Response(json_encode([
+                        'description' => 'Tipo de Pedido não pode ser vazio!'
+                    ]), 500);
+                break;
+                case 'error_fornecedores':
+                    return new Response(json_encode([
+                        'description' => 'Fornecedor não pode ser vazio!'
+                    ]), 500);
+                break;
+                case 'error_data_vencimento':
+                    return new Response(json_encode([
+                        'description' => 'Data de Vencimento não pode ser vazio!'
+                    ]), 500);
+                break;
+                case 'error_valor':
+                    return new Response(json_encode([
+                        'description' => 'Valor não pode ser vazio!'
+                    ]), 500);
+                break;
+                case 'error_descricao':
+                    return new Response(json_encode([
+                        'description' => 'Descrição não pode ser vazio!'
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                'description' => 'Não foi possivel cadastrar o Pedido!'
+            ]), 500);
+        }
     }
 }
