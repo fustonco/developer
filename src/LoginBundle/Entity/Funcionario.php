@@ -298,6 +298,12 @@ class Funcionario implements UserInterface, \Serializable
             case 3:
                 return array("ROLE_FINANCEIRO");
                 break;
+            case 4:
+                return array("ROLE_FUNCIONARIO_CHEFE");
+                break;
+            case 5:
+                return array("ROLE_FUNCIONARIO_MASTER");
+                break;
         }
     }
 

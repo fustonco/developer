@@ -36,6 +36,8 @@ security:
                 
     access_control:
              - { path: ^/admin, roles: ROLE_ADMIN }
+             - { path: ^/master, roles: ROLE_FUNCIONARIO_MASTER }
+             - { path: ^/chefe, roles: ROLE_FUNCIONARIO_CHEFE }
              - { path: ^/financeiro, roles: ROLE_FINANCEIRO }
              - { path: ^/funcionario, roles: ROLE_FUNCIONARIO }
              - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
