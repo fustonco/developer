@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="FuncionarioBundle\Entity\Empresa" table="empresa">
+    <indexes>
+      <index name="fk_empresa_grupo_idx" columns="idGrupo"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="nome" type="string" column="nome" length="45" nullable="false"/>
+    <field name="cnpj" type="string" column="cnpj" length="45" nullable="true"/>
+    <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
+    <many-to-one field="idgrupo" target-entity="Grupo">
+      <join-columns>
+        <join-column name="idGrupo" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
