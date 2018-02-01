@@ -4,15 +4,14 @@ namespace FuncionarioBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class DefaultController extends Controller
 {
 
     /**
-     * @Route("/" , name="func")
+     * @Route("/", name="func")
      */
-    public function funcionarioAction()
+    public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
         $connection = $em->getConnection();

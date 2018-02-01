@@ -40,6 +40,12 @@ class DefaultController extends Controller
             case 3:
                 return $this->redirect("/financeiro");
                 break; 
+            case 4:
+                return $this->redirect("/chefe");
+                break;
+            case 5:
+                return $this->redirect("/master");
+                break;
         }
     }
 }

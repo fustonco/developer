@@ -419,17 +419,17 @@
                         </li>
                         
                         <!-- Menu Funcionario -->
-                        <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
+                        <li class="{% if app.request.requestUri == "/admin/funcionario/new" or app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'admin_funcionario_edit' %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">person_add</i>
                                 <span>Funcionario</span>
                             </a>
                             <ul class="ml-menu">
                                 <li class="{% if app.request.requestUri == "/admin/funcionario/new" %}active{% endif %}">
-                                    <a href="{{ path('funcionario_new') }}">Cadastrar</a>
+                                    <a href="{{ path('admin_funcionario_new') }}">Cadastrar</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'funcionario_edit' %}active{% endif %}">
-                                    <a href="{{ path('funcionario') }}">Listar</a>
+                                <li class="{% if app.request.requestUri == "/admin/funcionario/"  or app.request.attributes.get('_route') == 'admin_funcionario_edit' %}active{% endif %}">
+                                    <a href="{{ path('admin_funcionario') }}">Listar</a>
                                 </li>
                             </ul>
                         </li>

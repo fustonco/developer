@@ -22,7 +22,7 @@ class FuncionarioController extends Controller
     /**
      * Lists all Funcionario entities.
      *
-     * @Route("/", name="funcionario")
+     * @Route("/", name="admin_funcionario")
      * @Method("GET")
      * @Template()
      */
