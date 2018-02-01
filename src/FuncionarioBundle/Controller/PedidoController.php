@@ -99,14 +99,24 @@ class PedidoController extends Controller
         $tipopedido = $em->getRepository('FuncionarioBundle:TipoPedido')->findBy([], [
             'nome' => 'ASC'
         ]);
+        $tipopagamento = $em->getRepository('FuncionarioBundle:TipoPagamento')->findBy([], [
+            'nome' => 'ASC'
+        ]);
         $fornecedores = $em->getRepository('FuncionarioBundle:Fornecedor')->findBy([], [
+            'nome' => 'ASC'
+        ]);
+        $para = $em->getRepository('FuncionarioBundle:Funcionario')->findBy([
+            'idtipo' => 4
+        ], [
             'nome' => 'ASC'
         ]);
 
         return array(
             'entity' => $entity,
             'tipopedido' => $tipopedido,
-            'fornecedores' => $fornecedores
+            'tipopagamento' => $tipopagamento,
+            'fornecedores' => $fornecedores,
+            'para' => $para
             // 'form'   => $form->createView(),
         );
     }
@@ -285,18 +295,18 @@ class PedidoController extends Controller
             $pedido->setValor($request->get('valor'));
             $pedido->setDescricao($request->get('descricao'));
             $pedido->setAtivo('S');
-            $pedido->setStatus('a');
+            $pedido->setStatus('P');
             $em->persist($pedido);
             $em->flush();
 
             $historico = new Historico();
             $historico->setCodigo(null);
             $historico->setIdpedido($pedido);
-            $historico->setIdde($this->getUser()->getId());
+            $historico->setIdde($this->getUser());
             $para = $em->getRepository('FuncionarioBundle:Funcionario')->findOneById($request->get('para'));
             $historico->setIdpara($para);
             $historico->setDataPassagem(date_create());
-            $historico->setIdmensagem($request->get('descricao'));
+            $historico->setIdmensagem(null);
             $tipohistorico = $em->getRepository('FuncionarioBundle:TipoHistorico')->findOneById(1);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
