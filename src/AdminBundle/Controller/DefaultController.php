@@ -49,6 +49,42 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/remove/empresa/" , name="removeEmpresa")
+     */
+    public function RemoveEmpresaAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            $empresafuncionario = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneBy([
+                'idfuncionario' => $request->get('idFuncionario'),
+                'idempresa' => $request->get('idEmpresa')
+            ]);
+            if($empresafuncionario) {
+                $em->remove($empresafuncionario);
+                $em->flush();
+            } else {
+                throw new \Exception('error_funcionarioempresa');
+            }
+
+            return new Response(json_encode([
+                "description" => "Empresa removida com sucesso!"
+            ]), 200);
+        } catch(\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_funcionarioempresa':
+                    return new Response(json_encode([
+                        "description" => "Não associados!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Não foi possível remover empresa desse funcionario!"
+            ]), 500);
+        }
+    }
+
+    /**
      * @Route("/add/empresa/" , name="addEmpresa")
      */
     public function AddEmpresaAction(Request $request)

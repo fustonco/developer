@@ -160,7 +160,10 @@ function triggerRmvBtn() {
     $('.btn-rmvemp').click(function(e) {
         e.preventDefault();
         let idFuncionario = $(this).attr('data-funcid');
-        let idEmpresa = $('#empresa').val();
+        let idEmpresa = $(this).attr('data-empid');
+
+        console.log(idFuncionario);
+        console.log(idEmpresa);
 
         if(!idFuncionario) return false;
         if(!idEmpresa) return false;
@@ -180,7 +183,7 @@ function triggerRmvBtn() {
                 if (isConfirm) {
                     ajaxForm = $.ajax({
                         type: "POST",
-                        url: '/admin/add/empresa/',
+                        url: '/admin/remove/empresa/',
                         data: {
                             idEmpresa: idEmpresa,
                             idFuncionario: idFuncionario
@@ -255,13 +258,14 @@ $('.btn-empresas').click(function(e) {
                         console.log('success', data.description);
                         let string = '';
                         for(emp of data.description) {
-                            string += "<div class='col-sm-11'>"+emp.idempresa.nome+"</div><div class='col-sm-1'><i class='material-icons btn-rmvemp' data-funcid='0' style='cursor: pointer;'>remove</i></div>";
+                            string += "<div class='col-sm-11'>"+emp.idempresa.nome+"</div><div class='col-sm-1'><i class='material-icons btn-rmvemp' data-funcid='0' data-empid='"+emp.idempresa.id+"' style='cursor: pointer;'>remove</i></div>";
                         }
                         $('.md-empresa-body').html(string);
                         $('#modal-show').addClass("md-show");
+                        $('.btn-addemp').attr('data-funcid', id);
+                        $('.btn-rmvemp').attr('data-funcid', id);
                         triggerRmvBtn();
                         swal.close();
-                        $('.btn-addemp').attr('data-funcid', data.description[0].idfuncionario.id);
                     },
                     error: function(data) {
                         ajaxForm = null;
