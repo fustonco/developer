@@ -323,6 +323,38 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
+
+                        <!-- Menu Fornecedor -->
+                        <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">assignment</i>
+                                <span>Pedidos</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" %}active{% endif %}">
+                                    <a href="{{ path('fornecedor_new') }}">Efetuar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/funcionario/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                                    <a href="{{ path('fornecedor') }}">Listar</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Menu Fornecedor -->
+                        <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">account_box</i>
+                                <span>Fornecedor</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/funcionario/fornecedor/new" %}active{% endif %}">
+                                    <a href="{{ path('fornecedor_new') }}">Cadastrar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/funcionario/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
+                                    <a href="{{ path('fornecedor') }}">Listar</a>
+                                </li>
+                            </ul>
+                        </li>
                     {% endif %}
                     
                     {% if app.user.idtipo.id == 1 %}
