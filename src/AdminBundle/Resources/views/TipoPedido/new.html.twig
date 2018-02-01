@@ -1,15 +1,104 @@
 {% extends '::base.html.twig' %}
 
-{% block body -%}
-    <h1>TipoPedido creation</h1>
+{% block body %}
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>Cadastrar Tipo de Pedido</h2>
+                </div>
+                <div class="body">
+                    <form id="form_validation" method="POST" novalidate="novalidate">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="nome" required aria-required="true">
+                                    <label class="form-label">Nome</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="descricao">
+                                    <label class="form-label">Descrição</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div style="text-align: right;">
+                                <button class="btn btn-primary waves-effect" type="submit">CRIAR</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
-    {{ form(form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('tipopedido') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+{% block javascripts %}
+<script>
+let ajaxForm;
+$('#form_validation').submit(function(e) {
+    e.preventDefault();
+    if(!$(this).valid()) return false;
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja realmente cadastrar?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/admin/cadastrar/tipopedido/',
+                    data: $('#form_validation').serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data);
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = '';
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
 {% endblock %}
