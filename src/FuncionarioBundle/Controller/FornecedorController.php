@@ -253,7 +253,7 @@ class FornecedorController extends Controller
     {
         try {
             $em = $this->getDoctrine()->getManager();
-
+            
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
 
             $fornecedor = $em->getRepository("FuncionarioBundle:Fornecedor")->findOneById($request->get('id'));
