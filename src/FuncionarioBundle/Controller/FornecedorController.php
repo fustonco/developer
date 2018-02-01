@@ -21,7 +21,7 @@ class FornecedorController extends Controller
     /**
      * Lists all Fornecedor entities.
      *
-     * @Route("/", name="fornecedor")
+     * @Route("/", name="fornecedor_func")
      * @Method("GET")
      * @Template()
      */
@@ -38,7 +38,7 @@ class FornecedorController extends Controller
     /**
      * Creates a new Fornecedor entity.
      *
-     * @Route("/", name="fornecedor_create")
+     * @Route("/", name="fornecedor_create_func")
      * @Method("POST")
      * @Template("FuncionarioBundle:Fornecedor:new.html.twig")
      */
@@ -84,7 +84,7 @@ class FornecedorController extends Controller
     /**
      * Displays a form to create a new Fornecedor entity.
      *
-     * @Route("/new", name="fornecedor_new")
+     * @Route("/new", name="fornecedor_new_func")
      * @Method("GET")
      * @Template()
      */
@@ -102,7 +102,7 @@ class FornecedorController extends Controller
     /**
      * Finds and displays a Fornecedor entity.
      *
-     * @Route("/{id}", name="fornecedor_show")
+     * @Route("/{id}", name="fornecedor_show_func")
      * @Method("GET")
      * @Template()
      */
@@ -127,7 +127,7 @@ class FornecedorController extends Controller
     /**
      * Displays a form to edit an existing Fornecedor entity.
      *
-     * @Route("/{id}/edit", name="fornecedor_edit")
+     * @Route("/{id}/edit", name="fornecedor_edit_func")
      * @Method("GET")
      * @Template()
      */
@@ -172,7 +172,7 @@ class FornecedorController extends Controller
     /**
      * Edits an existing Fornecedor entity.
      *
-     * @Route("/{id}", name="fornecedor_update")
+     * @Route("/{id}", name="fornecedor_update_func")
      * @Method("PUT")
      * @Template("FuncionarioBundle:Fornecedor:edit.html.twig")
      */
@@ -205,7 +205,7 @@ class FornecedorController extends Controller
     /**
      * Deletes a Fornecedor entity.
      *
-     * @Route("/{id}", name="fornecedor_delete")
+     * @Route("/{id}", name="fornecedor_delete_func")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -243,5 +243,102 @@ class FornecedorController extends Controller
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+
+    /**
+     * @Route("/editar/")
+     */
+    public function funcionarioEditarFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+
+            $fornecedor = $em->getRepository("FuncionarioBundle:Fornecedor")->findOneById($request->get('id'));
+            $fornecedor->setNome($request->get('nome'));
+            $fornecedor->setCnpj($request->get('cnpj'));
+            $fornecedor->setCpf($request->get('cpf'));
+            $fornecedor->setTelefone($request->get('telefone'));
+            $fornecedor->setEndereco($request->get('endereco'));
+            $fornecedor->setAtivo('S');
+            $em->persist($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Fornecedor!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/excluir/")
+     */
+    public function funcionarioExcluirFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $fornecedor = $em->getRepository("FuncionarioBundle:Fornecedor")->findOneById($request->get('id'));
+            $em->remove($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Excluido com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            if(strpos($e->getMessage(), 'FOREIGN')) {
+                return new Response(json_encode([
+                    "description" => "Não foi possível excluir esse Fornecedor, pois existe registros nele, por favor altere-os para que seja possível a remoção segura."
+                ]), 500);
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Excluir Empresa!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/cadastrar/")
+     */
+    public function funcionarioCadastrarFornecedorAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+
+            $fornecedor = new Fornecedor();
+            $fornecedor->setNome($request->get('nome'));
+            $fornecedor->setCnpj($request->get('cnpj'));
+            $fornecedor->setCpf($request->get('cpf'));
+            $fornecedor->setTelefone($request->get('telefone'));
+            $fornecedor->setEndereco($request->get('endereco'));
+            $fornecedor->setAtivo('S');
+            $em->persist($fornecedor);
+            $em->flush();
+            return new Response(json_encode([
+                "description" => "Fornecedor Cadastrado com Sucesso!"
+            ]), 200);
+        } catch (\Exception $e) {
+            switch($e->getMessage()){
+                case 'error_nome':
+                    return new Response(json_encode([
+                        "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                "description" => "Erro ao Cadastrar Fornecedor!"
+            ]), 500);
+        }
     }
 }
