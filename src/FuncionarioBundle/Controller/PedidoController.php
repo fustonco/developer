@@ -3,11 +3,13 @@
 namespace FuncionarioBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FuncionarioBundle\Entity\Pedido;
+use FuncionarioBundle\Entity\Historico;
 use FuncionarioBundle\Form\PedidoType;
 
 /**
@@ -97,14 +99,24 @@ class PedidoController extends Controller
         $tipopedido = $em->getRepository('FuncionarioBundle:TipoPedido')->findBy([], [
             'nome' => 'ASC'
         ]);
+        $tipopagamento = $em->getRepository('FuncionarioBundle:TipoPagamento')->findBy([], [
+            'nome' => 'ASC'
+        ]);
         $fornecedores = $em->getRepository('FuncionarioBundle:Fornecedor')->findBy([], [
+            'nome' => 'ASC'
+        ]);
+        $para = $em->getRepository('FuncionarioBundle:Funcionario')->findBy([
+            'idtipo' => 4
+        ], [
             'nome' => 'ASC'
         ]);
 
         return array(
             'entity' => $entity,
             'tipopedido' => $tipopedido,
-            'fornecedores' => $fornecedores
+            'tipopagamento' => $tipopagamento,
+            'fornecedores' => $fornecedores,
+            'para' => $para
             // 'form'   => $form->createView(),
         );
     }
@@ -265,12 +277,40 @@ class PedidoController extends Controller
             $em->getConnection()->beginTransaction();
 
             if(!$request->get('tipopedido')) {throw new \Exception('error_tipopedido');}
-            if(!$request->get('fornecedores')) {throw new \Exception('error_fornecedores');}
             if(!$request->get('data_vencimento')) {throw new \Exception('error_data_vencimento');}
             if(!$request->get('valor')) {throw new \Exception('error_valor');}
             if(!$request->get('descricao')) {throw new \Exception('error_descricao');}
+            if(!$request->get('para')) {throw new \Exception('error_para');}
 
-            
+            $pedido = new Pedido();
+            $pedido->setCodigo(null);
+            $tipo = $em->getRepository('FuncionarioBundle:TipoPedido')->findOneById($request->get('tipopedido'));
+            $pedido->setIdtipo($tipo);
+            if($request->get('fornecedor')) {
+                $fornecedor = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneById($request->get('fornecedor'));
+                $pedido->setIdfornecedor($fornecedor);
+            }
+            $pedido->setDataVencimento($request->get('data_vencimento'));
+            $pedido->setDataPedido(date_create());
+            $pedido->setValor($request->get('valor'));
+            $pedido->setDescricao($request->get('descricao'));
+            $pedido->setAtivo('S');
+            $pedido->setStatus('P');
+            $em->persist($pedido);
+            $em->flush();
+
+            $historico = new Historico();
+            $historico->setCodigo(null);
+            $historico->setIdpedido($pedido);
+            $historico->setIdde($this->getUser());
+            $para = $em->getRepository('FuncionarioBundle:Funcionario')->findOneById($request->get('para'));
+            $historico->setIdpara($para);
+            $historico->setDataPassagem(date_create());
+            $historico->setIdmensagem(null);
+            $tipohistorico = $em->getRepository('FuncionarioBundle:TipoHistorico')->findOneById(1);
+            $historico->setTipoHistorico($tipohistorico);
+            $em->persist($historico);
+            $em->flush();
 
             $em->getConnection()->commit();
             return new Response(json_encode([
@@ -282,11 +322,6 @@ class PedidoController extends Controller
                 case 'error_tipopedido':
                     return new Response(json_encode([
                         'description' => 'Tipo de Pedido não pode ser vazio!'
-                    ]), 500);
-                break;
-                case 'error_fornecedores':
-                    return new Response(json_encode([
-                        'description' => 'Fornecedor não pode ser vazio!'
                     ]), 500);
                 break;
                 case 'error_data_vencimento':
@@ -302,6 +337,11 @@ class PedidoController extends Controller
                 case 'error_descricao':
                     return new Response(json_encode([
                         'description' => 'Descrição não pode ser vazio!'
+                    ]), 500);
+                break;
+                case 'error_para':
+                    return new Response(json_encode([
+                        'description' => 'Para não pode ser vazio!'
                     ]), 500);
                 break;
             }
