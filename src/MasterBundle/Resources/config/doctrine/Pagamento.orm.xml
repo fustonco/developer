@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="MasterBundle\Entity\Pagamento" table="pagamento">
+    <indexes>
+      <index name="fk_pagamento_tipo_pagamento_idx" columns="idTipo"/>
+      <index name="fk_pagamento_pedido_idx" columns="idPedido"/>
+      <index name="fk_idStatus_status_pagamento_idx" columns="idStatus"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="valorIntegral" type="string" column="valor_integral" length="45" nullable="true"/>
+    <field name="parcelado" type="integer" column="parcelado" nullable="true"/>
+    <many-to-one field="idtipo" target-entity="TipoPagamento">
+      <join-columns>
+        <join-column name="idTipo" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idpedido" target-entity="Pedido">
+      <join-columns>
+        <join-column name="idPedido" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idstatus" target-entity="StatusPagamento">
+      <join-columns>
+        <join-column name="idStatus" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

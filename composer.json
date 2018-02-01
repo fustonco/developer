@@ -7,7 +7,9 @@
             "LoginBundle\\": "src/LoginBundle",
             "AdminBundle\\": "src/AdminBundle",
             "FuncionarioBundle\\": "src/FuncionarioBundle",
-            "FinanceiroBundle\\": "src/FinanceiroBundle"
+            "FinanceiroBundle\\": "src/FinanceiroBundle",
+            "ChefeBundle\\": "src/ChefeBundle",
+            "MasterBundle\\": "src/MasterBundle"
         }
     },
     "autoload-dev": {
