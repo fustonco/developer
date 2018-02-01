@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\Funcionario;
 use AdminBundle\Form\FuncionarioType;
 use AdminBundle\Form\TipoUsuario;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Funcionario controller.

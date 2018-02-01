@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\TipoHistorico;
 use AdminBundle\Form\TipoHistoricoType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * TipoHistorico controller.

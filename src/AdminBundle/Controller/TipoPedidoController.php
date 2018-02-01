@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\TipoPedido;
 use AdminBundle\Form\TipoPedidoType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * TipoPedido controller.

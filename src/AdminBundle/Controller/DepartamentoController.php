@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\Departamento;
 use AdminBundle\Form\DepartamentoType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Departamento controller.

@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\Empresa;
 use AdminBundle\Form\EmpresaType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Empresa controller.
