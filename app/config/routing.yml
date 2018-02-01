@@ -1,3 +1,13 @@
+master:
+    resource: "@MasterBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+chefe:
+    resource: "@ChefeBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 financeiro:
     resource: "@FinanceiroBundle/Controller/"
     type:     annotation

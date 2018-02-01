@@ -20,6 +20,8 @@ class AppKernel extends Kernel
             new AdminBundle\AdminBundle(),
             new FuncionarioBundle\FuncionarioBundle(),
             new FinanceiroBundle\FinanceiroBundle(),
+            new ChefeBundle\ChefeBundle(),
+            new MasterBundle\MasterBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
