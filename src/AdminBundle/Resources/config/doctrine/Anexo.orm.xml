@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="AdminBundle\Entity\Fornecedor" table="fornecedor">
+  <entity name="AdminBundle\Entity\Anexo" table="anexo">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="nome" type="string" column="nome" length="45" nullable="false"/>
-    <field name="cnpj" type="string" column="cnpj" length="20" nullable="true"/>
-    <field name="cpf" type="string" column="cpf" length="15" nullable="true"/>
-    <field name="telefone" type="string" column="telefone" length="15" nullable="true"/>
-    <field name="endereco" type="string" column="endereco" length="255" nullable="true"/>
+    <field name="caminho" type="string" column="caminho" length="45" nullable="false"/>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
   </entity>
 </doctrine-mapping>

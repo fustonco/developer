@@ -64,6 +64,26 @@ class DefaultController extends Controller
             'countFornecedor'  => $countFornecedor,
         ]);
     }
+    
+    /*  FORMA CORRETA DE FAZER COUNT COM DOCTRINE
+     *     {
+        $em = $this->getDoctrine()->getManager();
+
+        $grupo = $em->getRepository('AdminBundle:Grupo')->findAll();
+        $empresa = $em->getRepository('AdminBundle:Empresa')->findAll();
+        $departamento = $em->getRepository('AdminBundle:Departamento')->findAll();
+        $funcionario = $em->getRepository('AdminBundle:Funcionario')->findAll();
+        $fornecedor = $em->getRepository('AdminBundle:Fornecedor')->findAll();
+
+        return $this->render("AdminBundle:Default:index.html.twig", [
+            'countGrupo'  => count($grupo),
+            'countEmpresa'  => count($empresa),
+            'countDepartamento'  => count($departamento),
+            'countFuncionario'  => count($funcionario),
+            'countFornecedor'  => count($fornecedor),
+        ]);
+    }
+     */
 
     /**
      * @Route("/find/empresas/" , name="findEmpresas")

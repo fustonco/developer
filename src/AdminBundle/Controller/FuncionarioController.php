@@ -96,7 +96,7 @@ class FuncionarioController extends Controller
     /**
      * Displays a form to create a new Funcionario entity.
      *
-     * @Route("/new", name="funcionario_new")
+     * @Route("/new", name="admin_funcionario_new")
      * @Method("GET")
      * @Template()
      */
