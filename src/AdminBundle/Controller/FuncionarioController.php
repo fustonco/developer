@@ -50,7 +50,7 @@ class FuncionarioController extends Controller
     /**
      * Creates a new Funcionario entity.
      *
-     * @Route("/", name="funcionario_create")
+     * @Route("/", name="admin_funcionario_create")
      * @Method("POST")
      * @Template("AdminBundle:Funcionario:new.html.twig")
      */
@@ -123,7 +123,7 @@ class FuncionarioController extends Controller
     /**
      * Finds and displays a Funcionario entity.
      *
-     * @Route("/{id}", name="funcionario_show")
+     * @Route("/{id}", name="admin_funcionario_show")
      * @Method("GET")
      * @Template()
      */
@@ -148,7 +148,7 @@ class FuncionarioController extends Controller
     /**
      * Displays a form to edit an existing Funcionario entity.
      *
-     * @Route("/{id}/edit", name="funcionario_edit")
+     * @Route("/{id}/edit", name="admin_funcionario_edit")
      * @Method("GET")
      * @Template()
      */
@@ -204,7 +204,7 @@ class FuncionarioController extends Controller
     /**
      * Edits an existing Funcionario entity.
      *
-     * @Route("/{id}", name="funcionario_update")
+     * @Route("/{id}", name="admin_funcionario_update")
      * @Method("PUT")
      * @Template("AdminBundle:Funcionario:edit.html.twig")
      */
@@ -225,7 +225,7 @@ class FuncionarioController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('funcionario_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('admin_funcionario_edit', array('id' => $id)));
         }
 
         return array(
@@ -237,7 +237,7 @@ class FuncionarioController extends Controller
     /**
      * Deletes a Funcionario entity.
      *
-     * @Route("/{id}", name="funcionario_delete")
+     * @Route("/{id}", name="admin_funcionario_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -257,7 +257,7 @@ class FuncionarioController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('funcionario'));
+        return $this->redirect($this->generateUrl('admin_funcionario'));
     }
 
     /**
@@ -270,7 +270,7 @@ class FuncionarioController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('funcionario_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('admin_funcionario_delete', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()

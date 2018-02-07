@@ -6,7 +6,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
                     <div class="header">
-                        <a style="float: right;" href="javascript:void(0);">
+                        <a style="float: right;" href="javascript:void(0);" id="addPg">
                             Adicionar Pagamento
                         </a>
                         <h2>Cadastrar Pedido</h2>
@@ -71,11 +71,30 @@
                 </div>
             </div>
         </div>
-        <div class="row clearfix">
+    </form>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function addEventPagamentos() {
+    $('.btn-close-pg').click(function(e){
+        e.preventDefault();
+        $('[data-pagamento="'+$(this).attr('data-pagamento')+'"]').remove();
+    });
+    $('.libera-parcelas').change(function(e){
+        e.preventDefault();
+        $('.libera-parcelas-'+idPagamento).show();
+    });
+}
+let idPagamento = 1;
+$('#addPg').click(function(e){
+    e.preventDefault();
+    $('#form_validation').append(`
+        <div class="pagamento" data-pagamento="`+idPagamento+`">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                 <div class="card">
                     <div class="header">
-                        <a style="float: right;" href="javascript:void(0);">
+                        <a style="float: right;" href="javascript:void(0);" class="btn-close-pg" data-pagamento="`+idPagamento+`">
                             <i class="material-icons">close</i>
                         </a>
                         <h2>Pagamento</h2>
@@ -83,7 +102,7 @@
                     <div class="body">
                         <div class="row clearfix">
                             <div class="col-sm-12">
-                                <select class="form-control show-tick" name="tipopagamento" id="tipopagamento" required aria-required="true">
+                                <select data-parcelas="libera-parcelas-`+idPagamento+`" class="form-control show-tick libera-parcelas" name="tipopagamento" id="tipopagamento" required aria-required="true">
                                     <option value="">-- Selecione um tipo de pagamento --</option>
                                     {% for tp in tipopagamento %}
                                         <option value="{{ tp.id }}">{{ tp.nome }}</option>
@@ -92,26 +111,49 @@
                             </div>
                         </div>
                         <div class="col-sm-12">
-                            <label class="form-label">Valor</label>
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <input type="text" class="form-control" name="valor_integral" required aria-required="true">
+                                    <label class="form-label">Valor Integral</label>
                                 </div>
                             </div>
                         </div>
+                        <div class="libera-parcelas-`+idPagamento+`" style="display: none;">
+                            <div class="row clearfix">
+                                <div class="col-sm-12">
+                                    <select class="form-control show-tick" name="parcelas" id="parcelas" required aria-required="true">
+                                        <option value="">-- Selecione as parcelas --</option>
+                                        {% for i in 1..120 %}
+                                            <option value="{{i}}">{{i}}x</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="inputs-parcelas">
+                                <div class="col-sm-12">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="parcela1" required aria-required="true">
+                                            <label class="form-label">Parcela 1x</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix"></div>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
-{% endblock %}
+    `);
+    addEventPagamentos();
+    idPagamento++;
+});
 
-{% block javascripts %}
-<script>
 let ajaxForm;
 $('#form_validation').submit(function(e) {
     e.preventDefault();
-    if(!$(this).valid()) { swal('Atenção', 'Existem campos incompletos!', 'success'); return false;}
+    if(!$(this).valid()) { swal('Atenção', 'Existem campos incompletos!', 'warning'); return false;}
     if(!ajaxForm) {
         swal({
             title: "Atenção",
