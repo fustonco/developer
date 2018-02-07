@@ -34,41 +34,7 @@ class DefaultController extends Controller
     public function AdminAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $connection = $em->getConnection();
-
-        $statement = $connection->prepare("SELECT count(id) count FROM grupo");
-        $statement->execute();
-        $countGrupo = $statement->fetch();
-
-        $statement = $connection->prepare("SELECT count(id) count FROM empresa");
-        $statement->execute();
-        $countEmpresa = $statement->fetch();
-
-        $statement = $connection->prepare("SELECT count(id) count FROM departamento");
-        $statement->execute();
-        $countDepartamento = $statement->fetch();
-
-        $statement = $connection->prepare("SELECT count(id) count FROM funcionario");
-        $statement->execute();
-        $countFuncionario = $statement->fetch();
-
-        $statement = $connection->prepare("SELECT count(id) count FROM fornecedor");
-        $statement->execute();
-        $countFornecedor = $statement->fetch();
-
-        return $this->render("AdminBundle:Default:index.html.twig", [
-            'countGrupo'  => $countGrupo,
-            'countEmpresa'  => $countEmpresa,
-            'countDepartamento'  => $countDepartamento,
-            'countFuncionario'  => $countFuncionario,
-            'countFornecedor'  => $countFornecedor,
-        ]);
-    }
-    
-    /*  FORMA CORRETA DE FAZER COUNT COM DOCTRINE
-     *     {
-        $em = $this->getDoctrine()->getManager();
-
+        
         $grupo = $em->getRepository('AdminBundle:Grupo')->findAll();
         $empresa = $em->getRepository('AdminBundle:Empresa')->findAll();
         $departamento = $em->getRepository('AdminBundle:Departamento')->findAll();
@@ -83,8 +49,7 @@ class DefaultController extends Controller
             'countFornecedor'  => count($fornecedor),
         ]);
     }
-     */
-
+    
     /**
      * @Route("/find/empresas/" , name="findEmpresas")
      */
