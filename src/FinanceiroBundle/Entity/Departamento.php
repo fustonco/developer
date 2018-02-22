@@ -1,18 +1,23 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TipoPessoa
+ * Departamento
  */
-class TipoPessoa
+class Departamento
 {
     /**
      * @var string
      */
     private $nome;
+
+    /**
+     * @var string
+     */
+    private $descricao;
 
     /**
      * @var string
@@ -29,7 +34,7 @@ class TipoPessoa
      * Set nome
      *
      * @param string $nome
-     * @return TipoPessoa
+     * @return Departamento
      */
     public function setNome($nome)
     {
@@ -49,10 +54,33 @@ class TipoPessoa
     }
 
     /**
+     * Set descricao
+     *
+     * @param string $descricao
+     * @return Departamento
+     */
+    public function setDescricao($descricao)
+    {
+        $this->descricao = $descricao;
+
+        return $this;
+    }
+
+    /**
+     * Get descricao
+     *
+     * @return string 
+     */
+    public function getDescricao()
+    {
+        return $this->descricao;
+    }
+
+    /**
      * Set ativo
      *
      * @param string $ativo
-     * @return TipoPessoa
+     * @return Departamento
      */
     public function setAtivo($ativo)
     {

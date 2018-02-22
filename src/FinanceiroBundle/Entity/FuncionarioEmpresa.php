@@ -1,6 +1,6 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,12 +20,12 @@ class FuncionarioEmpresa
     private $id;
 
     /**
-     * @var \FuncionarioBundle\Entity\Empresa
+     * @var \FinanceiroBundle\Entity\Empresa
      */
     private $idempresa;
 
     /**
-     * @var \FuncionarioBundle\Entity\Funcionario
+     * @var \FinanceiroBundle\Entity\Funcionario
      */
     private $idfuncionario;
 
@@ -66,10 +66,10 @@ class FuncionarioEmpresa
     /**
      * Set idempresa
      *
-     * @param \FuncionarioBundle\Entity\Empresa $idempresa
+     * @param \FinanceiroBundle\Entity\Empresa $idempresa
      * @return FuncionarioEmpresa
      */
-    public function setIdempresa(\FuncionarioBundle\Entity\Empresa $idempresa = null)
+    public function setIdempresa(\FinanceiroBundle\Entity\Empresa $idempresa = null)
     {
         $this->idempresa = $idempresa;
 
@@ -79,7 +79,7 @@ class FuncionarioEmpresa
     /**
      * Get idempresa
      *
-     * @return \FuncionarioBundle\Entity\Empresa 
+     * @return \FinanceiroBundle\Entity\Empresa 
      */
     public function getIdempresa()
     {
@@ -89,10 +89,10 @@ class FuncionarioEmpresa
     /**
      * Set idfuncionario
      *
-     * @param \FuncionarioBundle\Entity\Funcionario $idfuncionario
+     * @param \FinanceiroBundle\Entity\Funcionario $idfuncionario
      * @return FuncionarioEmpresa
      */
-    public function setIdfuncionario(\FuncionarioBundle\Entity\Funcionario $idfuncionario = null)
+    public function setIdfuncionario(\FinanceiroBundle\Entity\Funcionario $idfuncionario = null)
     {
         $this->idfuncionario = $idfuncionario;
 
@@ -102,7 +102,7 @@ class FuncionarioEmpresa
     /**
      * Get idfuncionario
      *
-     * @return \FuncionarioBundle\Entity\Funcionario 
+     * @return \FinanceiroBundle\Entity\Funcionario 
      */
     public function getIdfuncionario()
     {

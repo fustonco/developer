@@ -1,23 +1,23 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Banco
+ * StatusPedido
  */
-class Banco
+class StatusPedido
 {
     /**
      * @var string
      */
-    private $codigo;
+    private $nome;
 
     /**
      * @var string
      */
-    private $nome;
+    private $descricao;
 
     /**
      * @var string
@@ -31,33 +31,10 @@ class Banco
 
 
     /**
-     * Set codigo
-     *
-     * @param string $codigo
-     * @return Banco
-     */
-    public function setCodigo($codigo)
-    {
-        $this->codigo = $codigo;
-
-        return $this;
-    }
-
-    /**
-     * Get codigo
-     *
-     * @return string 
-     */
-    public function getCodigo()
-    {
-        return $this->codigo;
-    }
-
-    /**
      * Set nome
      *
      * @param string $nome
-     * @return Banco
+     * @return StatusPedido
      */
     public function setNome($nome)
     {
@@ -77,10 +54,33 @@ class Banco
     }
 
     /**
+     * Set descricao
+     *
+     * @param string $descricao
+     * @return StatusPedido
+     */
+    public function setDescricao($descricao)
+    {
+        $this->descricao = $descricao;
+
+        return $this;
+    }
+
+    /**
+     * Get descricao
+     *
+     * @return string 
+     */
+    public function getDescricao()
+    {
+        return $this->descricao;
+    }
+
+    /**
      * Set ativo
      *
      * @param string $ativo
-     * @return Banco
+     * @return StatusPedido
      */
     public function setAtivo($ativo)
     {

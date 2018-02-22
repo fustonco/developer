@@ -1,6 +1,6 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -60,12 +60,12 @@ class Parcelas
     private $id;
 
     /**
-     * @var \FuncionarioBundle\Entity\Pagamento
+     * @var \FinanceiroBundle\Entity\Pagamento
      */
     private $idpagamento;
 
     /**
-     * @var \FuncionarioBundle\Entity\StatusParcela
+     * @var \FinanceiroBundle\Entity\StatusParcela
      */
     private $status;
 
@@ -290,10 +290,10 @@ class Parcelas
     /**
      * Set idpagamento
      *
-     * @param \FuncionarioBundle\Entity\Pagamento $idpagamento
+     * @param \FinanceiroBundle\Entity\Pagamento $idpagamento
      * @return Parcelas
      */
-    public function setIdpagamento(\FuncionarioBundle\Entity\Pagamento $idpagamento = null)
+    public function setIdpagamento(\FinanceiroBundle\Entity\Pagamento $idpagamento = null)
     {
         $this->idpagamento = $idpagamento;
 
@@ -303,7 +303,7 @@ class Parcelas
     /**
      * Get idpagamento
      *
-     * @return \FuncionarioBundle\Entity\Pagamento 
+     * @return \FinanceiroBundle\Entity\Pagamento 
      */
     public function getIdpagamento()
     {
@@ -313,10 +313,10 @@ class Parcelas
     /**
      * Set status
      *
-     * @param \FuncionarioBundle\Entity\StatusParcela $status
+     * @param \FinanceiroBundle\Entity\StatusParcela $status
      * @return Parcelas
      */
-    public function setStatus(\FuncionarioBundle\Entity\StatusParcela $status = null)
+    public function setStatus(\FinanceiroBundle\Entity\StatusParcela $status = null)
     {
         $this->status = $status;
 
@@ -326,7 +326,7 @@ class Parcelas
     /**
      * Get status
      *
-     * @return \FuncionarioBundle\Entity\StatusParcela 
+     * @return \FinanceiroBundle\Entity\StatusParcela 
      */
     public function getStatus()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,17 +40,17 @@ class Pedido
     private $id;
 
     /**
-     * @var \FuncionarioBundle\Entity\Fornecedor
+     * @var \FinanceiroBundle\Entity\Fornecedor
      */
     private $idfornecedor;
 
     /**
-     * @var \FuncionarioBundle\Entity\StatusPedido
+     * @var \FinanceiroBundle\Entity\StatusPedido
      */
     private $status;
 
     /**
-     * @var \FuncionarioBundle\Entity\TipoPedido
+     * @var \FinanceiroBundle\Entity\TipoPedido
      */
     private $idtipo;
 
@@ -183,10 +183,10 @@ class Pedido
     /**
      * Set idfornecedor
      *
-     * @param \FuncionarioBundle\Entity\Fornecedor $idfornecedor
+     * @param \FinanceiroBundle\Entity\Fornecedor $idfornecedor
      * @return Pedido
      */
-    public function setIdfornecedor(\FuncionarioBundle\Entity\Fornecedor $idfornecedor = null)
+    public function setIdfornecedor(\FinanceiroBundle\Entity\Fornecedor $idfornecedor = null)
     {
         $this->idfornecedor = $idfornecedor;
 
@@ -196,7 +196,7 @@ class Pedido
     /**
      * Get idfornecedor
      *
-     * @return \FuncionarioBundle\Entity\Fornecedor 
+     * @return \FinanceiroBundle\Entity\Fornecedor 
      */
     public function getIdfornecedor()
     {
@@ -206,10 +206,10 @@ class Pedido
     /**
      * Set status
      *
-     * @param \FuncionarioBundle\Entity\StatusPedido $status
+     * @param \FinanceiroBundle\Entity\StatusPedido $status
      * @return Pedido
      */
-    public function setStatus(\FuncionarioBundle\Entity\StatusPedido $status = null)
+    public function setStatus(\FinanceiroBundle\Entity\StatusPedido $status = null)
     {
         $this->status = $status;
 
@@ -219,7 +219,7 @@ class Pedido
     /**
      * Get status
      *
-     * @return \FuncionarioBundle\Entity\StatusPedido 
+     * @return \FinanceiroBundle\Entity\StatusPedido 
      */
     public function getStatus()
     {
@@ -229,10 +229,10 @@ class Pedido
     /**
      * Set idtipo
      *
-     * @param \FuncionarioBundle\Entity\TipoPedido $idtipo
+     * @param \FinanceiroBundle\Entity\TipoPedido $idtipo
      * @return Pedido
      */
-    public function setIdtipo(\FuncionarioBundle\Entity\TipoPedido $idtipo = null)
+    public function setIdtipo(\FinanceiroBundle\Entity\TipoPedido $idtipo = null)
     {
         $this->idtipo = $idtipo;
 
@@ -242,7 +242,7 @@ class Pedido
     /**
      * Get idtipo
      *
-     * @return \FuncionarioBundle\Entity\TipoPedido 
+     * @return \FinanceiroBundle\Entity\TipoPedido 
      */
     public function getIdtipo()
     {

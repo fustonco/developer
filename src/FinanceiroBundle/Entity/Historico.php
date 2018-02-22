@@ -1,6 +1,6 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,27 +25,27 @@ class Historico
     private $id;
 
     /**
-     * @var \FuncionarioBundle\Entity\Funcionario
+     * @var \FinanceiroBundle\Entity\Funcionario
      */
     private $idde;
 
     /**
-     * @var \FuncionarioBundle\Entity\Mensagem
+     * @var \FinanceiroBundle\Entity\Mensagem
      */
     private $idmensagem;
 
     /**
-     * @var \FuncionarioBundle\Entity\TipoHistorico
+     * @var \FinanceiroBundle\Entity\TipoHistorico
      */
     private $tipoHistorico;
 
     /**
-     * @var \FuncionarioBundle\Entity\Funcionario
+     * @var \FinanceiroBundle\Entity\Funcionario
      */
     private $idpara;
 
     /**
-     * @var \FuncionarioBundle\Entity\Pedido
+     * @var \FinanceiroBundle\Entity\Pedido
      */
     private $idpedido;
 
@@ -109,10 +109,10 @@ class Historico
     /**
      * Set idde
      *
-     * @param \FuncionarioBundle\Entity\Funcionario $idde
+     * @param \FinanceiroBundle\Entity\Funcionario $idde
      * @return Historico
      */
-    public function setIdde(\FuncionarioBundle\Entity\Funcionario $idde = null)
+    public function setIdde(\FinanceiroBundle\Entity\Funcionario $idde = null)
     {
         $this->idde = $idde;
 
@@ -122,7 +122,7 @@ class Historico
     /**
      * Get idde
      *
-     * @return \FuncionarioBundle\Entity\Funcionario 
+     * @return \FinanceiroBundle\Entity\Funcionario 
      */
     public function getIdde()
     {
@@ -132,10 +132,10 @@ class Historico
     /**
      * Set idmensagem
      *
-     * @param \FuncionarioBundle\Entity\Mensagem $idmensagem
+     * @param \FinanceiroBundle\Entity\Mensagem $idmensagem
      * @return Historico
      */
-    public function setIdmensagem(\FuncionarioBundle\Entity\Mensagem $idmensagem = null)
+    public function setIdmensagem(\FinanceiroBundle\Entity\Mensagem $idmensagem = null)
     {
         $this->idmensagem = $idmensagem;
 
@@ -145,7 +145,7 @@ class Historico
     /**
      * Get idmensagem
      *
-     * @return \FuncionarioBundle\Entity\Mensagem 
+     * @return \FinanceiroBundle\Entity\Mensagem 
      */
     public function getIdmensagem()
     {
@@ -155,10 +155,10 @@ class Historico
     /**
      * Set tipoHistorico
      *
-     * @param \FuncionarioBundle\Entity\TipoHistorico $tipoHistorico
+     * @param \FinanceiroBundle\Entity\TipoHistorico $tipoHistorico
      * @return Historico
      */
-    public function setTipoHistorico(\FuncionarioBundle\Entity\TipoHistorico $tipoHistorico = null)
+    public function setTipoHistorico(\FinanceiroBundle\Entity\TipoHistorico $tipoHistorico = null)
     {
         $this->tipoHistorico = $tipoHistorico;
 
@@ -168,7 +168,7 @@ class Historico
     /**
      * Get tipoHistorico
      *
-     * @return \FuncionarioBundle\Entity\TipoHistorico 
+     * @return \FinanceiroBundle\Entity\TipoHistorico 
      */
     public function getTipoHistorico()
     {
@@ -178,10 +178,10 @@ class Historico
     /**
      * Set idpara
      *
-     * @param \FuncionarioBundle\Entity\Funcionario $idpara
+     * @param \FinanceiroBundle\Entity\Funcionario $idpara
      * @return Historico
      */
-    public function setIdpara(\FuncionarioBundle\Entity\Funcionario $idpara = null)
+    public function setIdpara(\FinanceiroBundle\Entity\Funcionario $idpara = null)
     {
         $this->idpara = $idpara;
 
@@ -191,7 +191,7 @@ class Historico
     /**
      * Get idpara
      *
-     * @return \FuncionarioBundle\Entity\Funcionario 
+     * @return \FinanceiroBundle\Entity\Funcionario 
      */
     public function getIdpara()
     {
@@ -201,10 +201,10 @@ class Historico
     /**
      * Set idpedido
      *
-     * @param \FuncionarioBundle\Entity\Pedido $idpedido
+     * @param \FinanceiroBundle\Entity\Pedido $idpedido
      * @return Historico
      */
-    public function setIdpedido(\FuncionarioBundle\Entity\Pedido $idpedido = null)
+    public function setIdpedido(\FinanceiroBundle\Entity\Pedido $idpedido = null)
     {
         $this->idpedido = $idpedido;
 
@@ -214,7 +214,7 @@ class Historico
     /**
      * Get idpedido
      *
-     * @return \FuncionarioBundle\Entity\Pedido 
+     * @return \FinanceiroBundle\Entity\Pedido 
      */
     public function getIdpedido()
     {

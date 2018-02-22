@@ -1,6 +1,6 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,17 +25,17 @@ class Pagamento
     private $id;
 
     /**
-     * @var \FuncionarioBundle\Entity\StatusPagamento
+     * @var \FinanceiroBundle\Entity\StatusPagamento
      */
     private $idstatus;
 
     /**
-     * @var \FuncionarioBundle\Entity\Pedido
+     * @var \FinanceiroBundle\Entity\Pedido
      */
     private $idpedido;
 
     /**
-     * @var \FuncionarioBundle\Entity\TipoPagamento
+     * @var \FinanceiroBundle\Entity\TipoPagamento
      */
     private $idtipo;
 
@@ -99,10 +99,10 @@ class Pagamento
     /**
      * Set idstatus
      *
-     * @param \FuncionarioBundle\Entity\StatusPagamento $idstatus
+     * @param \FinanceiroBundle\Entity\StatusPagamento $idstatus
      * @return Pagamento
      */
-    public function setIdstatus(\FuncionarioBundle\Entity\StatusPagamento $idstatus = null)
+    public function setIdstatus(\FinanceiroBundle\Entity\StatusPagamento $idstatus = null)
     {
         $this->idstatus = $idstatus;
 
@@ -112,7 +112,7 @@ class Pagamento
     /**
      * Get idstatus
      *
-     * @return \FuncionarioBundle\Entity\StatusPagamento 
+     * @return \FinanceiroBundle\Entity\StatusPagamento 
      */
     public function getIdstatus()
     {
@@ -122,10 +122,10 @@ class Pagamento
     /**
      * Set idpedido
      *
-     * @param \FuncionarioBundle\Entity\Pedido $idpedido
+     * @param \FinanceiroBundle\Entity\Pedido $idpedido
      * @return Pagamento
      */
-    public function setIdpedido(\FuncionarioBundle\Entity\Pedido $idpedido = null)
+    public function setIdpedido(\FinanceiroBundle\Entity\Pedido $idpedido = null)
     {
         $this->idpedido = $idpedido;
 
@@ -135,7 +135,7 @@ class Pagamento
     /**
      * Get idpedido
      *
-     * @return \FuncionarioBundle\Entity\Pedido 
+     * @return \FinanceiroBundle\Entity\Pedido 
      */
     public function getIdpedido()
     {
@@ -145,10 +145,10 @@ class Pagamento
     /**
      * Set idtipo
      *
-     * @param \FuncionarioBundle\Entity\TipoPagamento $idtipo
+     * @param \FinanceiroBundle\Entity\TipoPagamento $idtipo
      * @return Pagamento
      */
-    public function setIdtipo(\FuncionarioBundle\Entity\TipoPagamento $idtipo = null)
+    public function setIdtipo(\FinanceiroBundle\Entity\TipoPagamento $idtipo = null)
     {
         $this->idtipo = $idtipo;
 
@@ -158,7 +158,7 @@ class Pagamento
     /**
      * Get idtipo
      *
-     * @return \FuncionarioBundle\Entity\TipoPagamento 
+     * @return \FinanceiroBundle\Entity\TipoPagamento 
      */
     public function getIdtipo()
     {

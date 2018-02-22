@@ -1,23 +1,23 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TipoConta
+ * Anexo
  */
-class TipoConta
+class Anexo
 {
     /**
      * @var string
      */
-    private $nome;
+    private $caminho;
 
     /**
      * @var string
      */
-    private $status;
+    private $ativo;
 
     /**
      * @var integer
@@ -26,49 +26,49 @@ class TipoConta
 
 
     /**
-     * Set nome
+     * Set caminho
      *
-     * @param string $nome
-     * @return TipoConta
+     * @param string $caminho
+     * @return Anexo
      */
-    public function setNome($nome)
+    public function setCaminho($caminho)
     {
-        $this->nome = $nome;
+        $this->caminho = $caminho;
 
         return $this;
     }
 
     /**
-     * Get nome
+     * Get caminho
      *
      * @return string 
      */
-    public function getNome()
+    public function getCaminho()
     {
-        return $this->nome;
+        return $this->caminho;
     }
 
     /**
-     * Set status
+     * Set ativo
      *
-     * @param string $status
-     * @return TipoConta
+     * @param string $ativo
+     * @return Anexo
      */
-    public function setStatus($status)
+    public function setAtivo($ativo)
     {
-        $this->status = $status;
+        $this->ativo = $ativo;
 
         return $this;
     }
 
     /**
-     * Get status
+     * Get ativo
      *
      * @return string 
      */
-    public function getStatus()
+    public function getAtivo()
     {
-        return $this->status;
+        return $this->ativo;
     }
 
     /**
