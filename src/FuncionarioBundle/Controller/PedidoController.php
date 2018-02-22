@@ -268,6 +268,35 @@ class PedidoController extends Controller
     }
 
     /**
+     * @Route("/get/fornecedores")
+     */
+    public function getFornecedoresAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            
+            $fornecedores = $em->getRepository("FuncionarioBundle:Fornecedor")->createQueryBuilder('f')
+            ->where("f.ativo = 'S'")
+            ->andWhere('f.cnpj LIKE :cnpj')
+            ->setParameter('cnpj', '%'.$request->get('cnpj_fornecedor_input').'%')
+            ->getQuery()
+            ->getResult();
+            if(!$fornecedores) {throw new \Exception('error_fornecedores');}
+
+            $default = new DefaultController();
+            $fornecedores = $default->serializeJSON($fornecedores);
+            
+            return new Response(json_encode([
+                'description' => json_decode($fornecedores)
+            ]), 200);
+        } catch (Exception $e) {
+            return new Response(json_encode([
+                'description' => 'Não foi possivel encontrar um fornecedor com esse CNPJ!'
+            ]), 500);
+        }
+    }
+
+    /**
      * @Route("/cadastrar/")
      */
     public function cadastrarPedidoAction(Request $request)
