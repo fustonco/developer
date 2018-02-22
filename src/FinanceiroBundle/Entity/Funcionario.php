@@ -1,6 +1,6 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -50,12 +50,12 @@ class Funcionario
     private $id;
 
     /**
-     * @var \FuncionarioBundle\Entity\Departamento
+     * @var \FinanceiroBundle\Entity\Departamento
      */
     private $iddepartamento;
 
     /**
-     * @var \FuncionarioBundle\Entity\TipoUsuario
+     * @var \FinanceiroBundle\Entity\TipoUsuario
      */
     private $idtipo;
 
@@ -234,10 +234,10 @@ class Funcionario
     /**
      * Set iddepartamento
      *
-     * @param \FuncionarioBundle\Entity\Departamento $iddepartamento
+     * @param \FinanceiroBundle\Entity\Departamento $iddepartamento
      * @return Funcionario
      */
-    public function setIddepartamento(\FuncionarioBundle\Entity\Departamento $iddepartamento = null)
+    public function setIddepartamento(\FinanceiroBundle\Entity\Departamento $iddepartamento = null)
     {
         $this->iddepartamento = $iddepartamento;
 
@@ -247,7 +247,7 @@ class Funcionario
     /**
      * Get iddepartamento
      *
-     * @return \FuncionarioBundle\Entity\Departamento 
+     * @return \FinanceiroBundle\Entity\Departamento 
      */
     public function getIddepartamento()
     {
@@ -257,10 +257,10 @@ class Funcionario
     /**
      * Set idtipo
      *
-     * @param \FuncionarioBundle\Entity\TipoUsuario $idtipo
+     * @param \FinanceiroBundle\Entity\TipoUsuario $idtipo
      * @return Funcionario
      */
-    public function setIdtipo(\FuncionarioBundle\Entity\TipoUsuario $idtipo = null)
+    public function setIdtipo(\FinanceiroBundle\Entity\TipoUsuario $idtipo = null)
     {
         $this->idtipo = $idtipo;
 
@@ -270,7 +270,7 @@ class Funcionario
     /**
      * Get idtipo
      *
-     * @return \FuncionarioBundle\Entity\TipoUsuario 
+     * @return \FinanceiroBundle\Entity\TipoUsuario 
      */
     public function getIdtipo()
     {

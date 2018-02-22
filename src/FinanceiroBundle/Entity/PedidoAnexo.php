@@ -1,6 +1,6 @@
 <?php
 
-namespace FuncionarioBundle\Entity;
+namespace FinanceiroBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,12 +20,12 @@ class PedidoAnexo
     private $id;
 
     /**
-     * @var \FuncionarioBundle\Entity\Anexo
+     * @var \FinanceiroBundle\Entity\Anexo
      */
     private $idanexo;
 
     /**
-     * @var \FuncionarioBundle\Entity\Pedido
+     * @var \FinanceiroBundle\Entity\Pedido
      */
     private $idpedido;
 
@@ -66,10 +66,10 @@ class PedidoAnexo
     /**
      * Set idanexo
      *
-     * @param \FuncionarioBundle\Entity\Anexo $idanexo
+     * @param \FinanceiroBundle\Entity\Anexo $idanexo
      * @return PedidoAnexo
      */
-    public function setIdanexo(\FuncionarioBundle\Entity\Anexo $idanexo = null)
+    public function setIdanexo(\FinanceiroBundle\Entity\Anexo $idanexo = null)
     {
         $this->idanexo = $idanexo;
 
@@ -79,7 +79,7 @@ class PedidoAnexo
     /**
      * Get idanexo
      *
-     * @return \FuncionarioBundle\Entity\Anexo 
+     * @return \FinanceiroBundle\Entity\Anexo 
      */
     public function getIdanexo()
     {
@@ -89,10 +89,10 @@ class PedidoAnexo
     /**
      * Set idpedido
      *
-     * @param \FuncionarioBundle\Entity\Pedido $idpedido
+     * @param \FinanceiroBundle\Entity\Pedido $idpedido
      * @return PedidoAnexo
      */
-    public function setIdpedido(\FuncionarioBundle\Entity\Pedido $idpedido = null)
+    public function setIdpedido(\FinanceiroBundle\Entity\Pedido $idpedido = null)
     {
         $this->idpedido = $idpedido;
 
@@ -102,7 +102,7 @@ class PedidoAnexo
     /**
      * Get idpedido
      *
-     * @return \FuncionarioBundle\Entity\Pedido 
+     * @return \FinanceiroBundle\Entity\Pedido 
      */
     public function getIdpedido()
     {

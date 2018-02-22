@@ -5,24 +5,19 @@ namespace FuncionarioBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * FuncionarioEmpresa
+ * FuncionarioChefe
  */
-class FuncionarioEmpresa
+class FuncionarioChefe
 {
     /**
      * @var string
      */
-    private $ativo;
+    private $status;
 
     /**
      * @var integer
      */
     private $id;
-
-    /**
-     * @var \FuncionarioBundle\Entity\Empresa
-     */
-    private $idempresa;
 
     /**
      * @var \FuncionarioBundle\Entity\Funcionario
@@ -31,26 +26,26 @@ class FuncionarioEmpresa
 
 
     /**
-     * Set ativo
+     * Set status
      *
-     * @param string $ativo
-     * @return FuncionarioEmpresa
+     * @param string $status
+     * @return FuncionarioChefe
      */
-    public function setAtivo($ativo)
+    public function setStatus($status)
     {
-        $this->ativo = $ativo;
+        $this->status = $status;
 
         return $this;
     }
 
     /**
-     * Get ativo
+     * Get status
      *
      * @return string 
      */
-    public function getAtivo()
+    public function getStatus()
     {
-        return $this->ativo;
+        return $this->status;
     }
 
     /**
@@ -64,33 +59,10 @@ class FuncionarioEmpresa
     }
 
     /**
-     * Set idempresa
-     *
-     * @param \FuncionarioBundle\Entity\Empresa $idempresa
-     * @return FuncionarioEmpresa
-     */
-    public function setIdempresa(\FuncionarioBundle\Entity\Empresa $idempresa = null)
-    {
-        $this->idempresa = $idempresa;
-
-        return $this;
-    }
-
-    /**
-     * Get idempresa
-     *
-     * @return \FuncionarioBundle\Entity\Empresa 
-     */
-    public function getIdempresa()
-    {
-        return $this->idempresa;
-    }
-
-    /**
      * Set idfuncionario
      *
      * @param \FuncionarioBundle\Entity\Funcionario $idfuncionario
-     * @return FuncionarioEmpresa
+     * @return FuncionarioChefe
      */
     public function setIdfuncionario(\FuncionarioBundle\Entity\Funcionario $idfuncionario = null)
     {

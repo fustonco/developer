@@ -460,6 +460,19 @@
                             </ul>
                         </li>
                     {% endif %}
+                    
+                    
+                    {% if app.user.idtipo.id == 3 %}
+                        <!-- Menu financeiro -->
+                        <li class="{% if app.request.requestUri == "/financeiro/" %}active{% endif %}">
+                            <a href="/financeiro/">
+                                <i class="material-icons">home</i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+
+                    {% endif %}
+                    
                     <!-- Menu Home -->
                     <li>
                         <a href="{{ path('logout') }}">

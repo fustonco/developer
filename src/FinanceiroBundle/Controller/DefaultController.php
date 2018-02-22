@@ -12,6 +12,14 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render("FinanceiroBundle:Default:index.html.twig");
+        
+        $em = $this->getDoctrine()->getManager();
+        $parcelas = $em->getRepository("FinanceiroBundle:Parcelas")->findAll();
+        
+        //findBy(array('data_vencimento' <= 'current_date', 'status' => '1'))
+        
+        return $this->render("FinanceiroBundle:Default:index.html.twig", [
+            'parcelas'  => $parcelas
+        ]);
     }
 }
