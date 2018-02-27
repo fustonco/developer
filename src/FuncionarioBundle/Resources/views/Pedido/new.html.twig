@@ -12,7 +12,7 @@
             <div class="body">
                 <div class="row clearfix">
                     <div class="col-sm-12">
-                        <select class="form-control show-tick select-para" name="para" id="para">
+                        <select class="form-control show-tick select-para" name="para" id="para" required aria-required="true">
                             <option value="">-- Selecione um chefe --</option>
                             {% for p in para %}
                                 <option value="{{ p.id }}">{{ p.nome }}</option>
@@ -31,7 +31,7 @@
                         <label class="form-label">CNPJ Fornecedor</label>
                         <div class="form-group form-float">
                             <div class="form-line">
-                                <input type="text" class="form-control cnpj_fornecedor_input" required aria-required="true">
+                                <input type="text" name="cnpj_forn" class="form-control cnpj_fornecedor_input" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -133,38 +133,64 @@ function addEventPagamentos(id) {
             $('.vencimento1-'+id).focus();
             return false;
         }
-        $('#modal-show-'+id).addClass("md-show");
+        let parcela1 = parseFloat($('.parcela1-'+id).val());
+        let valor_integral = parseFloat($('.valor-integral-'+id).val());
 
-        if($('[data-pagamento="'+id+'"]').attr('data-ok') == 'yes') return false;
+        if(parcela1 > valor_integral) {
+            swal('Atenção', 'O valor da parcela não pode ser maior que o valor integral do pagamento', 'warning');
+            return false;
+        }
+        
+        
+        if($('.select-parcelas-'+id).val() == 1) {
 
-        let valor_integral = $('.valor-integral-'+id).val();
-        let total_parcelas = $('.select-parcelas-'+id).val();
-        let parcela1 = $('.parcela1-'+id).val();
-        let total_valor = ((valor_integral - parcela1) / (total_parcelas - 1));
-        let intervalo_data = $('.intervalo-parcelas-'+id).val();
-        let date = $('.vencimento1-'+id).val();
+            if((valor_integral - parcela1) == 0) {
+                $('.pagamento-icon-'+id).show();
+                $('[data-pagamento="'+id+'"]').attr('data-ok', 'yes');
+                $('.btn-calc-'+id).html('EDITAR');
+                return false;
+            } else {
+                swal('Atenção', 'O valor da parcela não corresponde ao valor integral do pagamento', 'warning');
+                return false;
+            }
+        } else {
 
-        $('.inputs-parcela-'+id).html('');
-        for(i = 2; i <= total_parcelas; i++) {
-            $('.inputs-parcela-'+id).append(`
-                <div class="col-sm-6">
-                    <label class="form-label">`+i+` Parcela</label>
-                    <div class="form-group">
-                        <div class="form-line">
-                            <input type="number" value="`+parseFloat(total_valor).toFixed(2)+`" min="0" class="form-control parcela`+i+`-`+id+`" name="parcela`+i+`-`+id+`" required aria-required="true">
+            let total_parcelas = $('.select-parcelas-'+id).val();
+            let total_valor = ((valor_integral - parcela1) / (total_parcelas - 1));
+            let intervalo_data = $('.intervalo-parcelas-'+id).val();
+            let date = $('.vencimento1-'+id).val();
+
+            if((valor_integral - parcela1) == 0) {
+                swal('Atenção', 'Não é possível parcelar o valor, com a primeira parcela igual ao valor integral', 'warning');
+                return false;
+            }
+
+            $('#modal-show-'+id).addClass("md-show");
+            if($('[data-pagamento="'+id+'"]').attr('data-ok') == 'yes') return false;
+
+            $('.inputs-parcela-'+id).html('');
+            for(i = 2; i <= total_parcelas; i++) {
+                $('.inputs-parcela-'+id).append(`
+                    <div class="col-sm-6">
+                        <label class="form-label">`+i+` Parcela</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input type="number" value="`+parseFloat(total_valor).toFixed(2)+`" min="0" class="form-control parcela`+i+`-`+id+`" name="parcela`+i+`-`+id+`" required aria-required="true">
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-6">
-                    <label class="form-label">Vencimento</label>
-                    <div class="form-group">
-                        <div class="form-line">
-                            <input type="date" value="`+formatDate(addDays(date, parseInt(intervalo_data)))+`" class="form-control vencimento`+i+`-`+id+`" name="vencimento`+i+`-`+id+`" required aria-required="true">
+                    <div class="col-sm-6">
+                        <label class="form-label">Vencimento</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input type="date" value="`+formatDate(addDays(date, parseInt(intervalo_data)))+`" class="form-control vencimento`+i+`-`+id+`" name="vencimento`+i+`-`+id+`" required aria-required="true">
+                            </div>
                         </div>
                     </div>
-                </div>
-            `);
-            date = $('.vencimento'+i+'-'+id).val();
+                `);
+                date = $('.vencimento'+i+'-'+id).val();
+            }
+            return false;
         }
     });
     $('.md-close-'+id).click(function(e) {
@@ -232,7 +258,6 @@ $('.cnpj_fornecedor_input').keyup(function(e){
         },
         dataType: 'json',
         success: function(data) {
-            ajaxForm = null;
             console.log('success', data);
             let forns = "";
             for(i = 0; i < data.description.length; i++){
@@ -251,7 +276,6 @@ $('.cnpj_fornecedor_input').keyup(function(e){
             $('.list-fornecedores').show();
         },
         error: function(data) {
-            ajaxForm = null;
             console.error('erro', data);
             $('.list-fornecedores').hide();
         }
@@ -270,7 +294,7 @@ $('#addPg').click(function(e){
             <div class="body">
                 <div class="row clearfix">
                     <div class="col-sm-12">
-                        <select class="form-control show-tick tipopagamento-`+idPagamento+`" name="tipopagamento[]" id="tipopagamento" required aria-required="true">
+                        <select class="form-control show-tick tipopagamento-`+idPagamento+`" name="tipopagamento" id="tipopagamento" required aria-required="true">
                             <option value="">-- Selecione um tipo de pagamento --</option>
                             {% for tp in tipopagamento %}
                                 <option value="{{ tp.id }}">{{ tp.nome }}</option>
@@ -278,7 +302,7 @@ $('#addPg').click(function(e){
                         </select>
                     </div>
                     <div class="col-sm-12">
-                        <select class="form-control show-tick select-parcelas-`+idPagamento+`" name="parcelas[]" id="parcelas" required aria-required="true">
+                        <select class="form-control show-tick select-parcelas-`+idPagamento+`" name="parcelas" id="parcelas" required aria-required="true">
                             <option value="">-- Selecione as parcelas --</option>
                             {% for i in 1..120 %}
                                 <option value="{{i}}">{{i}}x</option>
@@ -289,7 +313,7 @@ $('#addPg').click(function(e){
                         <label class="form-label">Valor Integral</label>
                         <div class="form-group form-float">
                             <div class="form-line">
-                                <input value="10000" type="number" min="0" class="valor-integral-`+idPagamento+` form-control" name="valor_integral[]" required aria-required="true">
+                                <input value="10000" type="number" min="0" class="valor-integral-`+idPagamento+` form-control" name="valor_integral" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -297,7 +321,7 @@ $('#addPg').click(function(e){
                         <label class="form-label">Dias entre vencimentos</label>
                         <div class="form-group">
                             <div class="form-line">
-                                <input value="30" type="number" min="0" class="form-control intervalo-parcelas-`+idPagamento+`" name="intervalo-parcelas[]" required aria-required="true">
+                                <input value="30" type="number" min="0" class="form-control intervalo-parcelas-`+idPagamento+`" name="intervalo-parcelas" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -305,7 +329,7 @@ $('#addPg').click(function(e){
                         <label class="form-label">1 Parcela</label>
                         <div class="form-group">
                             <div class="form-line">
-                                <input value="5000" type="number" min="0" class="form-control parcela1-`+idPagamento+`" name="parcela[]" required aria-required="true">
+                                <input value="5000" type="number" min="0" class="form-control parcela1-`+idPagamento+`" name="parcela" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -313,7 +337,7 @@ $('#addPg').click(function(e){
                         <label class="form-label">Vencimento</label>
                         <div class="form-group">
                             <div class="form-line">
-                                <input value="`+formatDate(new Date())+`" type="date" class="form-control vencimento1-`+idPagamento+`" name="vencimento[]" required aria-required="true">
+                                <input value="`+formatDate(new Date())+`" type="date" class="form-control vencimento1-`+idPagamento+`" name="vencimento" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -336,10 +360,16 @@ $('#addPg').click(function(e){
     `);
     addEventPagamentos(idPagamento);
     idPagamento++;
+    swal('Atenção', 'Forma de pagamento adicionada!', 'warning');
 });
 $('#form_validation').submit(function(e) {
     e.preventDefault();
+    console.log($(this).valid());
+    let valid = $(this).valid();
+    if(valid != true) { swal('Atenção', 'Existem campos incompletos!', 'warning'); return false;}
+
     if($('[data-pagamento]').length == 0) { swal('Atenção', 'É necessário ter uma forma de pagamento', 'warning'); return false; }
+    let myArray;
     let canPass = true;
     let absoluto_valor = $('.absoluto-valor').val();
     let valor_absoluto = 0;
@@ -358,7 +388,6 @@ $('#form_validation').submit(function(e) {
         return false;
     }
 
-    if(!$(this).valid()) { swal('Atenção', 'Existem campos incompletos!', 'warning'); return false;}
     if(!ajaxForm) {
         swal({
             title: "Atenção",
@@ -372,61 +401,81 @@ $('#form_validation').submit(function(e) {
             allowClickOutside: false
         }, function(isConfirm) {
             if (isConfirm) {
+                let pagamentos = [];
+                $('[data-pagamento]').each(function(){
+                    if($(this).attr('data-ok') == "yes"){
+                        let idDP = $(this).attr('data-pagamento');
+                        let valor_integral = parseFloat($('.valor-integral-'+idDP).val());
+                        let tipopagamento = parseInt($('.tipopagamento-'+idDP).val());
+                        let parcelas = [];
+                        for(let i = 1; i <= parseInt($('.select-parcelas-'+idDP).val()); i++) {
+                            let parcela = {
+                                valor: parseFloat($('.parcela'+i+'-'+idDP).val()),
+                                vencimento: $('.vencimento'+i+'-'+idDP).val()
+                            }
+                            parcelas.push(parcela);
+                        }
+                        let pagamento = {
+                            'tipopagamento': tipopagamento,
+                            'parcelas': parcelas,
+                            'valor_integral': valor_integral
+                        };
+                        pagamentos.push(pagamento);
+                    }
+                });
+                myArray = {
+                    'para': parseInt($('[name="para"]').val() || 0),
+                    'valor': parseInt($('[name="valor"]').val() || 0),
+                    'tipopedido': parseInt($('[name="tipopedido"]').val() || 0),
+                    'forn': parseInt($('[name="forn"]').val() || 0),
+                    'descricao': $('[name="descricao"]').val(),
+                    'pagamentos': pagamentos
+                }
+                console.log(myArray);
 
-                
-
-                //ajaxForm = $.ajax({
-                //    type: "POST",
-                //    url: '/funcionario/pedido/cadastrar/',
-                //    data: $('#form_validation').serialize(),
-                //    dataType: 'json',
-                //    success: function(data) {
-                //        ajaxForm = null;
-                //        console.log('success', data);
-                //        swal({
-                //            title: "Sucesso",
-                //            text: data.description,
-                //            type: "success",
-                //            allowClickOutside: false,
-                //            allowEscapeKey: false
-                //        }, function(){
-                //            window.location = '';
-                //        });
-                //    },
-                //    error: function(data) {
-                //        ajaxForm = null;
-                //        console.error('erro', data);
-                //        if(data.status == 404){
-                //            swal({
-                //                title: "Erro",
-                //                text: 'Entre em contato com o suporte.',
-                //                type: "error",
-                //                allowClickOutside: false,
-                //                allowEscapeKey: false
-                //            });
-                //        } else {
-                //            swal({
-                //                title: "Erro",
-                //                text: data.responseJSON.description,
-                //                type: "warning",
-                //                allowClickOutside: false,
-                //                allowEscapeKey: false
-                //            });
-                //        }
-                //    }
-                //});
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/funcionario/pedido/cadastrar/',
+                    data: myArray,
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data);
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = '';
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
             }
         });
     }
 });
-
-
-let myArray = {
-    'para': 214,
-    'valor': 20000
-}
-
-console.log(myArray);
-
 </script>
 {% endblock %}

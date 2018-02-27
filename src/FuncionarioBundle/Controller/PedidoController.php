@@ -10,6 +10,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FuncionarioBundle\Entity\Pedido;
 use FuncionarioBundle\Entity\Historico;
+use FuncionarioBundle\Entity\Pagamento;
+use FuncionarioBundle\Entity\Parcelas;
 use FuncionarioBundle\Form\PedidoType;
 
 /**
@@ -301,40 +303,76 @@ class PedidoController extends Controller
      */
     public function cadastrarPedidoAction(Request $request)
     {
+        $hoje = new \DateTime();
         try {
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
 
             if(!$request->get('tipopedido')) {throw new \Exception('error_tipopedido');}
-            if(!$request->get('data_vencimento')) {throw new \Exception('error_data_vencimento');}
             if(!$request->get('valor')) {throw new \Exception('error_valor');}
             if(!$request->get('descricao')) {throw new \Exception('error_descricao');}
             if(!$request->get('para')) {throw new \Exception('error_para');}
+
+            $pagamentos = $request->get('pagamentos');
+            if(count($pagamentos) == 0) {throw new \Exception('error_pagamentos');}
 
             $pedido = new Pedido();
             $pedido->setCodigo(null);
             $tipo = $em->getRepository('FuncionarioBundle:TipoPedido')->findOneById($request->get('tipopedido'));
             $pedido->setIdtipo($tipo);
-            if($request->get('fornecedor')) {
-                $fornecedor = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneById($request->get('fornecedor'));
+            if($request->get('forn')) {
+                $fornecedor = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneById($request->get('forn'));
                 $pedido->setIdfornecedor($fornecedor);
             }
-            $pedido->setDataVencimento($request->get('data_vencimento'));
-            $pedido->setDataPedido(date_create());
+            $pedido->setDataPedido($hoje);
             $pedido->setValor($request->get('valor'));
             $pedido->setDescricao($request->get('descricao'));
             $pedido->setAtivo('S');
-            $pedido->setStatus('P');
+            $status_pedido = $em->getRepository('FuncionarioBundle:StatusPedido')->findOneById(1);
+            $pedido->setStatus($status_pedido);
             $em->persist($pedido);
             $em->flush();
+
+            for ($i = 0; $i < count($pagamentos); $i++) {
+                $pagamento = new Pagamento();
+                $pagamento->setIdPedido($pedido);
+                $tipo_pagamento = $em->getRepository('FuncionarioBundle:TipoPagamento')->findOneById($pagamentos[$i]['tipopagamento']);
+                $pagamento->setIdTipo($tipo_pagamento);
+                $pagamento->setValorIntegral($pagamentos[$i]['valor_integral']);
+                $status_pagamento = $em->getRepository('FuncionarioBundle:StatusPagamento')->findOneById(1);
+                $pagamento->setIdStatus($status_pagamento);
+                // $pagamento->setParcelado('S');
+                $em->persist($pagamento);
+                $em->flush();
+    
+                $parcelas = $pagamentos[$i]['parcelas'];
+                for ($j=0; $j < count($parcelas); $j++) {     
+                    $parcela = new Parcelas();
+                    $parcela->setIdPagamento($pagamento);
+                    $parcela->setNumParcela($j + 1);
+                    $parcela->setValor($parcelas[$j]['valor']);
+                    $parcela->setValorPago(null);
+                    $parcela->setValorDesconto(null);
+                    $parcela->setValorAcrecimo(null);
+                    $parcela->setValorPendente($parcelas[$j]['valor']);
+                    $parcela->setDataVencimento(date_create_from_format('Y-m-d', $parcelas[$j]['vencimento']));
+                    $parcela->setMensagem(null);
+                    $status_parcela = $em->getRepository('FuncionarioBundle:StatusParcela')->findOneById(1);
+                    $parcela->setStatus($status_parcela);
+                    $em->persist($parcela);
+                    $em->flush();
+                }
+                
+            }
 
             $historico = new Historico();
             $historico->setCodigo(null);
             $historico->setIdpedido($pedido);
-            $historico->setIdde($this->getUser());
+            $de = $em->getRepository('FuncionarioBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $historico->setIdde($de);
             $para = $em->getRepository('FuncionarioBundle:Funcionario')->findOneById($request->get('para'));
             $historico->setIdpara($para);
-            $historico->setDataPassagem(date_create());
+            $historico->setDataPassagem($hoje);
             $historico->setIdmensagem(null);
             $tipohistorico = $em->getRepository('FuncionarioBundle:TipoHistorico')->findOneById(1);
             $historico->setTipoHistorico($tipohistorico);
@@ -345,17 +383,12 @@ class PedidoController extends Controller
             return new Response(json_encode([
                 'description' => 'Pedido cadastrado com sucesso!'
             ]), 200);
-        } catch(\Exception $e) {
+        } catch(Exception $e) {
             $em->getConnection()->rollBack();
             switch($e->getMessage()) {
                 case 'error_tipopedido':
                     return new Response(json_encode([
                         'description' => 'Tipo de Pedido não pode ser vazio!'
-                    ]), 500);
-                break;
-                case 'error_data_vencimento':
-                    return new Response(json_encode([
-                        'description' => 'Data de Vencimento não pode ser vazio!'
                     ]), 500);
                 break;
                 case 'error_valor':
@@ -370,7 +403,12 @@ class PedidoController extends Controller
                 break;
                 case 'error_para':
                     return new Response(json_encode([
-                        'description' => 'Para não pode ser vazio!'
+                        'description' => 'Para quem não pode ser vazio!'
+                    ]), 500);
+                break;
+                case 'error_pagamentos':
+                    return new Response(json_encode([
+                        'description' => 'Pedido deve ter pelo menos uma forma de pagamento'
                     ]), 500);
                 break;
             }
