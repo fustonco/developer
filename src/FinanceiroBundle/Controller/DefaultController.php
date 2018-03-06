@@ -20,14 +20,13 @@ class DefaultController extends Controller
             'status' => '1'
         ));
 
-        $idPag = $parcelas->getIdPagamento();
+        //$idPag = $parcelas->getIdPagamento();
         
         
         //findBy(array('data_vencimento' <= 'current_date', 'status' => '1'))
         
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
-            'parcelas'  => $parcelas,
-            'teste' =>$idPag
+            'parcelas'  => $parcelas
         ]);
     }
 }
