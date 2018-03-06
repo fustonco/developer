@@ -141,7 +141,7 @@ a:active {
 button {
 	border: none;
 	padding: 0.6em 1.2em;
-	background: #2b35c0;
+	background: #1a70bd;
 	color: #fff;
 	font-family: 'Lato', Calibri, Arial, sans-serif;
 	font-size: 1em;
@@ -154,7 +154,7 @@ button {
 }
 
 button:hover {
-	background: rgb(27, 41, 165);
+	background: rgb(21, 101, 172);
 }
 
 @media screen and (max-width: 46.0625em) {

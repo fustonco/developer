@@ -2,158 +2,392 @@
 
 {% block body %}
     <form id="form_validation" method="POST" novalidate="novalidate">
-        <div class="row clearfix">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="card">
-                    <div class="header">
-                        <a style="float: right;" href="javascript:void(0);" id="addPg">
-                            Adicionar Pagamento
-                        </a>
-                        <h2>Cadastrar Pedido</h2>
+        <div class="card">
+            <div class="header">
+                <a style="float: right;" href="javascript:void(0);" id="addPg">
+                    Adicionar Pagamento
+                </a>
+                <h2>Cadastrar Pedido</h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-sm-12">
+                        <select class="form-control show-tick select-para" name="para" id="para" required aria-required="true">
+                            <option value="">-- Selecione um chefe --</option>
+                            {% for p in para %}
+                                <option value="{{ p.id }}">{{ p.nome }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="body">
-                        <div class="row clearfix">
-                            <div class="col-sm-12">
-                                <select class="form-control show-tick" name="para" id="para">
-                                    <option value="">-- Selecione um chefe --</option>
-                                    {% for p in para %}
-                                        <option value="{{ p.id }}">{{ p.nome }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-sm-6">
-                                <select class="form-control show-tick" name="tipopedido" id="tipopedido" required aria-required="true">
-                                    <option value="">-- Selecione um tipo de pedido --</option>
-                                    {% for tp in tipopedido %}
-                                        <option value="{{ tp.id }}">{{ tp.nome }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-sm-6">
-                                <select class="form-control show-tick" name="fornecedores" id="fornecedores">
-                                    <option value="">-- Selecione um fornecedor --</option>
-                                    {% for f in fornecedores %}
-                                        <option value="{{ f.id }}">{{ f.nome }}{% if f.cnpj %} - CNPJ: {{ f.cnpj }}{% else %}{% if f.cpf %} - CPF: {{ f.cpf }}{% endif %}{% endif %}</option>
-                                    {% endfor %}
-                                </select>
+                    <div class="col-sm-12">
+                        <select class="form-control show-tick select-tipo-pedido" name="tipopedido" id="tipopedido" required aria-required="true">
+                            <option value="">-- Selecione um tipo de pedido --</option>
+                            {% for tp in tipopedido %}
+                                <option value="{{ tp.id }}">{{ tp.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-sm-offset-0 cnpj_fornecedor" style="display: none;">
+                        <label class="form-label">CNPJ Fornecedor</label>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input type="text" name="cnpj_forn" class="form-control cnpj_fornecedor_input" required aria-required="true">
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <label class="form-label">Data Vencimento</label>
-                            <div class="form-group">
-                                <div class="form-line">
-                                    <input type="date" class="form-control" name="data_vencimento" required aria-required="true">
-                                </div>
-                            </div>
+                    </div>
+                    <div class="list-fornecedores" style="display: none;"></div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Valor</label>
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <input type="number" min="0" class="form-control absoluto-valor" name="valor" required aria-required="true">
                         </div>
-                        <div class="col-sm-6">
-                            <label class="form-label">Valor</label>
-                            <div class="form-group form-float">
-                                <div class="form-line">
-                                    <input type="text" class="form-control" name="valor" required aria-required="true">
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label class="form-label">Descrição</label>
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <textarea rows="5" style="resize: none;" type="text" class="form-control" name="descricao" required aria-required="true"></textarea>
                         </div>
-                        <div class="col-sm-12">
-                            <label class="form-label">Descrição</label>
-                            <div class="form-group form-float">
-                                <div class="form-line">
-                                    <textarea rows="5" style="resize: none;" type="text" class="form-control" name="descricao" required aria-required="true"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row clearfix">
-                            <div style="text-align: right;">
-                                <button class="btn btn-primary waves-effect" type="submit">CRIAR</button>
-                            </div>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-sm-12">
+                        <div style="text-align: right;">
+                            <button class="btn btn-primary waves-effect" type="submit">CRIAR</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div id="div-pagamentos" class="row clearfix"></div>
     </form>
 {% endblock %}
 
 {% block javascripts %}
 <script>
-function addEventPagamentos() {
+let ajaxForm;
+let idPagamento = 0;
+function addEventPagamentos(id) {
     $('.btn-close-pg').click(function(e){
         e.preventDefault();
-        $('[data-pagamento="'+$(this).attr('data-pagamento')+'"]').remove();
+        $('[data-pagamento="'+id+'"]').remove();
     });
-    $('.libera-parcelas').change(function(e){
+    $('.select-parcelas-'+id).change(function(e){
+        $('.pagamento-icon-'+id).hide();
+        $('[data-pagamento="'+id+'"]').attr('data-ok', 'no');
+        $('.btn-calc-'+id).html('CALCULAR');
+    });
+    $('.valor-integral-'+id).keyup(function(e){
+        $('.pagamento-icon-'+id).hide();
+        $('[data-pagamento="'+id+'"]').attr('data-ok', 'no');
+        $('.btn-calc-'+id).html('CALCULAR');
+    });
+    $('.intervalo-parcelas-'+id).keyup(function(e){
+        $('.pagamento-icon-'+id).hide();
+        $('[data-pagamento="'+id+'"]').attr('data-ok', 'no');
+        $('.btn-calc-'+id).html('CALCULAR');
+    });
+    $('.parcela1-'+id).keyup(function(e){
+        $('.pagamento-icon-'+id).hide();
+        $('[data-pagamento="'+id+'"]').attr('data-ok', 'no');
+        $('.btn-calc-'+id).html('CALCULAR');
+    });
+    $('.vencimento1-'+id).change(function(e){
+        $('.pagamento-icon-'+id).hide();
+        $('[data-pagamento="'+id+'"]').attr('data-ok', 'no');
+        $('.btn-calc-'+id).html('CALCULAR');
+    });
+    $('.btn-calc-'+id).click(function(e){
         e.preventDefault();
-        $('.libera-parcelas-'+idPagamento).show();
+
+        if($('.tipopagamento-'+id).val() == 0 || $('.tipopagamento-'+id).val() == '') {
+            swal('Atenção','Escolha o Tipo de Pagamento!', 'warning');
+            $('.tipopagamento-'+id).focus();
+            return false;
+        }
+        if($('.select-parcelas-'+id).val() == 0 || $('.select-parcelas-'+id).val() == '') {
+            swal('Atenção','Escolha a Quantidade de parcelas!', 'warning');
+            $('.select-parcelas-'+id).focus();
+            return false;
+        }
+        if($('.valor-integral-'+id).val() == 0 || $('.valor-integral-'+id).val() == '') {
+            swal('Atenção','Preencha o valor integral!', 'warning');
+            $('.valor-integral-'+id).focus();
+            return false;
+        }
+        if($('.intervalo-parcelas-'+id).val() == 0 || $('.intervalo-parcelas-'+id).val() == '') {
+            swal('Atenção','Escolha um intervalo de datas entre as parcelas!', 'warning');
+            $('.intervalo-parcelas-'+id).focus();
+            return false;
+        }
+        if($('.parcela1-'+id).val() == 0 || $('.parcela1-'+id).val() == '') {
+            swal('Atenção','Preencha o valor da primeira parcela!', 'warning');
+            $('.parcela1-'+id).focus();
+            return false;
+        }
+        if($('.vencimento1-'+id).val() == 0 || $('.vencimento1-'+id).val() == '') {
+            swal('Atenção','Preencha a data de vencimento da primeira parcela!', 'warning');
+            $('.vencimento1-'+id).focus();
+            return false;
+        }
+        let parcela1 = parseFloat($('.parcela1-'+id).val());
+        let valor_integral = parseFloat($('.valor-integral-'+id).val());
+
+        if(parcela1 > valor_integral) {
+            swal('Atenção', 'O valor da parcela não pode ser maior que o valor integral do pagamento', 'warning');
+            return false;
+        }
+        
+        
+        if($('.select-parcelas-'+id).val() == 1) {
+
+            if((valor_integral - parcela1) == 0) {
+                $('.pagamento-icon-'+id).show();
+                $('[data-pagamento="'+id+'"]').attr('data-ok', 'yes');
+                $('.btn-calc-'+id).html('EDITAR');
+                return false;
+            } else {
+                swal('Atenção', 'O valor da parcela não corresponde ao valor integral do pagamento', 'warning');
+                return false;
+            }
+        } else {
+
+            let total_parcelas = $('.select-parcelas-'+id).val();
+            let total_valor = ((valor_integral - parcela1) / (total_parcelas - 1));
+            let intervalo_data = $('.intervalo-parcelas-'+id).val();
+            let date = $('.vencimento1-'+id).val();
+
+            if((valor_integral - parcela1) == 0) {
+                swal('Atenção', 'Não é possível parcelar o valor, com a primeira parcela igual ao valor integral', 'warning');
+                return false;
+            }
+
+            $('#modal-show-'+id).addClass("md-show");
+            if($('[data-pagamento="'+id+'"]').attr('data-ok') == 'yes') return false;
+
+            $('.inputs-parcela-'+id).html('');
+            for(i = 2; i <= total_parcelas; i++) {
+                $('.inputs-parcela-'+id).append(`
+                    <div class="col-sm-6">
+                        <label class="form-label">`+i+` Parcela</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input type="number" value="`+parseFloat(total_valor).toFixed(2)+`" min="0" class="form-control parcela`+i+`-`+id+`" name="parcela`+i+`-`+id+`" required aria-required="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Vencimento</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input type="date" value="`+formatDate(addDays(date, parseInt(intervalo_data)))+`" class="form-control vencimento`+i+`-`+id+`" name="vencimento`+i+`-`+id+`" required aria-required="true">
+                            </div>
+                        </div>
+                    </div>
+                `);
+                date = $('.vencimento'+i+'-'+id).val();
+            }
+            return false;
+        }
+    });
+    $('.md-close-'+id).click(function(e) {
+        e.preventDefault();
+        let valor_integral = $('.valor-integral-'+id).val();
+        let total_parcelas = $('.select-parcelas-'+id).val();
+        let parcela1 = $('.parcela1-'+id).val();
+        let valor_total = parseFloat(parcela1);
+        for(i = 2; i <= total_parcelas; i++) {
+            valor_total += parseFloat($('.parcela'+i+'-'+id).val());
+        }
+        if(valor_total != valor_integral) {
+            swal('Atenção','valor da soma das parcelas não corresponde ao valor integral do pagamento\n\nValor integral: '+valor_integral+'\n'+'Valor Total: '+valor_total, 'warning');
+            return false;
+        } else {
+            swal({
+                title: "Atenção",
+                text: "Pagamento calculado com sucesso, deseja fechar a janela de ajuste?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sim",
+                cancelButtonText: "Não",
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    $('.pagamento-icon-'+id).show();
+                    $('[data-pagamento="'+id+'"]').attr('data-ok', 'yes');
+                    $('.btn-calc-'+id).html('EDITAR');
+                    $('#modal-show-'+id).removeClass("md-show");
+                }
+            });
+        }
     });
 }
-let idPagamento = 1;
+
+function formatDate(nowDate) {
+    let year = nowDate.getFullYear();
+    let month = ((nowDate.getMonth()+1) < 10) ? '0'+(nowDate.getMonth()+1) : (nowDate.getMonth()+1);
+    let date = (nowDate.getDate() < 10) ? '0'+nowDate.getDate() : nowDate.getDate();
+    nowDate = year+'-'+month+'-'+date;
+    return nowDate;
+}
+function addDays(date, days) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+$('.select-tipo-pedido').change(function(e){
+    if($(this).val() == 4) {
+        $('.cnpj_fornecedor').show();
+    }else{
+        $('.cnpj_fornecedor').hide();
+    }
+});
+$('.cnpj_fornecedor_input').keyup(function(e){
+    if($('.cnpj_fornecedor_input').val().length <= 2) return false;
+
+    console.log($('.cnpj_fornecedor_input').val());
+    $.ajax({
+        type: "POST",
+        url: '/funcionario/pedido/get/fornecedores',
+        data: {
+            cnpj_fornecedor_input: $('.cnpj_fornecedor_input').val()
+        },
+        dataType: 'json',
+        success: function(data) {
+            console.log('success', data);
+            let forns = "";
+            for(i = 0; i < data.description.length; i++){
+                forns += `<option value="`+data.description[i].id+`">`+data.description[i].nome+`</option>`;
+            }
+            $('.list-fornecedores').html(`
+                <div class="row clearfix">
+                    <div class="col-sm-12">
+                        <select class="form-control show-tick" name="forn" id="forn" required aria-required="true">
+                            <option value="">Escolha um Fornecedor</option>
+                            `+forns+`
+                        </select>
+                    </div>
+                </div>
+            `);
+            $('.list-fornecedores').show();
+        },
+        error: function(data) {
+            console.error('erro', data);
+            $('.list-fornecedores').hide();
+        }
+    });
+});
 $('#addPg').click(function(e){
     e.preventDefault();
-    $('#form_validation').append(`
-        <div class="pagamento" data-pagamento="`+idPagamento+`">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                <div class="card">
-                    <div class="header">
-                        <a style="float: right;" href="javascript:void(0);" class="btn-close-pg" data-pagamento="`+idPagamento+`">
-                            <i class="material-icons">close</i>
-                        </a>
-                        <h2>Pagamento</h2>
+    $('#div-pagamentos').append(`
+        <div class="card pagamento col-sm-6" data-pagamento="`+idPagamento+`" data-ok="no">
+            <div class="header">
+                <a style="float: right;" href="javascript:void(0);" class="btn-close-pg">
+                    <i class="material-icons">close</i>
+                </a>
+                <h2>Pagamento&nbsp;<i class="material-icons pagamento-icon-`+idPagamento+`" style="display: none; color: green;">check</i></h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-sm-12">
+                        <select class="form-control show-tick tipopagamento-`+idPagamento+`" name="tipopagamento" id="tipopagamento" required aria-required="true">
+                            <option value="">-- Selecione um tipo de pagamento --</option>
+                            {% for tp in tipopagamento %}
+                                <option value="{{ tp.id }}">{{ tp.nome }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="body">
-                        <div class="row clearfix">
-                            <div class="col-sm-12">
-                                <select data-parcelas="libera-parcelas-`+idPagamento+`" class="form-control show-tick libera-parcelas" name="tipopagamento" id="tipopagamento" required aria-required="true">
-                                    <option value="">-- Selecione um tipo de pagamento --</option>
-                                    {% for tp in tipopagamento %}
-                                        <option value="{{ tp.id }}">{{ tp.nome }}</option>
-                                    {% endfor %}
-                                </select>
+                    <div class="col-sm-12">
+                        <select class="form-control show-tick select-parcelas-`+idPagamento+`" name="parcelas" id="parcelas" required aria-required="true">
+                            <option value="">-- Selecione as parcelas --</option>
+                            {% for i in 1..120 %}
+                                <option value="{{i}}">{{i}}x</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Valor Integral</label>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input value="10000" type="number" min="0" class="valor-integral-`+idPagamento+` form-control" name="valor_integral" required aria-required="true">
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="form-group form-float">
-                                <div class="form-line">
-                                    <input type="text" class="form-control" name="valor_integral" required aria-required="true">
-                                    <label class="form-label">Valor Integral</label>
-                                </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Dias entre vencimentos</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input value="30" type="number" min="0" class="form-control intervalo-parcelas-`+idPagamento+`" name="intervalo-parcelas" required aria-required="true">
                             </div>
                         </div>
-                        <div class="libera-parcelas-`+idPagamento+`" style="display: none;">
-                            <div class="row clearfix">
-                                <div class="col-sm-12">
-                                    <select class="form-control show-tick" name="parcelas" id="parcelas" required aria-required="true">
-                                        <option value="">-- Selecione as parcelas --</option>
-                                        {% for i in 1..120 %}
-                                            <option value="{{i}}">{{i}}x</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="inputs-parcelas">
-                                <div class="col-sm-12">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="text" class="form-control" name="parcela1" required aria-required="true">
-                                            <label class="form-label">Parcela 1x</label>
-                                        </div>
-                                    </div>
-                                </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">1 Parcela</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input value="5000" type="number" min="0" class="form-control parcela1-`+idPagamento+`" name="parcela" required aria-required="true">
                             </div>
                         </div>
-                        <div class="row clearfix"></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Vencimento</label>
+                        <div class="form-group">
+                            <div class="form-line">
+                                <input value="`+formatDate(new Date())+`" type="date" class="form-control vencimento1-`+idPagamento+`" name="vencimento" required aria-required="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <button style="width: 100%;" class="btn btn-primary waves-effect btn-calc-`+idPagamento+`" data-calc="`+idPagamento+`" type="submit">CALCULAR</button>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="md-modal md-effect-17" id="modal-show-`+idPagamento+`">
+            <div class="md-content">
+                <h3 class="md-empresa-header">Ajuste de pagamento</h3>
+                <br/>
+                <div class="row clearfix inputs-parcela-`+idPagamento+`" style="overflow: auto; height: 300px;">
+                </div>
+                <br/>
+                <button class="md-close-`+idPagamento+`" data-close="modal-show-`+idPagamento+`">Salvar</button>
+            </div>
+        </div>
     `);
-    addEventPagamentos();
+    addEventPagamentos(idPagamento);
     idPagamento++;
+    swal('Atenção', 'Forma de pagamento adicionada!', 'warning');
 });
-
-let ajaxForm;
 $('#form_validation').submit(function(e) {
     e.preventDefault();
-    if(!$(this).valid()) { swal('Atenção', 'Existem campos incompletos!', 'warning'); return false;}
+    console.log($(this).valid());
+    let valid = $(this).valid();
+    if(valid != true) { swal('Atenção', 'Existem campos incompletos!', 'warning'); return false;}
+
+    if($('[data-pagamento]').length == 0) { swal('Atenção', 'É necessário ter uma forma de pagamento', 'warning'); return false; }
+    let myArray;
+    let canPass = true;
+    let absoluto_valor = $('.absoluto-valor').val();
+    let valor_absoluto = 0;
+    $('[data-pagamento]').each(function(){
+        if($(this).attr('data-ok') == "no") {
+            canPass = false;
+        }else if($(this).attr('data-ok') == "yes"){
+            let idDP = $(this).attr('data-pagamento');
+            valor_absoluto += parseFloat($('.valor-integral-'+idDP).val());
+        }
+    });
+    if(!canPass) { swal('Atenção', 'Todos os pagamentos precisam estar OK', 'warning'); return false; }
+
+    if(valor_absoluto != absoluto_valor){
+        swal('Atenção', 'Todos os pagamentos precisam ter a soma igual ao Valor do Pedido', 'warning');
+        return false;
+    }
+
     if(!ajaxForm) {
         swal({
             title: "Atenção",
@@ -167,10 +401,42 @@ $('#form_validation').submit(function(e) {
             allowClickOutside: false
         }, function(isConfirm) {
             if (isConfirm) {
+                let pagamentos = [];
+                $('[data-pagamento]').each(function(){
+                    if($(this).attr('data-ok') == "yes"){
+                        let idDP = $(this).attr('data-pagamento');
+                        let valor_integral = parseFloat($('.valor-integral-'+idDP).val());
+                        let tipopagamento = parseInt($('.tipopagamento-'+idDP).val());
+                        let parcelas = [];
+                        for(let i = 1; i <= parseInt($('.select-parcelas-'+idDP).val()); i++) {
+                            let parcela = {
+                                valor: parseFloat($('.parcela'+i+'-'+idDP).val()),
+                                vencimento: $('.vencimento'+i+'-'+idDP).val()
+                            }
+                            parcelas.push(parcela);
+                        }
+                        let pagamento = {
+                            'tipopagamento': tipopagamento,
+                            'parcelas': parcelas,
+                            'valor_integral': valor_integral
+                        };
+                        pagamentos.push(pagamento);
+                    }
+                });
+                myArray = {
+                    'para': parseInt($('[name="para"]').val() || 0),
+                    'valor': parseInt($('[name="valor"]').val() || 0),
+                    'tipopedido': parseInt($('[name="tipopedido"]').val() || 0),
+                    'forn': parseInt($('[name="forn"]').val() || 0),
+                    'descricao': $('[name="descricao"]').val(),
+                    'pagamentos': pagamentos
+                }
+                console.log(myArray);
+
                 ajaxForm = $.ajax({
                     type: "POST",
                     url: '/funcionario/pedido/cadastrar/',
-                    data: $('#form_validation').serialize(),
+                    data: myArray,
                     dataType: 'json',
                     success: function(data) {
                         ajaxForm = null;
