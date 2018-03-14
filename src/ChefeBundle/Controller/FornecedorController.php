@@ -1,6 +1,6 @@
 <?php
 
-namespace FuncionarioBundle\Controller;
+namespace ChefeBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,8 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use FuncionarioBundle\Entity\Fornecedor;
-use FuncionarioBundle\Form\FornecedorType;
+use ChefeBundle\Entity\Fornecedor;
+use ChefeBundle\Form\FornecedorType;
 
 /**
  * Fornecedor controller.
@@ -22,7 +22,7 @@ class FornecedorController extends Controller
     /**
      * Lists all Fornecedor entities.
      *
-     * @Route("/", name="func_fornecedor")
+     * @Route("/", name="chefe_fornecedor")
      * @Method("GET")
      * @Template()
      */
@@ -30,7 +30,7 @@ class FornecedorController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('FuncionarioBundle:Fornecedor')->findAll();
+        $entities = $em->getRepository('ChefeBundle:Fornecedor')->findAll();
 
         return array(
             'entities' => $entities
@@ -39,9 +39,9 @@ class FornecedorController extends Controller
     /**
      * Creates a new Fornecedor entity.
      *
-     * @Route("/", name="func_fornecedor_create")
+     * @Route("/", name="chefe_fornecedor_create")
      * @Method("POST")
-     * @Template("FuncionarioBundle:Fornecedor:new.html.twig")
+     * @Template("ChefeBundle:Fornecedor:new.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -54,7 +54,7 @@ class FornecedorController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('func_fornecedor_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('chefe_fornecedor_show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -73,7 +73,7 @@ class FornecedorController extends Controller
     private function createCreateForm(Fornecedor $entity)
     {
         $form = $this->createForm(new FornecedorType(), $entity, array(
-            'action' => $this->generateUrl('func_fornecedor_create'),
+            'action' => $this->generateUrl('chefe_fornecedor_create'),
             'method' => 'POST',
         ));
 
@@ -85,7 +85,7 @@ class FornecedorController extends Controller
     /**
      * Displays a form to create a new Fornecedor entity.
      *
-     * @Route("/new", name="func_fornecedor_new")
+     * @Route("/new", name="chefe_fornecedor_new")
      * @Method("GET")
      * @Template()
      */
@@ -103,7 +103,7 @@ class FornecedorController extends Controller
     /**
      * Finds and displays a Fornecedor entity.
      *
-     * @Route("/{id}", name="func_fornecedor_show")
+     * @Route("/{id}", name="chefe_fornecedor_show")
      * @Method("GET")
      * @Template()
      */
@@ -111,7 +111,7 @@ class FornecedorController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('FuncionarioBundle:Fornecedor')->find($id);
+        $entity = $em->getRepository('ChefeBundle:Fornecedor')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Fornecedor entity.');
@@ -128,7 +128,7 @@ class FornecedorController extends Controller
     /**
      * Displays a form to edit an existing Fornecedor entity.
      *
-     * @Route("/{id}/edit", name="func_fornecedor_edit")
+     * @Route("/{id}/edit", name="chefe_fornecedor_edit")
      * @Method("GET")
      * @Template()
      */
@@ -136,7 +136,7 @@ class FornecedorController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('FuncionarioBundle:Fornecedor')->find($id);
+        $entity = $em->getRepository('ChefeBundle:Fornecedor')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Fornecedor entity.');
@@ -162,7 +162,7 @@ class FornecedorController extends Controller
     private function createEditForm(Fornecedor $entity)
     {
         $form = $this->createForm(new FornecedorType(), $entity, array(
-            'action' => $this->generateUrl('func_fornecedor_update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('chefe_fornecedor_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -173,15 +173,15 @@ class FornecedorController extends Controller
     /**
      * Edits an existing Fornecedor entity.
      *
-     * @Route("/{id}", name="func_fornecedor_update")
+     * @Route("/{id}", name="chefe_fornecedor_update")
      * @Method("PUT")
-     * @Template("FuncionarioBundle:Fornecedor:edit.html.twig")
+     * @Template("ChefeBundle:Fornecedor:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('FuncionarioBundle:Fornecedor')->find($id);
+        $entity = $em->getRepository('ChefeBundle:Fornecedor')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Fornecedor entity.');
@@ -194,7 +194,7 @@ class FornecedorController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('func_fornecedor_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('chefe_fornecedor_edit', array('id' => $id)));
         }
 
         return array(
@@ -206,7 +206,7 @@ class FornecedorController extends Controller
     /**
      * Deletes a Fornecedor entity.
      *
-     * @Route("/{id}", name="func_fornecedor_delete")
+     * @Route("/{id}", name="chefe_fornecedor_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -216,7 +216,7 @@ class FornecedorController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('FuncionarioBundle:Fornecedor')->find($id);
+            $entity = $em->getRepository('ChefeBundle:Fornecedor')->find($id);
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Fornecedor entity.');
@@ -226,7 +226,7 @@ class FornecedorController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('func_fornecedor'));
+        return $this->redirect($this->generateUrl('chefe_fornecedor'));
     }
 
     /**
@@ -239,7 +239,7 @@ class FornecedorController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('func_fornecedor_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('chefe_fornecedor_delete', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
@@ -256,7 +256,7 @@ class FornecedorController extends Controller
             
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
 
-            $fornecedor = $em->getRepository("FuncionarioBundle:Fornecedor")->findOneById($request->get('id'));
+            $fornecedor = $em->getRepository("ChefeBundle:Fornecedor")->findOneById($request->get('id'));
             $fornecedor->setNome($request->get('nome'));
             $fornecedor->setCnpj($request->get('cnpj'));
             $fornecedor->setCpf($request->get('cpf'));
@@ -289,7 +289,7 @@ class FornecedorController extends Controller
     {
         try {
             $em = $this->getDoctrine()->getManager();
-            $fornecedor = $em->getRepository("FuncionarioBundle:Fornecedor")->findOneById($request->get('id'));
+            $fornecedor = $em->getRepository("ChefeBundle:Fornecedor")->findOneById($request->get('id'));
             $em->remove($fornecedor);
             $em->flush();
             return new Response(json_encode([

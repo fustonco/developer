@@ -13,7 +13,7 @@
                 <div class="row clearfix">
                     <div class="col-sm-12">
                         <select class="form-control show-tick select-para" name="para" id="para" required aria-required="true">
-                            <option value="">-- Selecione um chefe --</option>
+                            <option value="">-- Selecione um Master --</option>
                             {% for p in para %}
                                 <option value="{{ p.id }}">{{ p.nome }}</option>
                             {% endfor %}
@@ -252,7 +252,7 @@ $('.cnpj_fornecedor_input').keyup(function(e){
     console.log($('.cnpj_fornecedor_input').val());
     $.ajax({
         type: "POST",
-        url: '/funcionario/pedido/get/fornecedores',
+        url: '/chefe/pedido/get/fornecedores',
         data: {
             cnpj_fornecedor_input: $('.cnpj_fornecedor_input').val()
         },
@@ -435,7 +435,7 @@ $('#form_validation').submit(function(e) {
 
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/funcionario/pedido/cadastrar/',
+                    url: '/chefe/pedido/cadastrar/',
                     data: myArray,
                     dataType: 'json',
                     success: function(data) {
@@ -448,7 +448,7 @@ $('#form_validation').submit(function(e) {
                             allowClickOutside: false,
                             allowEscapeKey: false
                         }, function(){
-                            window.location = '/funcionario/pedido/';
+                            window.location = '/chefe/pedido/';
                         });
                     },
                     error: function(data) {

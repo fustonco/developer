@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Pedido</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Codigo</th>
+                <td>{{ entity.codigo }}</td>
+            </tr>
+            <tr>
+                <th>Datavencimento</th> 
+                <td>{{ entity.dataVencimento|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Datapedido</th>
+                <td>{{ entity.dataPedido|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Valor</th>
+                <td>{{ entity.valor }}</td>
+            </tr>
+            <tr>
+                <th>Descricao</th>
+                <td>{{ entity.descricao }}</td>
+            </tr>
+            <tr>
+                <th>Ativo</th>
+                <td>{{ entity.ativo }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ entity.status }}</td>
+            </tr>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('func_pedido') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('func_pedido_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}
