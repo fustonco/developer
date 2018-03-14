@@ -3,6 +3,7 @@
   <entity name="ChefeBundle\Entity\Parcelas" table="parcelas">
     <indexes>
       <index name="fk_parcelas_pagamento_idx" columns="idPagamento"/>
+      <index name="fk_parcelas_status_parcela1_idx" columns="status"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
@@ -15,11 +16,15 @@
     <field name="valorPendente" type="string" column="valor_pendente" length="45" nullable="true"/>
     <field name="dataVencimento" type="date" column="data_vencimento" nullable="true"/>
     <field name="dataPagamento" type="date" column="data_pagamento" nullable="true"/>
-    <field name="status" type="string" column="status" length="1" nullable="true"/>
     <field name="mensagem" type="string" column="mensagem" length="255" nullable="true"/>
     <many-to-one field="idpagamento" target-entity="Pagamento">
       <join-columns>
         <join-column name="idPagamento" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="status" target-entity="StatusParcela">
+      <join-columns>
+        <join-column name="status" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

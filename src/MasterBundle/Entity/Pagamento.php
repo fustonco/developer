@@ -164,4 +164,32 @@ class Pagamento
     {
         return $this->idpedido;
     }
+    /**
+     * @var \MasterBundle\Entity\StatusPagamento
+     */
+    private $idstatus;
+
+
+    /**
+     * Set idstatus
+     *
+     * @param \MasterBundle\Entity\StatusPagamento $idstatus
+     * @return Pagamento
+     */
+    public function setIdstatus(\MasterBundle\Entity\StatusPagamento $idstatus = null)
+    {
+        $this->idstatus = $idstatus;
+
+        return $this;
+    }
+
+    /**
+     * Get idstatus
+     *
+     * @return \MasterBundle\Entity\StatusPagamento 
+     */
+    public function getIdstatus()
+    {
+        return $this->idstatus;
+    }
 }

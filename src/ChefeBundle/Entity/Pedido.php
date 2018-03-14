@@ -17,11 +17,6 @@ class Pedido
     /**
      * @var \DateTime
      */
-    private $dataVencimento;
-
-    /**
-     * @var \DateTime
-     */
     private $dataPedido;
 
     /**
@@ -40,24 +35,29 @@ class Pedido
     private $ativo;
 
     /**
-     * @var string
-     */
-    private $status;
-
-    /**
      * @var integer
      */
     private $id;
 
     /**
-     * @var \ChefeBundle\Entity\TipoPedido
-     */
-    private $idtipo;
-
-    /**
      * @var \ChefeBundle\Entity\Fornecedor
      */
     private $idfornecedor;
+
+    /**
+     * @var \ChefeBundle\Entity\Funcionario
+     */
+    private $criadoPor;
+
+    /**
+     * @var \ChefeBundle\Entity\StatusPedido
+     */
+    private $status;
+
+    /**
+     * @var \ChefeBundle\Entity\TipoPedido
+     */
+    private $idtipo;
 
 
     /**
@@ -81,29 +81,6 @@ class Pedido
     public function getCodigo()
     {
         return $this->codigo;
-    }
-
-    /**
-     * Set dataVencimento
-     *
-     * @param \DateTime $dataVencimento
-     * @return Pedido
-     */
-    public function setDataVencimento($dataVencimento)
-    {
-        $this->dataVencimento = $dataVencimento;
-
-        return $this;
-    }
-
-    /**
-     * Get dataVencimento
-     *
-     * @return \DateTime 
-     */
-    public function getDataVencimento()
-    {
-        return $this->dataVencimento;
     }
 
     /**
@@ -199,29 +176,6 @@ class Pedido
     }
 
     /**
-     * Set status
-     *
-     * @param string $status
-     * @return Pedido
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * Get status
-     *
-     * @return string 
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
      * Get id
      *
      * @return integer 
@@ -229,29 +183,6 @@ class Pedido
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set idtipo
-     *
-     * @param \ChefeBundle\Entity\TipoPedido $idtipo
-     * @return Pedido
-     */
-    public function setIdtipo(\ChefeBundle\Entity\TipoPedido $idtipo = null)
-    {
-        $this->idtipo = $idtipo;
-
-        return $this;
-    }
-
-    /**
-     * Get idtipo
-     *
-     * @return \ChefeBundle\Entity\TipoPedido 
-     */
-    public function getIdtipo()
-    {
-        return $this->idtipo;
     }
 
     /**
@@ -275,5 +206,74 @@ class Pedido
     public function getIdfornecedor()
     {
         return $this->idfornecedor;
+    }
+
+    /**
+     * Set criadoPor
+     *
+     * @param \ChefeBundle\Entity\Funcionario $criadoPor
+     * @return Pedido
+     */
+    public function setCriadoPor(\ChefeBundle\Entity\Funcionario $criadoPor = null)
+    {
+        $this->criadoPor = $criadoPor;
+
+        return $this;
+    }
+
+    /**
+     * Get criadoPor
+     *
+     * @return \ChefeBundle\Entity\Funcionario 
+     */
+    public function getCriadoPor()
+    {
+        return $this->criadoPor;
+    }
+
+    /**
+     * Set status
+     *
+     * @param \ChefeBundle\Entity\StatusPedido $status
+     * @return Pedido
+     */
+    public function setStatus(\ChefeBundle\Entity\StatusPedido $status = null)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return \ChefeBundle\Entity\StatusPedido 
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set idtipo
+     *
+     * @param \ChefeBundle\Entity\TipoPedido $idtipo
+     * @return Pedido
+     */
+    public function setIdtipo(\ChefeBundle\Entity\TipoPedido $idtipo = null)
+    {
+        $this->idtipo = $idtipo;
+
+        return $this;
+    }
+
+    /**
+     * Get idtipo
+     *
+     * @return \ChefeBundle\Entity\TipoPedido 
+     */
+    public function getIdtipo()
+    {
+        return $this->idtipo;
     }
 }

@@ -52,11 +52,6 @@ class Parcelas
     /**
      * @var string
      */
-    private $status;
-
-    /**
-     * @var string
-     */
     private $mensagem;
 
     /**
@@ -68,6 +63,11 @@ class Parcelas
      * @var \ChefeBundle\Entity\Pagamento
      */
     private $idpagamento;
+
+    /**
+     * @var \ChefeBundle\Entity\StatusParcela
+     */
+    private $status;
 
 
     /**
@@ -255,29 +255,6 @@ class Parcelas
     }
 
     /**
-     * Set status
-     *
-     * @param string $status
-     * @return Parcelas
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * Get status
-     *
-     * @return string 
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
      * Set mensagem
      *
      * @param string $mensagem
@@ -331,5 +308,28 @@ class Parcelas
     public function getIdpagamento()
     {
         return $this->idpagamento;
+    }
+
+    /**
+     * Set status
+     *
+     * @param \ChefeBundle\Entity\StatusParcela $status
+     * @return Parcelas
+     */
+    public function setStatus(\ChefeBundle\Entity\StatusParcela $status = null)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return \ChefeBundle\Entity\StatusParcela 
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }

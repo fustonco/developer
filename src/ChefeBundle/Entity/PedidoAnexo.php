@@ -20,14 +20,14 @@ class PedidoAnexo
     private $id;
 
     /**
-     * @var \ChefeBundle\Entity\Pedido
-     */
-    private $idpedido;
-
-    /**
      * @var \ChefeBundle\Entity\Anexo
      */
     private $idanexo;
+
+    /**
+     * @var \ChefeBundle\Entity\Pedido
+     */
+    private $idpedido;
 
 
     /**
@@ -64,29 +64,6 @@ class PedidoAnexo
     }
 
     /**
-     * Set idpedido
-     *
-     * @param \ChefeBundle\Entity\Pedido $idpedido
-     * @return PedidoAnexo
-     */
-    public function setIdpedido(\ChefeBundle\Entity\Pedido $idpedido = null)
-    {
-        $this->idpedido = $idpedido;
-
-        return $this;
-    }
-
-    /**
-     * Get idpedido
-     *
-     * @return \ChefeBundle\Entity\Pedido 
-     */
-    public function getIdpedido()
-    {
-        return $this->idpedido;
-    }
-
-    /**
      * Set idanexo
      *
      * @param \ChefeBundle\Entity\Anexo $idanexo
@@ -107,5 +84,28 @@ class PedidoAnexo
     public function getIdanexo()
     {
         return $this->idanexo;
+    }
+
+    /**
+     * Set idpedido
+     *
+     * @param \ChefeBundle\Entity\Pedido $idpedido
+     * @return PedidoAnexo
+     */
+    public function setIdpedido(\ChefeBundle\Entity\Pedido $idpedido = null)
+    {
+        $this->idpedido = $idpedido;
+
+        return $this;
+    }
+
+    /**
+     * Get idpedido
+     *
+     * @return \ChefeBundle\Entity\Pedido 
+     */
+    public function getIdpedido()
+    {
+        return $this->idpedido;
     }
 }

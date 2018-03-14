@@ -1,18 +1,23 @@
 <?php
 
-namespace ChefeBundle\Entity;
+namespace MasterBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TipoPessoa
+ * StatusParcela
  */
-class TipoPessoa
+class StatusParcela
 {
     /**
      * @var string
      */
     private $nome;
+
+    /**
+     * @var string
+     */
+    private $descricao;
 
     /**
      * @var string
@@ -29,7 +34,7 @@ class TipoPessoa
      * Set nome
      *
      * @param string $nome
-     * @return TipoPessoa
+     * @return StatusParcela
      */
     public function setNome($nome)
     {
@@ -49,10 +54,33 @@ class TipoPessoa
     }
 
     /**
+     * Set descricao
+     *
+     * @param string $descricao
+     * @return StatusParcela
+     */
+    public function setDescricao($descricao)
+    {
+        $this->descricao = $descricao;
+
+        return $this;
+    }
+
+    /**
+     * Get descricao
+     *
+     * @return string 
+     */
+    public function getDescricao()
+    {
+        return $this->descricao;
+    }
+
+    /**
      * Set ativo
      *
      * @param string $ativo
-     * @return TipoPessoa
+     * @return StatusParcela
      */
     public function setAtivo($ativo)
     {

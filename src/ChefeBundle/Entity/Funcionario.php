@@ -50,14 +50,14 @@ class Funcionario
     private $id;
 
     /**
-     * @var \ChefeBundle\Entity\TipoUsuario
-     */
-    private $idtipo;
-
-    /**
      * @var \ChefeBundle\Entity\Departamento
      */
     private $iddepartamento;
+
+    /**
+     * @var \ChefeBundle\Entity\TipoUsuario
+     */
+    private $idtipo;
 
 
     /**
@@ -232,29 +232,6 @@ class Funcionario
     }
 
     /**
-     * Set idtipo
-     *
-     * @param \ChefeBundle\Entity\TipoUsuario $idtipo
-     * @return Funcionario
-     */
-    public function setIdtipo(\ChefeBundle\Entity\TipoUsuario $idtipo = null)
-    {
-        $this->idtipo = $idtipo;
-
-        return $this;
-    }
-
-    /**
-     * Get idtipo
-     *
-     * @return \ChefeBundle\Entity\TipoUsuario 
-     */
-    public function getIdtipo()
-    {
-        return $this->idtipo;
-    }
-
-    /**
      * Set iddepartamento
      *
      * @param \ChefeBundle\Entity\Departamento $iddepartamento
@@ -275,5 +252,28 @@ class Funcionario
     public function getIddepartamento()
     {
         return $this->iddepartamento;
+    }
+
+    /**
+     * Set idtipo
+     *
+     * @param \ChefeBundle\Entity\TipoUsuario $idtipo
+     * @return Funcionario
+     */
+    public function setIdtipo(\ChefeBundle\Entity\TipoUsuario $idtipo = null)
+    {
+        $this->idtipo = $idtipo;
+
+        return $this;
+    }
+
+    /**
+     * Get idtipo
+     *
+     * @return \ChefeBundle\Entity\TipoUsuario 
+     */
+    public function getIdtipo()
+    {
+        return $this->idtipo;
     }
 }

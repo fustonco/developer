@@ -5,9 +5,9 @@ namespace ChefeBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TipoConta
+ * StatusParcela
  */
-class TipoConta
+class StatusParcela
 {
     /**
      * @var string
@@ -17,7 +17,12 @@ class TipoConta
     /**
      * @var string
      */
-    private $status;
+    private $descricao;
+
+    /**
+     * @var string
+     */
+    private $ativo;
 
     /**
      * @var integer
@@ -29,7 +34,7 @@ class TipoConta
      * Set nome
      *
      * @param string $nome
-     * @return TipoConta
+     * @return StatusParcela
      */
     public function setNome($nome)
     {
@@ -49,26 +54,49 @@ class TipoConta
     }
 
     /**
-     * Set status
+     * Set descricao
      *
-     * @param string $status
-     * @return TipoConta
+     * @param string $descricao
+     * @return StatusParcela
      */
-    public function setStatus($status)
+    public function setDescricao($descricao)
     {
-        $this->status = $status;
+        $this->descricao = $descricao;
 
         return $this;
     }
 
     /**
-     * Get status
+     * Get descricao
      *
      * @return string 
      */
-    public function getStatus()
+    public function getDescricao()
     {
-        return $this->status;
+        return $this->descricao;
+    }
+
+    /**
+     * Set ativo
+     *
+     * @param string $ativo
+     * @return StatusParcela
+     */
+    public function setAtivo($ativo)
+    {
+        $this->ativo = $ativo;
+
+        return $this;
+    }
+
+    /**
+     * Get ativo
+     *
+     * @return string 
+     */
+    public function getAtivo()
+    {
+        return $this->ativo;
     }
 
     /**

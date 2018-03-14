@@ -45,6 +45,11 @@ class Pedido
     private $idfornecedor;
 
     /**
+     * @var \FinanceiroBundle\Entity\Funcionario
+     */
+    private $criadoPor;
+
+    /**
      * @var \FinanceiroBundle\Entity\StatusPedido
      */
     private $status;
@@ -201,6 +206,29 @@ class Pedido
     public function getIdfornecedor()
     {
         return $this->idfornecedor;
+    }
+
+    /**
+     * Set criadoPor
+     *
+     * @param \FinanceiroBundle\Entity\Funcionario $criadoPor
+     * @return Pedido
+     */
+    public function setCriadoPor(\FinanceiroBundle\Entity\Funcionario $criadoPor = null)
+    {
+        $this->criadoPor = $criadoPor;
+
+        return $this;
+    }
+
+    /**
+     * Get criadoPor
+     *
+     * @return \FinanceiroBundle\Entity\Funcionario 
+     */
+    public function getCriadoPor()
+    {
+        return $this->criadoPor;
     }
 
     /**

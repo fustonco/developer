@@ -20,24 +20,24 @@ class Pagamento
     private $parcelado;
 
     /**
-     * @var string
-     */
-    private $statusPag;
-
-    /**
      * @var integer
      */
     private $id;
 
     /**
-     * @var \ChefeBundle\Entity\TipoPagamento
+     * @var \ChefeBundle\Entity\StatusPagamento
      */
-    private $idtipo;
+    private $idstatus;
 
     /**
      * @var \ChefeBundle\Entity\Pedido
      */
     private $idpedido;
+
+    /**
+     * @var \ChefeBundle\Entity\TipoPagamento
+     */
+    private $idtipo;
 
 
     /**
@@ -87,29 +87,6 @@ class Pagamento
     }
 
     /**
-     * Set statusPag
-     *
-     * @param string $statusPag
-     * @return Pagamento
-     */
-    public function setStatusPag($statusPag)
-    {
-        $this->statusPag = $statusPag;
-
-        return $this;
-    }
-
-    /**
-     * Get statusPag
-     *
-     * @return string 
-     */
-    public function getStatusPag()
-    {
-        return $this->statusPag;
-    }
-
-    /**
      * Get id
      *
      * @return integer 
@@ -120,26 +97,26 @@ class Pagamento
     }
 
     /**
-     * Set idtipo
+     * Set idstatus
      *
-     * @param \ChefeBundle\Entity\TipoPagamento $idtipo
+     * @param \ChefeBundle\Entity\StatusPagamento $idstatus
      * @return Pagamento
      */
-    public function setIdtipo(\ChefeBundle\Entity\TipoPagamento $idtipo = null)
+    public function setIdstatus(\ChefeBundle\Entity\StatusPagamento $idstatus = null)
     {
-        $this->idtipo = $idtipo;
+        $this->idstatus = $idstatus;
 
         return $this;
     }
 
     /**
-     * Get idtipo
+     * Get idstatus
      *
-     * @return \ChefeBundle\Entity\TipoPagamento 
+     * @return \ChefeBundle\Entity\StatusPagamento 
      */
-    public function getIdtipo()
+    public function getIdstatus()
     {
-        return $this->idtipo;
+        return $this->idstatus;
     }
 
     /**
@@ -163,5 +140,28 @@ class Pagamento
     public function getIdpedido()
     {
         return $this->idpedido;
+    }
+
+    /**
+     * Set idtipo
+     *
+     * @param \ChefeBundle\Entity\TipoPagamento $idtipo
+     * @return Pagamento
+     */
+    public function setIdtipo(\ChefeBundle\Entity\TipoPagamento $idtipo = null)
+    {
+        $this->idtipo = $idtipo;
+
+        return $this;
+    }
+
+    /**
+     * Get idtipo
+     *
+     * @return \ChefeBundle\Entity\TipoPagamento 
+     */
+    public function getIdtipo()
+    {
+        return $this->idtipo;
     }
 }

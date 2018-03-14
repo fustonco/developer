@@ -25,19 +25,9 @@ class Historico
     private $id;
 
     /**
-     * @var \ChefeBundle\Entity\Pedido
-     */
-    private $idpedido;
-
-    /**
      * @var \ChefeBundle\Entity\Funcionario
      */
-    private $idpara;
-
-    /**
-     * @var \ChefeBundle\Entity\TipoHistorico
-     */
-    private $tipoHistorico;
+    private $idde;
 
     /**
      * @var \ChefeBundle\Entity\Mensagem
@@ -45,9 +35,19 @@ class Historico
     private $idmensagem;
 
     /**
+     * @var \ChefeBundle\Entity\TipoHistorico
+     */
+    private $tipoHistorico;
+
+    /**
      * @var \ChefeBundle\Entity\Funcionario
      */
-    private $idde;
+    private $idpara;
+
+    /**
+     * @var \ChefeBundle\Entity\Pedido
+     */
+    private $idpedido;
 
 
     /**
@@ -107,72 +107,26 @@ class Historico
     }
 
     /**
-     * Set idpedido
+     * Set idde
      *
-     * @param \ChefeBundle\Entity\Pedido $idpedido
+     * @param \ChefeBundle\Entity\Funcionario $idde
      * @return Historico
      */
-    public function setIdpedido(\ChefeBundle\Entity\Pedido $idpedido = null)
+    public function setIdde(\ChefeBundle\Entity\Funcionario $idde = null)
     {
-        $this->idpedido = $idpedido;
+        $this->idde = $idde;
 
         return $this;
     }
 
     /**
-     * Get idpedido
-     *
-     * @return \ChefeBundle\Entity\Pedido 
-     */
-    public function getIdpedido()
-    {
-        return $this->idpedido;
-    }
-
-    /**
-     * Set idpara
-     *
-     * @param \ChefeBundle\Entity\Funcionario $idpara
-     * @return Historico
-     */
-    public function setIdpara(\ChefeBundle\Entity\Funcionario $idpara = null)
-    {
-        $this->idpara = $idpara;
-
-        return $this;
-    }
-
-    /**
-     * Get idpara
+     * Get idde
      *
      * @return \ChefeBundle\Entity\Funcionario 
      */
-    public function getIdpara()
+    public function getIdde()
     {
-        return $this->idpara;
-    }
-
-    /**
-     * Set tipoHistorico
-     *
-     * @param \ChefeBundle\Entity\TipoHistorico $tipoHistorico
-     * @return Historico
-     */
-    public function setTipoHistorico(\ChefeBundle\Entity\TipoHistorico $tipoHistorico = null)
-    {
-        $this->tipoHistorico = $tipoHistorico;
-
-        return $this;
-    }
-
-    /**
-     * Get tipoHistorico
-     *
-     * @return \ChefeBundle\Entity\TipoHistorico 
-     */
-    public function getTipoHistorico()
-    {
-        return $this->tipoHistorico;
+        return $this->idde;
     }
 
     /**
@@ -199,25 +153,71 @@ class Historico
     }
 
     /**
-     * Set idde
+     * Set tipoHistorico
      *
-     * @param \ChefeBundle\Entity\Funcionario $idde
+     * @param \ChefeBundle\Entity\TipoHistorico $tipoHistorico
      * @return Historico
      */
-    public function setIdde(\ChefeBundle\Entity\Funcionario $idde = null)
+    public function setTipoHistorico(\ChefeBundle\Entity\TipoHistorico $tipoHistorico = null)
     {
-        $this->idde = $idde;
+        $this->tipoHistorico = $tipoHistorico;
 
         return $this;
     }
 
     /**
-     * Get idde
+     * Get tipoHistorico
+     *
+     * @return \ChefeBundle\Entity\TipoHistorico 
+     */
+    public function getTipoHistorico()
+    {
+        return $this->tipoHistorico;
+    }
+
+    /**
+     * Set idpara
+     *
+     * @param \ChefeBundle\Entity\Funcionario $idpara
+     * @return Historico
+     */
+    public function setIdpara(\ChefeBundle\Entity\Funcionario $idpara = null)
+    {
+        $this->idpara = $idpara;
+
+        return $this;
+    }
+
+    /**
+     * Get idpara
      *
      * @return \ChefeBundle\Entity\Funcionario 
      */
-    public function getIdde()
+    public function getIdpara()
     {
-        return $this->idde;
+        return $this->idpara;
+    }
+
+    /**
+     * Set idpedido
+     *
+     * @param \ChefeBundle\Entity\Pedido $idpedido
+     * @return Historico
+     */
+    public function setIdpedido(\ChefeBundle\Entity\Pedido $idpedido = null)
+    {
+        $this->idpedido = $idpedido;
+
+        return $this;
+    }
+
+    /**
+     * Get idpedido
+     *
+     * @return \ChefeBundle\Entity\Pedido 
+     */
+    public function getIdpedido()
+    {
+        return $this->idpedido;
     }
 }

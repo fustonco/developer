@@ -276,4 +276,32 @@ class Pedido
     {
         return $this->idfornecedor;
     }
+    /**
+     * @var \MasterBundle\Entity\Funcionario
+     */
+    private $criadoPor;
+
+
+    /**
+     * Set criadoPor
+     *
+     * @param \MasterBundle\Entity\Funcionario $criadoPor
+     * @return Pedido
+     */
+    public function setCriadoPor(\MasterBundle\Entity\Funcionario $criadoPor = null)
+    {
+        $this->criadoPor = $criadoPor;
+
+        return $this;
+    }
+
+    /**
+     * Get criadoPor
+     *
+     * @return \MasterBundle\Entity\Funcionario 
+     */
+    public function getCriadoPor()
+    {
+        return $this->criadoPor;
+    }
 }
