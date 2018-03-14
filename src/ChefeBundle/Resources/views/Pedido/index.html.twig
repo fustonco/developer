@@ -199,8 +199,24 @@ $('.btn-ver').click(function(e) {
                     },
                     error: function(data) {
                         ajaxForm = null;
-                        console.error('erro', data.description);
-                        swal.close();
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
                     }
                 });
             }
