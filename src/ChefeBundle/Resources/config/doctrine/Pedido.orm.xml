@@ -11,7 +11,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="codigo" type="string" column="codigo" length="10" nullable="true"/>
-    <field name="dataPedido" type="date" column="data_pedido" nullable="false"/>
+    <field name="dataPedido" type="datetime" column="data_pedido" nullable="false"/>
     <field name="valor" type="string" column="valor" length="45" nullable="false"/>
     <field name="descricao" type="string" column="descricao" length="255" nullable="true"/>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
