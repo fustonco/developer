@@ -467,7 +467,8 @@ class PedidoController extends Controller
             $pedido->setAtivo('S');
             $status_pedido = $em->getRepository('ChefeBundle:StatusPedido')->findOneById(1);
             $pedido->setStatus($status_pedido);
-            $pedido->setCriadoPor($this->getUser());
+            $criador = $em->getRepository('FuncionarioBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $pedido->setCriadoPor($criador);
             $em->persist($pedido);
             $em->flush();
 
