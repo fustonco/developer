@@ -12,6 +12,7 @@ use ChefeBundle\Entity\Pedido;
 use ChefeBundle\Entity\Historico;
 use ChefeBundle\Entity\Pagamento;
 use ChefeBundle\Entity\Parcelas;
+use ChefeBundle\Entity\Mensagem;
 use ChefeBundle\Form\PedidoType;
 
 /**
@@ -37,11 +38,12 @@ class PedidoController extends Controller
         SELECT f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
-        INNER JOIN historico h ON h.idPedido = p.id
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         WHERE p.criado_por = :criado_por
-        ORDER BY h.id DESC
+        ORDER BY p.id DESC
         ");
         $entities->bindValue("criado_por", $this->getUser()->getId());
         $entities->execute();
@@ -68,14 +70,12 @@ class PedidoController extends Controller
         SELECT f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
-        INNER JOIN historico h ON h.idPedido = p.id
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
-        WHERE h.idPara = :para
-        AND p.criado_por != :criado_por
-        ORDER BY h.id DESC
+        ORDER BY p.id DESC;
         ");
-        $entities->bindValue("criado_por", $this->getUser()->getId());
         $entities->bindValue("para", $this->getUser()->getId());
         $entities->execute();
         $entities = $entities->fetchAll();
@@ -149,7 +149,7 @@ class PedidoController extends Controller
             $historico = $historico->fetchAll();
             if(!$historico){throw new \Exception("error_historico");}
             for($i = 0; $i < count($historico); $i++) {
-                $entities = $em->getConnection()->prepare("DELETE FROM mensagem WHERE id = ".$historico[$i]["id"]);
+                $entities = $em->getConnection()->prepare("DELETE FROM mensagem WHERE id = ".$historico[$i]["idMensagem"]);
                 $entities->execute();
             }
             $entities = $em->getConnection()->prepare("DELETE FROM historico WHERE idPedido = ".$request->get('id'));
@@ -431,6 +431,130 @@ class PedidoController extends Controller
         } catch (Exception $e) {
             return new Response(json_encode([
                 'description' => 'Não foi possivel encontrar um fornecedor com esse CNPJ!'
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/contestar/")
+     */
+    public function contestarPedidoAction(Request $request)
+    {
+        $hoje = date_create();
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+
+            if(!$request->get('id')) {throw new \Exception('error_id');}
+            if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
+
+            $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
+                'idpedido' => $request->get('id')
+            ],[
+                'id' => 'DESC'
+            ]);
+
+            $mensagem = new Mensagem();
+            $mensagem->setMensagem($request->get('mensagem'));
+            $em->persist($mensagem);
+            $em->flush();
+
+            $historico = new Historico();
+            $historico->setCodigo($old_historico->getCodigo());
+            $historico->setIdpedido($old_historico->getIdpedido());
+            $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $historico->setIdde($de);
+            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($old_historico->getIdde());
+            $historico->setIdpara($para);
+            $historico->setDataPassagem($hoje);
+            $historico->setIdmensagem($mensagem);
+            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(2);
+            $historico->setTipoHistorico($tipohistorico);
+            $em->persist($historico);
+            $em->flush();
+
+            $em->getConnection()->commit();
+            return new Response(json_encode([
+                'description' => 'Pedido contestado com sucesso!'
+            ]), 200);
+        } catch(\Exception $e) {
+            $em->getConnection()->rollBack();
+            switch($e->getMessage()) {
+                case 'error_id':
+                    return new Response(json_encode([
+                        'description' => 'Id incorreto'
+                    ]), 500);
+                break;
+                case 'error_mensagem':
+                    return new Response(json_encode([
+                        'description' => 'Mensagem incorreta!'
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                'description' => 'Não foi possivel contestar o Pedido!'
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/encaminhar/")
+     */
+    public function encaminharPedidoAction(Request $request)
+    {
+        $hoje = date_create();
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+
+            if(!$request->get('id')) {throw new \Exception('error_id');}
+            if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
+
+            $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
+                'Idpedido' => $request->get('id')
+            ],[
+                'id' => 'DESC'
+            ]);
+
+            $mensagem = new Mensagem();
+            $mensagem->setMensagem($request->get('mensagem'));
+            $em->persist($mensagem);
+            $em->flush();
+
+            $historico = new Historico();
+            $historico->setCodigo($old_historico->getCodigo());
+            $historico->setIdpedido($old_historico->getIdpedido());
+            $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $historico->setIdde($de);
+            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($old_historico->getIdde());
+            $historico->setIdpara($para);
+            $historico->setDataPassagem($hoje);
+            $historico->setIdmensagem($mensagem);
+            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(1);
+            $historico->setTipoHistorico($tipohistorico);
+            $em->persist($historico);
+            $em->flush();
+
+            $em->getConnection()->commit();
+            return new Response(json_encode([
+                'description' => 'Pedido encaminhado com sucesso!'
+            ]), 200);
+        } catch(\Exception $e) {
+            $em->getConnection()->rollBack();
+            switch($e->getMessage()) {
+                case 'error_id':
+                    return new Response(json_encode([
+                        'description' => 'Id incorreto'
+                    ]), 500);
+                break;
+                case 'error_mensagem':
+                    return new Response(json_encode([
+                        'description' => 'Mensagem incorreta!'
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                'description' => 'Não foi possivel encaminhado o Pedido!'
             ]), 500);
         }
     }

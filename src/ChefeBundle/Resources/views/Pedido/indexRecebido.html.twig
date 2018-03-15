@@ -18,9 +18,7 @@
                                     <th>Descricao</th> 
                                     <th>Status</th>
                                     <th>Encaminhado</th>
-                                    {# <th>Id</th> #}
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
+                                    <th>Operação</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -32,9 +30,12 @@
                                     <td>{{ entity.descricao }}</td>
                                     <td>{{ entity.status }}</td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{entity.funcionario}}">{{ entity.tipo_funcionario }}</span></td>
-                                    {# <td>{{ entity.id }}</td> #}
-                                    <td><a href="javascript:void(0);" class="btn-ver" data-id="{{ entity.id }}"><i class="material-icons">search</i></a></td>
-                                    <td>{% if entity.id_tipo_funcionario != 3 %}<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">close</i></a>{% endif %}</td>
+                                    <td>
+                                        <a href="javascript:void(0);" class="btn-ver" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
+                                        &nbsp;<a href="javascript:void(0);" class="btn-contestar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a>
+                                        &nbsp;<a href="javascript:void(0);" class="btn-confirmar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar">check</i></a>
+                                        {% if entity.id_tipo_funcionario != 3 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">close</i></a>{% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -137,6 +138,71 @@ $('.btn-show-historico').click(function(e) {
 });
 
 let ajaxForm;
+
+$('.btn-contestar').click(function(e) {
+    e.preventDefault();
+    let id = $(this).attr('data-id');
+    if(!ajaxForm) {
+        swal({
+            title: "Contestação",
+            text: "Escreva o motivo da contestação",
+            type: "input",
+            showCancelButton: true,
+            confirmButtonText: "Constestar",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            allowClickOutside: false,
+            animation: "slide-from-top",
+            inputPlaceholder: "Escreva o motivo aqui",
+            showLoaderOnConfirm: true
+        }, function (inputValue) {
+            if (inputValue === false) return false;
+            if (inputValue === "") {swal.showInputError("Você precisa escrever algo."); return false}
+            ajaxForm = $.ajax({
+                type: "POST",
+                url: '/chefe/pedido/contestar/',
+                data: {
+                    id: id,
+                    mensagem: inputValue
+                },
+                dataType: 'json',
+                success: function(data) {
+                    ajaxForm = null;
+                    console.log('success', data);
+                    swal({
+                        title: "Sucesso!",
+                        text: data.description,
+                        type: "success",
+                        allowClickOutside: false,
+                        allowEscapeKey: false
+                    });
+                },
+                error: function(data) {
+                    ajaxForm = null;
+                    console.error('erro', data);
+                    if(data.status == 404){
+                        swal({
+                            title: "Erro",
+                            text: 'Entre em contato com o suporte.',
+                            type: "error",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        });
+                    } else {
+                        swal({
+                            title: "Erro",
+                            text: data.responseJSON.description,
+                            type: "warning",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        });
+                    }
+                }
+            });
+        });
+    }
+});
+
 $('.btn-ver').click(function(e) {
     e.preventDefault();
     let id = $(this).attr('data-id');
