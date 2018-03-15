@@ -1,0 +1,356 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>Lista de Pedidos</h2>
+                </div>
+                <div class="body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover dataTable js-exportable">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Data Pedido</th>
+                                    <th>Valor</th>
+                                    <th>Descricao</th> 
+                                    <th>Status</th>
+                                    <th>Encaminhado</th>
+                                    <th>Operação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for entity in entities %}
+                                <tr>
+                                    <td>{{ entity.codigo }}</td>
+                                    <td>{% if entity.dataPedido %}{{ entity.dataPedido | date('d/m/Y H:i:s') }}{% endif %}</td>
+                                    <td>R$ {{ entity.valor | number_format(2, ',', '.') }}</td>
+                                    <td>{{ entity.descricao }}</td>
+                                    <td>{{ entity.status }}</td>
+                                    <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{entity.funcionario}}">{{ entity.tipo_funcionario }}</span></td>
+                                    <td>
+                                        <a href="javascript:void(0);" class="btn-ver" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
+                                        {% if entity.idFuncionario == app.user.id %}&nbsp;<a href="javascript:void(0);" class="btn-encaminhar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Encaminhar">send</i></a>{% endif %}
+                                        {% if entity.id_tipo_funcionario != 3 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">close</i></a>{% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="largeModalLabel">Pedido #<span id="idPedido"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-sm-4">
+                            <h6>Data do Pedido</h6>
+                            <p id="dataPedido"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Status do Pagamento</h6>
+                            <p id="statusPagamento"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Tipo de Pagamento</h6>
+                            <p id="tipoPagamento"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Valor do Pagamento</h6>
+                            <p id="valorPagamento"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Encaminhado</h6>
+                            <p id="encaminhadoPedido"></p>
+                        </div>
+                        <div class="col-sm-12">
+                            <h6>Descrição</h6>
+                            <p id="descricaoPedido"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect btn-show-historico">Histórico</button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+                <div class="modal-footer show-historico" style="text-align: left; height: 225px; overflow: auto; display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal" data-toggle="modal" data-target="#largeModal"></button>
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+
+$('[data-toggle="tooltip"]').tooltip({
+    container: 'body'
+});
+
+function formatDateStamp(timestamp) {
+    const date = new Date(timestamp * 1000);
+    const hours = date.getUTCHours();
+    const minutes = "0" + date.getUTCMinutes();
+    const seconds = "0" + date.getUTCSeconds();
+    const formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    const day = (date.getDate() < 10) ? '0'+date.getDate() : date.getDate();
+    const month = ((date.getMonth() + 1) < 10) ? ('0'+(date.getMonth() + 1)) : (date.getMonth() + 1);
+    const year = date.getFullYear();
+    const formattedDate = day + '/' + month + '/' + year;
+    return formattedDate + ' - ' + formattedTime;
+}
+
+function formatDate(newdate) {
+    const date = new Date(newdate);
+    const hours = date.getHours();
+    const minutes = "0" + date.getMinutes();
+    const seconds = "0" + date.getSeconds();
+    const formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    const day = (date.getDate() < 10) ? '0'+date.getDate() : date.getDate();
+    const month = ((date.getMonth() + 1) < 10) ? ('0'+(date.getMonth() + 1)) : (date.getMonth() + 1);
+    const year = date.getFullYear();
+    const formattedDate = day + '/' + month + '/' + year;
+    return formattedDate + ' - ' + formattedTime;
+}
+function formataDinheiro(n) {
+    return "R$ " + Number(n).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, "$1.");
+}
+
+$('.btn-show-historico').click(function(e) {
+    if($('.show-historico').is(':visible')){
+        $('.show-historico').hide();
+    } else {
+        $('.show-historico').show();
+    }
+});
+
+let ajaxForm;
+
+$('.btn-encaminhar').click(function(e) {
+    e.preventDefault();
+    let id = $(this).attr('data-id');
+    if(!ajaxForm) {
+        swal({
+            title: "Encaminhar",
+            text: "Escreva uma mensagem",
+            type: "input",
+            showCancelButton: true,
+            confirmButtonText: "Encaminhar",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            allowClickOutside: false,
+            animation: "slide-from-top",
+            inputPlaceholder: "Escreva a mensagem aqui",
+            showLoaderOnConfirm: true
+        }, function (inputValue) {
+            if (inputValue === false) return false;
+            if (inputValue === "") {swal.showInputError("Você precisa escrever algo."); return false}
+            ajaxForm = $.ajax({
+                type: "POST",
+                url: '/master/pedido/encaminhar/',
+                data: {
+                    id: id,
+                    mensagem: inputValue
+                },
+                dataType: 'json',
+                success: function(data) {
+                    ajaxForm = null;
+                    console.log('success', data);
+                    swal({
+                        title: "Sucesso!",
+                        text: data.description,
+                        type: "success",
+                        allowClickOutside: false,
+                        allowEscapeKey: false
+                    }, function(){
+                        window.location = '';
+                    });
+                },
+                error: function(data) {
+                    ajaxForm = null;
+                    console.error('erro', data);
+                    if(data.status == 404){
+                        swal({
+                            title: "Erro",
+                            text: 'Entre em contato com o suporte.',
+                            type: "error",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        });
+                    } else {
+                        swal({
+                            title: "Erro",
+                            text: data.responseJSON.description,
+                            type: "warning",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        });
+                    }
+                }
+            });
+        });
+    }
+});
+
+$('.btn-ver').click(function(e) {
+    e.preventDefault();
+    let id = $(this).attr('data-id');
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja realmente ver?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/master/pedido/ver/',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        historico = data.historico;
+                        data = data.pedido[0];
+                        console.log('success', data);
+                        console.log('success', historico);
+                        swal.close();
+                        $('#idPedido').html(data.id);
+                        $('#dataPedido').html(formatDate(data.data_pedido));
+                        $('#statusPagamento').html(data.status);
+                        let fornecedor = '';
+                        if(!data.fornecedor) {fornecedor = '';} else {fornecedor = data.fornecedor;}
+                        $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
+                        $('#valorPagamento').html(formataDinheiro(data.valor));
+                        $('#encaminhadoPedido').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+data.para+'">'+data.tipo_para+'</span>');
+                        $('#descricaoPedido').html(data.descricao);
+                        $('[data-toggle="tooltip"]').tooltip({container: 'body'});
+                        $('.show-historico').html('');
+                        for(let i = 0; i < historico.length; i++) {
+                            let mensagem = '';
+                            let oddClass = '';
+                            if ( historico[i].idmensagem ) { mensagem = historico[i].idmensagem.mensagem; }
+                            if ( i % 2 === 0 ) { oddClass = 'oddClass' }
+                            $('.show-historico').append(`
+                                <div class="row clearfix">
+                                    <div class="col-sm-12 `+oddClass+`">
+                                        <h6 style="text-align: right;">`+formatDateStamp(historico[i].dataPassagem.timestamp)+`</h6>
+                                        <h6>De: `+historico[i].idde.nome+` - Para: `+historico[i].idpara.nome+`</h6>
+                                        <h6>`+historico[i].tipoHistorico.nome+`</h6>
+                                        <p>`+mensagem+`</p>
+                                    </div>
+                                </div>
+                            `);
+                        }
+                        $('.btn-modal').trigger('click');
+                        // MODAL
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+$('.btn-excluir').click(function(e) {
+    e.preventDefault();
+    let id = $(this).attr('data-id');
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja realmente deletar?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/master/pedido/excluir/',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data);
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = '';
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
