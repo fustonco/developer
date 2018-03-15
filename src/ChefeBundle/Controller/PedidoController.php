@@ -439,6 +439,26 @@ class PedidoController extends Controller
     }
 
     /**
+     * @Route("/get/masters/")
+     */
+    public function getMastersAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            
+            $financeiros = $em->getConnection()->prepare("SELECT id idFuncionario, nome nomeFuncionario FROM funcionario WHERE idTipo = 5");
+            $financeiros->execute();
+            $financeiros = $financeiros->fetchAll();
+            
+            return new Response(json_encode($financeiros), 200);
+        } catch (\Exception $e) {
+            return new Response(json_encode([
+                'description' => 'Não foi possivel encontrar masters!'
+            ]), 500);
+        }
+    }
+
+    /**
      * @Route("/get/financeiros/")
      */
     public function getFinanceirosAction(Request $request)
@@ -590,7 +610,7 @@ class PedidoController extends Controller
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
-            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(3);
+            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(1);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
             $em->flush();

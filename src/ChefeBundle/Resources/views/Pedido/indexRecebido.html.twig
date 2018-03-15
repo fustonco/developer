@@ -33,7 +33,7 @@
                                     <td>
                                         <a href="javascript:void(0);" class="btn-ver" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
                                         &nbsp;<a href="javascript:void(0);" class="btn-contestar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a>
-                                        &nbsp;<a href="javascript:void(0);" class="btn-confirmar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar">check</i></a>
+                                        &nbsp;<a href="javascript:void(0);" class="btn-confirmar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar">send</i></a>
                                         {% if entity.id_tipo_funcionario != 3 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">close</i></a>{% endif %}
                                     </td>
                                 </tr>
@@ -211,7 +211,7 @@ $('.btn-confirmar').click(function(e) {
             if (isConfirm) {
             ajaxForm = $.ajax({
                 type: "POST",
-                url: '/chefe/pedido/get/financeiros/',
+                url: '/chefe/pedido/get/masters/',
                 data: {
                     id: id,
                 },
