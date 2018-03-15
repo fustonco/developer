@@ -179,12 +179,15 @@ class PedidoController extends Controller
             $historico->execute();
             $historico = $historico->fetchAll();
             if(!$historico){throw new \Exception("error_historico");}
-            for($i = 0; $i < count($historico); $i++) {
-                $entities = $em->getConnection()->prepare("DELETE FROM mensagem WHERE id = ".$historico[$i]["idMensagem"]);
-                $entities->execute();
-            }
             $entities = $em->getConnection()->prepare("DELETE FROM historico WHERE idPedido = ".$request->get('id'));
             $entities->execute();
+
+            for($i = 0; $i < count($historico); $i++) {
+                if($historico[$i]["idMensagem"]) {
+                    $entities = $em->getConnection()->prepare("DELETE FROM mensagem WHERE id = ".$historico[$i]["idMensagem"]);
+                    $entities->execute();
+                }
+            }
 
             $entities = $em->getConnection()->prepare("DELETE FROM pedido WHERE id = ".$request->get('id'));
             $entities->execute();

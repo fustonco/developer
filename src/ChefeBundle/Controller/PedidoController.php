@@ -117,7 +117,7 @@ class PedidoController extends Controller
                 'pedido' => $pedido,
                 'historico' => json_decode($historico)
             ]), 200);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             return new Response(json_encode([
                 "description" => "Erro ao Ver Pedido!"
             ]), 500);
@@ -148,12 +148,15 @@ class PedidoController extends Controller
             $historico->execute();
             $historico = $historico->fetchAll();
             if(!$historico){throw new \Exception("error_historico");}
-            for($i = 0; $i < count($historico); $i++) {
-                $entities = $em->getConnection()->prepare("DELETE FROM mensagem WHERE id = ".$historico[$i]["idMensagem"]);
-                $entities->execute();
-            }
             $entities = $em->getConnection()->prepare("DELETE FROM historico WHERE idPedido = ".$request->get('id'));
             $entities->execute();
+
+            for($i = 0; $i < count($historico); $i++) {
+                if($historico[$i]["idMensagem"]) {
+                    $entities = $em->getConnection()->prepare("DELETE FROM mensagem WHERE id = ".$historico[$i]["idMensagem"]);
+                    $entities->execute();
+                }
+            }
 
             $entities = $em->getConnection()->prepare("DELETE FROM pedido WHERE id = ".$request->get('id'));
             $entities->execute();
@@ -428,9 +431,59 @@ class PedidoController extends Controller
             return new Response(json_encode([
                 'description' => json_decode($fornecedores)
             ]), 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return new Response(json_encode([
                 'description' => 'Não foi possivel encontrar um fornecedor com esse CNPJ!'
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/get/financeiros/")
+     */
+    public function getFinanceirosAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            
+            $financeiros = $em->getConnection()->prepare("SELECT id idFuncionario, nome nomeFuncionario FROM funcionario WHERE idTipo = 3");
+            $financeiros->execute();
+            $financeiros = $financeiros->fetchAll();
+            
+            return new Response(json_encode($financeiros), 200);
+        } catch (\Exception $e) {
+            return new Response(json_encode([
+                'description' => 'Não foi possivel encontrar financeiros!'
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/get/affecteds/")
+     */
+    public function getAffectedsPedidoAction(Request $request)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            if(!$request->get('id')) {throw new \Exception('error_id');}
+
+            $afetados = $em->getConnection()->prepare("
+            SELECT DISTINCT f.nome nomeFuncionario, f.id idFuncionario
+            FROM pedido p
+            INNER JOIN historico h ON h.idPedido = p.id
+            INNER JOIN funcionario f ON f.id = h.idDe
+            WHERE p.id = :pedido
+            AND h.idDe != :eumesmo
+            ");
+            $afetados->bindValue("pedido", $request->get('id'));
+            $afetados->bindValue("eumesmo", $this->getUser()->getId());
+            $afetados->execute();
+            $afetados = $afetados->fetchAll();
+            
+            return new Response(json_encode($afetados), 200);
+        } catch(\Exception $e) {
+            return new Response(json_encode([
+                'description' => 'Erro ao pegar afetados'
             ]), 500);
         }
     }
@@ -447,6 +500,7 @@ class PedidoController extends Controller
 
             if(!$request->get('id')) {throw new \Exception('error_id');}
             if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
+            if(!$request->get('para')) {throw new \Exception('error_para');}
 
             $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
                 'idpedido' => $request->get('id')
@@ -464,7 +518,7 @@ class PedidoController extends Controller
             $historico->setIdpedido($old_historico->getIdpedido());
             $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
-            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($old_historico->getIdde());
+            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($request->get('para'));
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
@@ -482,17 +536,90 @@ class PedidoController extends Controller
             switch($e->getMessage()) {
                 case 'error_id':
                     return new Response(json_encode([
-                        'description' => 'Id incorreto'
+                        'description' => 'ID incorreto'
                     ]), 500);
                 break;
                 case 'error_mensagem':
                     return new Response(json_encode([
-                        'description' => 'Mensagem incorreta!'
+                        'description' => 'É necessario ter uma mensagem!'
+                    ]), 500);
+                break;
+                case 'error_para':
+                    return new Response(json_encode([
+                        'description' => 'Precisa escolher para quem enviar!'
                     ]), 500);
                 break;
             }
             return new Response(json_encode([
                 'description' => 'Não foi possivel contestar o Pedido!'
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/confirmar/")
+     */
+    public function confirmarPedidoAction(Request $request)
+    {
+        $hoje = date_create();
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+
+            if(!$request->get('id')) {throw new \Exception('error_id');}
+            if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
+            if(!$request->get('para')) {throw new \Exception('error_para');}
+
+            $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
+                'idpedido' => $request->get('id')
+            ],[
+                'id' => 'DESC'
+            ]);
+
+            $mensagem = new Mensagem();
+            $mensagem->setMensagem($request->get('mensagem'));
+            $em->persist($mensagem);
+            $em->flush();
+
+            $historico = new Historico();
+            $historico->setCodigo($old_historico->getCodigo());
+            $historico->setIdpedido($old_historico->getIdpedido());
+            $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $historico->setIdde($de);
+            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($request->get('para'));
+            $historico->setIdpara($para);
+            $historico->setDataPassagem($hoje);
+            $historico->setIdmensagem($mensagem);
+            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(3);
+            $historico->setTipoHistorico($tipohistorico);
+            $em->persist($historico);
+            $em->flush();
+
+            $em->getConnection()->commit();
+            return new Response(json_encode([
+                'description' => 'Pedido confirmado com sucesso!'
+            ]), 200);
+        } catch(\Exception $e) {
+            $em->getConnection()->rollBack();
+            switch($e->getMessage()) {
+                case 'error_id':
+                    return new Response(json_encode([
+                        'description' => 'ID incorreto'
+                    ]), 500);
+                break;
+                case 'error_mensagem':
+                    return new Response(json_encode([
+                        'description' => 'É necessario ter uma mensagem!'
+                    ]), 500);
+                break;
+                case 'error_para':
+                    return new Response(json_encode([
+                        'description' => 'Precisa escolher para quem enviar!'
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                'description' => 'Não foi possivel confirmar o Pedido!'
             ]), 500);
         }
     }
@@ -645,7 +772,7 @@ class PedidoController extends Controller
             return new Response(json_encode([
                 'description' => 'Pedido cadastrado com sucesso!'
             ]), 200);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             $em->getConnection()->rollBack();
             switch($e->getMessage()) {
                 case 'error_tipopedido':

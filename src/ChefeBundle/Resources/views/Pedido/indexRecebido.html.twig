@@ -91,6 +91,59 @@
     </div>
     <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal" data-toggle="modal" data-target="#largeModal"></button>
 
+    <div class="modal fade" id="contestacaoModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="largeModalLabel">Contestar</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <h6>Mensagem</h6>
+                            <textarea rows="5" id="mensagem-text" style="width: 100%; resize: none;"></textarea>
+                        </div>
+                        <div class="col-sm-12">
+                            <h6>Enviar para</h6>
+                            <div class="input-field select-para-create"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect btn-contestar-confirm">Contestar</button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-contestar" data-toggle="modal" data-target="#contestacaoModal"></button>
+
+    <div class="modal fade" id="confirmarModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="largeModalLabel">Contestar</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <h6>Mensagem</h6>
+                            <textarea rows="5" id="mensagem-text-financeiro" style="width: 100%; resize: none;"></textarea>
+                        </div>
+                        <div class="col-sm-12">
+                            <h6>Enviar para</h6>
+                            <div class="input-field select-para-financeiro-create"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect btn-confirmar-confirm">Contestar</button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-confirmar" data-toggle="modal" data-target="#confirmarModal"></button>
 {% endblock %}
 
 {% block javascripts %}
@@ -139,66 +192,240 @@ $('.btn-show-historico').click(function(e) {
 
 let ajaxForm;
 
-$('.btn-contestar').click(function(e) {
+$('.btn-confirmar').click(function(e) {
     e.preventDefault();
     let id = $(this).attr('data-id');
+
     if(!ajaxForm) {
         swal({
-            title: "Contestação",
-            text: "Escreva o motivo da contestação",
-            type: "input",
+            title: "Atenção",
+            text: "Deseja abrir confirmar?",
+            type: "warning",
             showCancelButton: true,
-            confirmButtonText: "Constestar",
+            confirmButtonText: "Sim!",
             cancelButtonText: "Cancelar",
             closeOnConfirm: false,
-            allowClickOutside: false,
-            animation: "slide-from-top",
-            inputPlaceholder: "Escreva o motivo aqui",
-            showLoaderOnConfirm: true
-        }, function (inputValue) {
-            if (inputValue === false) return false;
-            if (inputValue === "") {swal.showInputError("Você precisa escrever algo."); return false}
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
             ajaxForm = $.ajax({
                 type: "POST",
-                url: '/chefe/pedido/contestar/',
+                url: '/chefe/pedido/get/financeiros/',
                 data: {
                     id: id,
-                    mensagem: inputValue
                 },
                 dataType: 'json',
                 success: function(data) {
                     ajaxForm = null;
-                    console.log('success', data);
-                    swal({
-                        title: "Sucesso!",
-                        text: data.description,
-                        type: "success",
-                        allowClickOutside: false,
-                        allowEscapeKey: false
+                    let str = '';
+                    for(let i = 0; i < data.length; i++) {
+                        str += '<option value="'+data[i].idFuncionario+'">'+data[i].nomeFuncionario+'</option>';
+                    }
+                    $('.select-para-financeiro-create').html('');
+                    $('.select-para-financeiro-create').append(`
+                        <select class="form-control show-tick select-para-financeiro" name="para" id="para" required aria-required="true">
+                        <option value="" selected disabled>-- Selecione --</option>
+                        `+str+`
+                        </select>
+                    `);
+                    $('.btn-modal-confirmar').trigger('click');
+                    swal.close();
+
+                    $('.btn-confirmar-confirm').click(function(e) {
+                        e.preventDefault();
+                        let para = $('.select-para-financeiro').val();
+                        let mensagem = $('#mensagem-text-financeiro').val();
+                        if(!ajaxForm) {
+                            swal({
+                                title: "Confirmação",
+                                text: "Deseja realmente confirmar?",
+                                type: "warning",
+                                showCancelButton: true,
+                                confirmButtonText: "Confirmar",
+                                cancelButtonText: "Cancelar",
+                                closeOnConfirm: false,
+                                allowClickOutside: false,
+                                animation: "slide-from-top",
+                                inputPlaceholder: "Escreva a mensagem aqui",
+                                showLoaderOnConfirm: true
+                            }, function (inputValue) {
+                                if(inputValue) {
+                                    ajaxForm = $.ajax({
+                                        type: "POST",
+                                        url: '/chefe/pedido/confirmar/',
+                                        data: {
+                                            id: id,
+                                            para: para,
+                                            mensagem: mensagem
+                                        },
+                                        dataType: 'json',
+                                        success: function(data) {
+                                            ajaxForm = null;
+                                            console.log('success', data);
+                                            swal({
+                                                title: "Sucesso!",
+                                                text: data.description,
+                                                type: "success",
+                                                allowClickOutside: false,
+                                                allowEscapeKey: false
+                                            }, function(){
+                                                window.location = '';
+                                            });
+                                        },
+                                        error: function(data) {
+                                            ajaxForm = null;
+                                            console.error('erro', data);
+                                            if(data.status == 404){
+                                                swal({
+                                                    title: "Erro",
+                                                    text: 'Entre em contato com o suporte.',
+                                                    type: "error",
+                                                    allowClickOutside: false,
+                                                    allowEscapeKey: false
+                                                });
+                                            } else {
+                                                swal({
+                                                    title: "Erro",
+                                                    text: data.responseJSON.description,
+                                                    type: "warning",
+                                                    allowClickOutside: false,
+                                                    allowEscapeKey: false
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     });
+
                 },
                 error: function(data) {
                     ajaxForm = null;
-                    console.error('erro', data);
-                    if(data.status == 404){
-                        swal({
-                            title: "Erro",
-                            text: 'Entre em contato com o suporte.',
-                            type: "error",
-                            allowClickOutside: false,
-                            allowEscapeKey: false
-                        });
-                    } else {
-                        swal({
-                            title: "Erro",
-                            text: data.responseJSON.description,
-                            type: "warning",
-                            allowClickOutside: false,
-                            allowEscapeKey: false
-                        });
-                    }
+                    console.error('erroAffecteds', data);
                 }
             });
+            }
+        });
+    }
+});
+
+$('.btn-contestar').click(function(e) {
+    e.preventDefault();
+    let id = $(this).attr('data-id');
+
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja abrir contestar?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+            ajaxForm = $.ajax({
+                type: "POST",
+                url: '/chefe/pedido/get/affecteds/',
+                data: {
+                    id: id,
+                },
+                dataType: 'json',
+                success: function(data) {
+                    ajaxForm = null;
+                    let str = '';
+                    for(let i = 0; i < data.length; i++) {
+                        str += '<option value="'+data[i].idFuncionario+'">'+data[i].nomeFuncionario+'</option>';
+                    }
+                    $('.select-para-create').html('');
+                    $('.select-para-create').append(`
+                        <select class="form-control show-tick select-para" name="para" id="para" required aria-required="true">
+                        <option value="" selected disabled>-- Selecione --</option>
+                        `+str+`
+                        </select>
+                    `);
+                    $('.btn-modal-contestar').trigger('click');
+                    swal.close();
+
+                    $('.btn-contestar-confirm').click(function(e) {
+                        e.preventDefault();
+                        let para = $('.select-para').val();
+                        let mensagem = $('#mensagem-text').val();
+                        if(!ajaxForm) {
+                            swal({
+                                title: "Contestação",
+                                text: "Deseja realmente contestar?",
+                                type: "warning",
+                                showCancelButton: true,
+                                confirmButtonText: "Constestar",
+                                cancelButtonText: "Cancelar",
+                                closeOnConfirm: false,
+                                allowClickOutside: false,
+                                animation: "slide-from-top",
+                                inputPlaceholder: "Escreva o motivo aqui",
+                                showLoaderOnConfirm: true
+                            }, function (inputValue) {
+                                if(inputValue) {
+                                    ajaxForm = $.ajax({
+                                        type: "POST",
+                                        url: '/chefe/pedido/contestar/',
+                                        data: {
+                                            id: id,
+                                            para: para,
+                                            mensagem: mensagem
+                                        },
+                                        dataType: 'json',
+                                        success: function(data) {
+                                            ajaxForm = null;
+                                            console.log('success', data);
+                                            swal({
+                                                title: "Sucesso!",
+                                                text: data.description,
+                                                type: "success",
+                                                allowClickOutside: false,
+                                                allowEscapeKey: false
+                                            }, function(){
+                                                window.location = '';
+                                            });
+                                        },
+                                        error: function(data) {
+                                            ajaxForm = null;
+                                            console.error('erro', data);
+                                            if(data.status == 404){
+                                                swal({
+                                                    title: "Erro",
+                                                    text: 'Entre em contato com o suporte.',
+                                                    type: "error",
+                                                    allowClickOutside: false,
+                                                    allowEscapeKey: false
+                                                });
+                                            } else {
+                                                swal({
+                                                    title: "Erro",
+                                                    text: data.responseJSON.description,
+                                                    type: "warning",
+                                                    allowClickOutside: false,
+                                                    allowEscapeKey: false
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                },
+                error: function(data) {
+                    ajaxForm = null;
+                    console.error('erroAffecteds', data);
+                }
+            });
+            }
         });
     }
 });
