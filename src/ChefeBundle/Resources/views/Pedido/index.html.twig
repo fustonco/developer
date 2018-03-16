@@ -33,7 +33,7 @@
                                     <td>
                                         <a href="javascript:void(0);" class="btn-ver" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
                                         {% if entity.idFuncionario == app.user.id %}&nbsp;<a href="javascript:void(0);" class="btn-encaminhar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Encaminhar">send</i></a>{% endif %}
-                                        {% if entity.id_tipo_funcionario != 3 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">close</i></a>{% endif %}
+                                        {% if entity.id_status_pedido == 1 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">delete</i></a>{% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -35,7 +35,7 @@ class PedidoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getConnection()->prepare("
-        SELECT f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -690,7 +690,7 @@ class PedidoController extends Controller
             if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
 
             $old_historico = $em->getRepository('MasterBundle:Historico')->findOneBy([
-                'Idpedido' => $request->get('id')
+                'idpedido' => $request->get('id')
             ],[
                 'id' => 'DESC'
             ]);
@@ -734,6 +734,74 @@ class PedidoController extends Controller
             }
             return new Response(json_encode([
                 'description' => 'Não foi possivel encaminhado o Pedido!'
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/recusar/")
+     */
+    public function recusarPedidoAction(Request $request)
+    {
+        $hoje = date_create();
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+
+            if(!$request->get('id')) {throw new \Exception('error_id');}
+            if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
+
+            $old_historico = $em->getRepository('MasterBundle:Historico')->findOneBy([
+                'idpedido' => $request->get('id')
+            ],[
+                'id' => 'DESC'
+            ]);
+
+            $mensagem = new Mensagem();
+            $mensagem->setMensagem($request->get('mensagem'));
+            $em->persist($mensagem);
+            $em->flush();
+
+            $pedido = $em->getRepository('MasterBundle:Pedido')->findOneById($old_historico->getIdpedido());
+            $status_pedido = $em->getRepository('MasterBundle:StatusPedido')->findOneById(3);
+            $pedido->setStatus($status_pedido);
+            $em->persist($pedido);
+            $em->flush();
+
+            $historico = new Historico();
+            $historico->setCodigo($old_historico->getCodigo());
+            $historico->setIdpedido($old_historico->getIdpedido());
+            $de = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $historico->setIdde($de);
+            $para = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $historico->setIdpara($para);
+            $historico->setDataPassagem($hoje);
+            $historico->setIdmensagem($mensagem);
+            $tipohistorico = $em->getRepository('MasterBundle:TipoHistorico')->findOneById(4);
+            $historico->setTipoHistorico($tipohistorico);
+            $em->persist($historico);
+            $em->flush();
+
+            $em->getConnection()->commit();
+            return new Response(json_encode([
+                'description' => 'Pedido recusado com sucesso!'
+            ]), 200);
+        } catch(Exception $e) {
+            $em->getConnection()->rollBack();
+            switch($e->getMessage()) {
+                case 'error_id':
+                    return new Response(json_encode([
+                        'description' => 'Id incorreto'
+                    ]), 500);
+                break;
+                case 'error_mensagem':
+                    return new Response(json_encode([
+                        'description' => 'Mensagem incorreta!'
+                    ]), 500);
+                break;
+            }
+            return new Response(json_encode([
+                'description' => 'Não foi possivel recusar o Pedido!'
             ]), 500);
         }
     }

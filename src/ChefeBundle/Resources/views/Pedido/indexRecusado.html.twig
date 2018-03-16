@@ -32,9 +32,9 @@
                                     <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{entity.funcionario}}">{{ entity.tipo_funcionario }}</span></td>
                                     <td>
                                         <a href="javascript:void(0);" class="btn-ver" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
-                                        &nbsp;<a href="javascript:void(0);" class="btn-contestar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a>
-                                        &nbsp;<a href="javascript:void(0);" class="btn-confirmar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar">send</i></a>
-                                        {% if entity.id_tipo_funcionario != 3 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">close</i></a>{% endif %}
+                                        {# &nbsp;<a href="javascript:void(0);" class="btn-contestar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a> #}
+                                        {# &nbsp;<a href="javascript:void(0);" class="btn-confirmar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar">send</i></a> #}
+                                        {# {% if entity.id_tipo_funcionario != 3 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">delete</i></a>{% endif %} #}
                                     </td>
                                 </tr>
                             {% endfor %}
