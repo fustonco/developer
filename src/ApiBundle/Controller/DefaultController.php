@@ -26,10 +26,13 @@ class DefaultController extends Controller
         $request->request->replace($this->getContent($request));
 
         try {
-            return new Response(json_encode([
+            $response = new Response(json_encode([
                 'user' => $request->get('username'),
                 'pass' => $request->get('password')
             ]), 200);
+            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            return $response;
         } catch(\Exception $e) {
             return new Response(json_encode('errorroror'), 500);
         }
