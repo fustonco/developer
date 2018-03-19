@@ -5,7 +5,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
                 <div class="header">
-                    <h2>Lista de Pedidos Recebidos</h2>
+                    <h2>Lista de Pedidos Recusados</h2>
                 </div>
                 <div class="body">
                     <div class="table-responsive">
@@ -34,7 +34,6 @@
                                         <a href="javascript:void(0);" class="btn-ver" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
                                         &nbsp;<a href="javascript:void(0);" class="btn-contestar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a>
                                         &nbsp;<a href="javascript:void(0);" class="btn-confirmar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar">send</i></a>
-                                        &nbsp;<a href="javascript:void(0);" class="btn-recusar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Recusar">close</i></a>
                                         {% if entity.id_tipo_funcionario != 3 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">delete</i></a>{% endif %}
                                     </td>
                                 </tr>
@@ -123,7 +122,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="largeModalLabel">Contestar</h4>
+                    <h4 class="modal-title" id="largeModalLabel">Confirmar</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row clearfix">
@@ -145,30 +144,6 @@
         </div>
     </div>
     <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-confirmar" data-toggle="modal" data-target="#confirmarModal"></button>
-
-    <div class="modal fade" id="recusarModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="largeModalLabel">Recusar</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row clearfix">
-                        <div class="col-sm-12">
-                            <h6>Mensagem</h6>
-                            <textarea rows="5" id="mensagem-text-recusar" style="width: 100%; resize: none;"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-link waves-effect btn-recusar-confirm">Recusar</button>
-                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-recusar" data-toggle="modal" data-target="#recusarModal"></button>
 {% endblock %}
 
 {% block javascripts %}
@@ -217,95 +192,6 @@ $('.btn-show-historico').click(function(e) {
 
 let ajaxForm;
 
-$('.btn-recusar').click(function(e) {
-    e.preventDefault();
-    let id = $(this).attr('data-id');
-    if(!ajaxForm) {
-        swal({
-            title: "Atenção",
-            text: "Deseja abrir recusar?",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Sim!",
-            cancelButtonText: "Cancelar",
-            closeOnConfirm: false,
-            showLoaderOnConfirm: true,
-            allowClickOutside: false
-        }, function(isConfirm) {
-            if (isConfirm) {
-                $('.btn-modal-recusar').trigger('click');
-                swal.close();
-
-                $('.btn-recusar-confirm').click(function(e) {
-                    e.preventDefault();
-                    let mensagem = $('#mensagem-text-recusar').val();
-                    if(!ajaxForm) {
-                        swal({
-                            title: "Recusar",
-                            text: "Deseja realmente recusar?",
-                            type: "warning",
-                            showCancelButton: true,
-                            confirmButtonText: "Recusar",
-                            cancelButtonText: "Cancelar",
-                            closeOnConfirm: false,
-                            allowClickOutside: false,
-                            animation: "slide-from-top",
-                            inputPlaceholder: "Escreva a mensagem aqui",
-                            showLoaderOnConfirm: true
-                        }, function (inputValue) {
-                            if(inputValue) {
-                                ajaxForm = $.ajax({
-                                    type: "POST",
-                                    url: '/chefe/pedido/recusar/',
-                                    data: {
-                                        id: id,
-                                        mensagem: mensagem
-                                    },
-                                    dataType: 'json',
-                                    success: function(data) {
-                                        ajaxForm = null;
-                                        console.log('success', data);
-                                        swal({
-                                            title: "Sucesso!",
-                                            text: data.description,
-                                            type: "success",
-                                            allowClickOutside: false,
-                                            allowEscapeKey: false
-                                        }, function(){
-                                            window.location = '';
-                                        });
-                                    },
-                                    error: function(data) {
-                                        ajaxForm = null;
-                                        console.error('erro', data);
-                                        if(data.status == 404){
-                                            swal({
-                                                title: "Erro",
-                                                text: 'Entre em contato com o suporte.',
-                                                type: "error",
-                                                allowClickOutside: false,
-                                                allowEscapeKey: false
-                                            });
-                                        } else {
-                                            swal({
-                                                title: "Erro",
-                                                text: data.responseJSON.description,
-                                                type: "warning",
-                                                allowClickOutside: false,
-                                                allowEscapeKey: false
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
-});
-
 $('.btn-confirmar').click(function(e) {
     e.preventDefault();
     let id = $(this).attr('data-id');
@@ -325,7 +211,7 @@ $('.btn-confirmar').click(function(e) {
             if (isConfirm) {
             ajaxForm = $.ajax({
                 type: "POST",
-                url: '/chefe/pedido/get/masters/',
+                url: '/master/pedido/get/financeiros/',
                 data: {
                     id: id,
                 },
@@ -367,7 +253,7 @@ $('.btn-confirmar').click(function(e) {
                                 if(inputValue) {
                                     ajaxForm = $.ajax({
                                         type: "POST",
-                                        url: '/chefe/pedido/confirmar/',
+                                        url: '/master/pedido/confirmar/',
                                         data: {
                                             id: id,
                                             para: para,
@@ -444,7 +330,7 @@ $('.btn-contestar').click(function(e) {
             if (isConfirm) {
             ajaxForm = $.ajax({
                 type: "POST",
-                url: '/chefe/pedido/get/affecteds/',
+                url: '/master/pedido/get/affecteds/',
                 data: {
                     id: id,
                 },
@@ -486,7 +372,7 @@ $('.btn-contestar').click(function(e) {
                                 if(inputValue) {
                                     ajaxForm = $.ajax({
                                         type: "POST",
-                                        url: '/chefe/pedido/contestar/',
+                                        url: '/master/pedido/contestar/',
                                         data: {
                                             id: id,
                                             para: para,
@@ -562,7 +448,7 @@ $('.btn-ver').click(function(e) {
             if (isConfirm) {
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/chefe/pedido/ver/',
+                    url: '/master/pedido/ver/',
                     data: {
                         id: id
                     },
@@ -648,7 +534,7 @@ $('.btn-excluir').click(function(e) {
             if (isConfirm) {
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/chefe/pedido/excluir/',
+                    url: '/master/pedido/excluir/',
                     data: {
                         id: id
                     },

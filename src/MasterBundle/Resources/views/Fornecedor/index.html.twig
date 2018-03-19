@@ -5,11 +5,8 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
                 <div class="header">
-                    <a style="float: right;" href="{{ path('tipopedido_new') }}">
-                        <i class="material-icons">add</i>
-                    </a>
                     <h2>
-                        Lista dos Tipos de Pedidos
+                        Lista de Fornecedores
                     </h2>
                 </div>
                 <div class="body">
@@ -19,7 +16,10 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Nome</th>
-                                    <th>Descrição</th>
+                                    <th>CNPJ</th>
+                                    <th>CPF</th>
+                                    <th>Telefone</th>
+                                    <th>Endereço</th>
                                     <th>Editar</th>
                                     <th>Excluir</th>
                                 </tr>
@@ -29,8 +29,11 @@
                                 <tr>
                                     <td>{{ entity.id }}</td>
                                     <td>{{ entity.nome }}</td>
-                                    <td>{{ entity.descricao }}</td>
-                                    <td><a href="{{ path('tipopedido_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
+                                    <td>{{ entity.cnpj }}</td>
+                                    <td>{{ entity.cpf }}</td>
+                                    <td>{{ entity.telefone }}</td>
+                                    <td>{{ entity.endereco }}</td>
+                                    <td><a href="{{ path('chefe_fornecedor_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
                                     <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">delete</i></a></td>
                                 </tr>
                             {% endfor %}
@@ -64,7 +67,7 @@ $('.btn-excluir').click(function(e) {
             if (isConfirm) {
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/admin/tipopedido/excluir/',
+                    url: '/master/fornecedor/excluir/',
                     data: {
                         id: id
                     },

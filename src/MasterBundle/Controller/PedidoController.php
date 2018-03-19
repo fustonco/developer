@@ -1,6 +1,6 @@
 <?php
 
-namespace ChefeBundle\Controller;
+namespace MasterBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -8,12 +8,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use ChefeBundle\Entity\Pedido;
-use ChefeBundle\Entity\Historico;
-use ChefeBundle\Entity\Pagamento;
-use ChefeBundle\Entity\Parcelas;
-use ChefeBundle\Entity\Mensagem;
-use ChefeBundle\Form\PedidoType;
+use MasterBundle\Entity\Pedido;
+use MasterBundle\Entity\Historico;
+use MasterBundle\Entity\Pagamento;
+use MasterBundle\Entity\Parcelas;
+use MasterBundle\Entity\Mensagem;
+use MasterBundle\Form\PedidoType;
 
 /**
  * Pedido controller.
@@ -26,7 +26,7 @@ class PedidoController extends Controller
     /**
      * Lists all Pedido entities.
      *
-     * @Route("/", name="chefe_pedido")
+     * @Route("/", name="master_pedido")
      * @Method("GET")
      * @Template()
      */
@@ -54,10 +54,11 @@ class PedidoController extends Controller
         );
     }
 
+
     /**
      * Lists all Pedido entities.
      *
-     * @Route("/recebido", name="chefe_pedido_recebido")
+     * @Route("/recebido", name="master_pedido_recebido")
      * @Method("GET")
      * @Template()
      */
@@ -88,7 +89,7 @@ class PedidoController extends Controller
     /**
      * Lists all Pedido entities.
      *
-     * @Route("/recusado", name="chefe_pedido_recusado")
+     * @Route("/recusado", name="master_pedido_recusado")
      * @Method("GET")
      * @Template()
      */
@@ -115,7 +116,7 @@ class PedidoController extends Controller
             'entities' => $entities
         );
     }
-
+    
     /**
      * @Route("/ver/")
      */
@@ -141,7 +142,7 @@ class PedidoController extends Controller
             $pedido->execute();
             $pedido = $pedido->fetchAll();
 
-            $historico = $em->getRepository('ChefeBundle:Historico')->findByIdpedido($id);
+            $historico = $em->getRepository('MasterBundle:Historico')->findByIdpedido($id);
             $historico = $default->serializeJSON($historico);
 
             return new Response(json_encode([
@@ -212,9 +213,9 @@ class PedidoController extends Controller
     /**
      * Creates a new Pedido entity.
      *
-     * @Route("/", name="chefe_pedido_create")
+     * @Route("/", name="master_pedido_create")
      * @Method("POST")
-     * @Template("ChefeBundle:Pedido:new.html.twig")
+     * @Template("MasterBundle:Pedido:new.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -227,7 +228,7 @@ class PedidoController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('chefe_pedido_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('master_pedido_show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -246,7 +247,7 @@ class PedidoController extends Controller
     private function createCreateForm(Pedido $entity)
     {
         // $form = $this->createForm(new PedidoType(), $entity, array(
-        //     'action' => $this->generateUrl('chefe_pedido_create'),
+        //     'action' => $this->generateUrl('master_pedido_create'),
         //     'method' => 'POST',
         // ));
 
@@ -258,7 +259,7 @@ class PedidoController extends Controller
     /**
      * Displays a form to create a new Pedido entity.
      *
-     * @Route("/new", name="chefe_pedido_new")
+     * @Route("/new", name="master_pedido_new")
      * @Method("GET")
      * @Template()
      */
@@ -268,17 +269,17 @@ class PedidoController extends Controller
         // $form   = $this->createCreateForm($entity);
 
         $em = $this->getDoctrine()->getManager();
-        $tipopedido = $em->getRepository('ChefeBundle:TipoPedido')->findBy([], [
+        $tipopedido = $em->getRepository('MasterBundle:TipoPedido')->findBy([], [
             'nome' => 'ASC'
         ]);
-        $tipopagamento = $em->getRepository('ChefeBundle:TipoPagamento')->findBy([], [
+        $tipopagamento = $em->getRepository('MasterBundle:TipoPagamento')->findBy([], [
             'nome' => 'ASC'
         ]);
-        $fornecedores = $em->getRepository('ChefeBundle:Fornecedor')->findBy([], [
+        $fornecedores = $em->getRepository('MasterBundle:Fornecedor')->findBy([], [
             'nome' => 'ASC'
         ]);
-        $para = $em->getRepository('ChefeBundle:Funcionario')->findBy([
-            'idtipo' => 5
+        $para = $em->getRepository('MasterBundle:Funcionario')->findBy([
+            'idtipo' => 3
         ], [
             'nome' => 'ASC'
         ]);
@@ -296,7 +297,7 @@ class PedidoController extends Controller
     /**
      * Finds and displays a Pedido entity.
      *
-     * @Route("/{id}", name="chefe_pedido_show")
+     * @Route("/{id}", name="master_pedido_show")
      * @Method("GET")
      * @Template()
      */
@@ -304,7 +305,7 @@ class PedidoController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('ChefeBundle:Pedido')->find($id);
+        $entity = $em->getRepository('MasterBundle:Pedido')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Pedido entity.');
@@ -321,7 +322,7 @@ class PedidoController extends Controller
     /**
      * Displays a form to edit an existing Pedido entity.
      *
-     * @Route("/{id}/edit", name="chefe_pedido_edit")
+     * @Route("/{id}/edit", name="master_pedido_edit")
      * @Method("GET")
      * @Template()
      */
@@ -329,7 +330,7 @@ class PedidoController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        // $entity = $em->getRepository('ChefeBundle:Pedido')->findOneById($id);
+        // $entity = $em->getRepository('MasterBundle:Pedido')->findOneById($id);
         $entity = $em->getConnection()->prepare("SELECT id, codigo, idTipo, idFornecedor, data_pedido dataPedido, valor, descricao, ativo, status FROM pedido WHERE id = ".$id);
         $entity->execute();
         $entity = $entity->fetchAll();
@@ -356,7 +357,7 @@ class PedidoController extends Controller
     private function createEditForm(Pedido $entity)
     {
         // $form = $this->createForm(new PedidoType(), $entity, array(
-        //     'action' => $this->generateUrl('chefe_pedido_update', array('id' => $entity->getId())),
+        //     'action' => $this->generateUrl('master_pedido_update', array('id' => $entity->getId())),
         //     'method' => 'PUT',
         // ));
 
@@ -367,15 +368,15 @@ class PedidoController extends Controller
     /**
      * Edits an existing Pedido entity.
      *
-     * @Route("/{id}", name="chefe_pedido_update")
+     * @Route("/{id}", name="master_pedido_update")
      * @Method("PUT")
-     * @Template("ChefeBundle:Pedido:edit.html.twig")
+     * @Template("MasterBundle:Pedido:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('ChefeBundle:Pedido')->find($id);
+        $entity = $em->getRepository('MasterBundle:Pedido')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Pedido entity.');
@@ -388,7 +389,7 @@ class PedidoController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('chefe_pedido_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('master_pedido_edit', array('id' => $id)));
         }
 
         return array(
@@ -400,7 +401,7 @@ class PedidoController extends Controller
     /**
      * Deletes a Pedido entity.
      *
-     * @Route("/{id}", name="chefe_pedido_delete")
+     * @Route("/{id}", name="master_pedido_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -410,7 +411,7 @@ class PedidoController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('ChefeBundle:Pedido')->find($id);
+            $entity = $em->getRepository('MasterBundle:Pedido')->find($id);
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Pedido entity.');
@@ -420,7 +421,7 @@ class PedidoController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('chefe_pedido'));
+        return $this->redirect($this->generateUrl('master_pedido'));
     }
 
     /**
@@ -433,7 +434,7 @@ class PedidoController extends Controller
     private function createDeleteForm($id)
     {
         // return $this->createFormBuilder()
-        //     ->setAction($this->generateUrl('chefe_pedido_delete', array('id' => $id)))
+        //     ->setAction($this->generateUrl('master_pedido_delete', array('id' => $id)))
         //     ->setMethod('DELETE')
         //     ->add('submit', 'submit', array('label' => 'Delete'))
         //     ->getForm()
@@ -448,7 +449,7 @@ class PedidoController extends Controller
         try {
             $em = $this->getDoctrine()->getManager();
             
-            $fornecedores = $em->getRepository("ChefeBundle:Fornecedor")->createQueryBuilder('f')
+            $fornecedores = $em->getRepository("MasterBundle:Fornecedor")->createQueryBuilder('f')
             ->where("f.ativo = 'S'")
             ->andWhere('f.cnpj LIKE :cnpj')
             ->setParameter('cnpj', '%'.$request->get('cnpj_fornecedor_input').'%')
@@ -553,7 +554,7 @@ class PedidoController extends Controller
             if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
             if(!$request->get('para')) {throw new \Exception('error_para');}
 
-            $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
+            $old_historico = $em->getRepository('MasterBundle:Historico')->findOneBy([
                 'idpedido' => $request->get('id')
             ],[
                 'id' => 'DESC'
@@ -567,13 +568,13 @@ class PedidoController extends Controller
             $historico = new Historico();
             $historico->setCodigo($old_historico->getCodigo());
             $historico->setIdpedido($old_historico->getIdpedido());
-            $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $de = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
-            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($request->get('para'));
+            $para = $em->getRepository('MasterBundle:Funcionario')->findOneById($request->get('para'));
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
-            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(2);
+            $tipohistorico = $em->getRepository('MasterBundle:TipoHistorico')->findOneById(2);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
             $em->flush();
@@ -621,7 +622,7 @@ class PedidoController extends Controller
             if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
             if(!$request->get('para')) {throw new \Exception('error_para');}
 
-            $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
+            $old_historico = $em->getRepository('MasterBundle:Historico')->findOneBy([
                 'idpedido' => $request->get('id')
             ],[
                 'id' => 'DESC'
@@ -635,13 +636,13 @@ class PedidoController extends Controller
             $historico = new Historico();
             $historico->setCodigo($old_historico->getCodigo());
             $historico->setIdpedido($old_historico->getIdpedido());
-            $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $de = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
-            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($request->get('para'));
+            $para = $em->getRepository('MasterBundle:Funcionario')->findOneById($request->get('para'));
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
-            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(1);
+            $tipohistorico = $em->getRepository('MasterBundle:TipoHistorico')->findOneById(3);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
             $em->flush();
@@ -688,7 +689,7 @@ class PedidoController extends Controller
             if(!$request->get('id')) {throw new \Exception('error_id');}
             if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
 
-            $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
+            $old_historico = $em->getRepository('MasterBundle:Historico')->findOneBy([
                 'idpedido' => $request->get('id')
             ],[
                 'id' => 'DESC'
@@ -702,13 +703,13 @@ class PedidoController extends Controller
             $historico = new Historico();
             $historico->setCodigo($old_historico->getCodigo());
             $historico->setIdpedido($old_historico->getIdpedido());
-            $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $de = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
-            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($old_historico->getIdde());
+            $para = $em->getRepository('MasterBundle:Funcionario')->findOneById($old_historico->getIdde());
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
-            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(1);
+            $tipohistorico = $em->getRepository('MasterBundle:TipoHistorico')->findOneById(1);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
             $em->flush();
@@ -750,7 +751,7 @@ class PedidoController extends Controller
             if(!$request->get('id')) {throw new \Exception('error_id');}
             if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
 
-            $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
+            $old_historico = $em->getRepository('MasterBundle:Historico')->findOneBy([
                 'idpedido' => $request->get('id')
             ],[
                 'id' => 'DESC'
@@ -761,8 +762,8 @@ class PedidoController extends Controller
             $em->persist($mensagem);
             $em->flush();
 
-            $pedido = $em->getRepository('ChefeBundle:Pedido')->findOneById($old_historico->getIdpedido());
-            $status_pedido = $em->getRepository('ChefeBundle:StatusPedido')->findOneById(3);
+            $pedido = $em->getRepository('MasterBundle:Pedido')->findOneById($old_historico->getIdpedido());
+            $status_pedido = $em->getRepository('MasterBundle:StatusPedido')->findOneById(3);
             $pedido->setStatus($status_pedido);
             $em->persist($pedido);
             $em->flush();
@@ -770,13 +771,13 @@ class PedidoController extends Controller
             $historico = new Historico();
             $historico->setCodigo($old_historico->getCodigo());
             $historico->setIdpedido($old_historico->getIdpedido());
-            $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $de = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
-            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $para = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
-            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(4);
+            $tipohistorico = $em->getRepository('MasterBundle:TipoHistorico')->findOneById(4);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
             $em->flush();
@@ -825,17 +826,17 @@ class PedidoController extends Controller
 
             $pedido = new Pedido();
             $pedido->setCodigo(null);
-            $tipo = $em->getRepository('ChefeBundle:TipoPedido')->findOneById($request->get('tipopedido'));
+            $tipo = $em->getRepository('MasterBundle:TipoPedido')->findOneById($request->get('tipopedido'));
             $pedido->setIdtipo($tipo);
             if($request->get('forn')) {
-                $fornecedor = $em->getRepository('ChefeBundle:Fornecedor')->findOneById($request->get('forn'));
+                $fornecedor = $em->getRepository('MasterBundle:Fornecedor')->findOneById($request->get('forn'));
                 $pedido->setIdfornecedor($fornecedor);
             }
             $pedido->setDataPedido($hoje);
             $pedido->setValor($request->get('valor'));
             $pedido->setDescricao($request->get('descricao'));
             $pedido->setAtivo('S');
-            $status_pedido = $em->getRepository('ChefeBundle:StatusPedido')->findOneById(1);
+            $status_pedido = $em->getRepository('MasterBundle:StatusPedido')->findOneById(1);
             $pedido->setStatus($status_pedido);
             $criador = $em->getRepository('FuncionarioBundle:Funcionario')->findOneById($this->getUser()->getId());
             $pedido->setCriadoPor($criador);
@@ -845,10 +846,10 @@ class PedidoController extends Controller
             for ($i = 0; $i < count($pagamentos); $i++) {
                 $pagamento = new Pagamento();
                 $pagamento->setIdPedido($pedido);
-                $tipo_pagamento = $em->getRepository('ChefeBundle:TipoPagamento')->findOneById($pagamentos[$i]['tipopagamento']);
+                $tipo_pagamento = $em->getRepository('MasterBundle:TipoPagamento')->findOneById($pagamentos[$i]['tipopagamento']);
                 $pagamento->setIdTipo($tipo_pagamento);
                 $pagamento->setValorIntegral($pagamentos[$i]['valor_integral']);
-                $status_pagamento = $em->getRepository('ChefeBundle:StatusPagamento')->findOneById(1);
+                $status_pagamento = $em->getRepository('MasterBundle:StatusPagamento')->findOneById(1);
                 $pagamento->setIdStatus($status_pagamento);
                 $em->persist($pagamento);
                 $em->flush();
@@ -865,7 +866,7 @@ class PedidoController extends Controller
                     $parcela->setValorPendente($parcelas[$j]['valor']);
                     $parcela->setDataVencimento(date_create_from_format('Y-m-d', $parcelas[$j]['vencimento']));
                     $parcela->setMensagem(null);
-                    $status_parcela = $em->getRepository('ChefeBundle:StatusParcela')->findOneById(1);
+                    $status_parcela = $em->getRepository('MasterBundle:StatusParcela')->findOneById(1);
                     $parcela->setStatus($status_parcela);
                     $em->persist($parcela);
                     $em->flush();
@@ -876,13 +877,13 @@ class PedidoController extends Controller
             $historico = new Historico();
             $historico->setCodigo(null);
             $historico->setIdpedido($pedido);
-            $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $de = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
-            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($request->get('para'));
+            $para = $em->getRepository('MasterBundle:Funcionario')->findOneById($request->get('para'));
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem(null);
-            $tipohistorico = $em->getRepository('ChefeBundle:TipoHistorico')->findOneById(1);
+            $tipohistorico = $em->getRepository('MasterBundle:TipoHistorico')->findOneById(1);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
             $em->flush();

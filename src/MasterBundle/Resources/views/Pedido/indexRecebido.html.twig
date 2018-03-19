@@ -123,7 +123,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="largeModalLabel">Contestar</h4>
+                    <h4 class="modal-title" id="largeModalLabel">Confirmar</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row clearfix">
@@ -256,7 +256,7 @@ $('.btn-recusar').click(function(e) {
                             if(inputValue) {
                                 ajaxForm = $.ajax({
                                     type: "POST",
-                                    url: '/chefe/pedido/recusar/',
+                                    url: '/master/pedido/recusar/',
                                     data: {
                                         id: id,
                                         mensagem: mensagem
@@ -325,7 +325,7 @@ $('.btn-confirmar').click(function(e) {
             if (isConfirm) {
             ajaxForm = $.ajax({
                 type: "POST",
-                url: '/chefe/pedido/get/masters/',
+                url: '/master/pedido/get/financeiros/',
                 data: {
                     id: id,
                 },
@@ -367,7 +367,7 @@ $('.btn-confirmar').click(function(e) {
                                 if(inputValue) {
                                     ajaxForm = $.ajax({
                                         type: "POST",
-                                        url: '/chefe/pedido/confirmar/',
+                                        url: '/master/pedido/confirmar/',
                                         data: {
                                             id: id,
                                             para: para,
@@ -444,7 +444,7 @@ $('.btn-contestar').click(function(e) {
             if (isConfirm) {
             ajaxForm = $.ajax({
                 type: "POST",
-                url: '/chefe/pedido/get/affecteds/',
+                url: '/master/pedido/get/affecteds/',
                 data: {
                     id: id,
                 },
@@ -486,7 +486,7 @@ $('.btn-contestar').click(function(e) {
                                 if(inputValue) {
                                     ajaxForm = $.ajax({
                                         type: "POST",
-                                        url: '/chefe/pedido/contestar/',
+                                        url: '/master/pedido/contestar/',
                                         data: {
                                             id: id,
                                             para: para,
@@ -562,7 +562,7 @@ $('.btn-ver').click(function(e) {
             if (isConfirm) {
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/chefe/pedido/ver/',
+                    url: '/master/pedido/ver/',
                     data: {
                         id: id
                     },
@@ -648,7 +648,7 @@ $('.btn-excluir').click(function(e) {
             if (isConfirm) {
                 ajaxForm = $.ajax({
                     type: "POST",
-                    url: '/chefe/pedido/excluir/',
+                    url: '/master/pedido/excluir/',
                     data: {
                         id: id
                     },

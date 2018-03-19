@@ -34,7 +34,7 @@
                                     <td>{{ entity.telefone }}</td>
                                     <td>{{ entity.endereco }}</td>
                                     <td><a href="{{ path('fornecedor_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
-                                    <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">close</i></a></td>
+                                    <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">delete</i></a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
