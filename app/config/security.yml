@@ -40,4 +40,5 @@ security:
              - { path: ^/chefe, roles: ROLE_FUNCIONARIO_CHEFE }
              - { path: ^/financeiro, roles: ROLE_FINANCEIRO }
              - { path: ^/funcionario, roles: ROLE_FUNCIONARIO }
+             - { path: ^/api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
              - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
