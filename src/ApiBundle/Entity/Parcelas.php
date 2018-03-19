@@ -1,0 +1,335 @@
+<?php
+
+namespace ApiBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Parcelas
+ */
+class Parcelas
+{
+    /**
+     * @var integer
+     */
+    private $numParcela;
+
+    /**
+     * @var string
+     */
+    private $valor;
+
+    /**
+     * @var string
+     */
+    private $valorPago;
+
+    /**
+     * @var string
+     */
+    private $valorDesconto;
+
+    /**
+     * @var string
+     */
+    private $valorAcrecimo;
+
+    /**
+     * @var string
+     */
+    private $valorPendente;
+
+    /**
+     * @var \DateTime
+     */
+    private $dataVencimento;
+
+    /**
+     * @var \DateTime
+     */
+    private $dataPagamento;
+
+    /**
+     * @var string
+     */
+    private $mensagem;
+
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var \ApiBundle\Entity\Pagamento
+     */
+    private $idpagamento;
+
+    /**
+     * @var \ApiBundle\Entity\StatusParcela
+     */
+    private $status;
+
+
+    /**
+     * Set numParcela
+     *
+     * @param integer $numParcela
+     * @return Parcelas
+     */
+    public function setNumParcela($numParcela)
+    {
+        $this->numParcela = $numParcela;
+
+        return $this;
+    }
+
+    /**
+     * Get numParcela
+     *
+     * @return integer 
+     */
+    public function getNumParcela()
+    {
+        return $this->numParcela;
+    }
+
+    /**
+     * Set valor
+     *
+     * @param string $valor
+     * @return Parcelas
+     */
+    public function setValor($valor)
+    {
+        $this->valor = $valor;
+
+        return $this;
+    }
+
+    /**
+     * Get valor
+     *
+     * @return string 
+     */
+    public function getValor()
+    {
+        return $this->valor;
+    }
+
+    /**
+     * Set valorPago
+     *
+     * @param string $valorPago
+     * @return Parcelas
+     */
+    public function setValorPago($valorPago)
+    {
+        $this->valorPago = $valorPago;
+
+        return $this;
+    }
+
+    /**
+     * Get valorPago
+     *
+     * @return string 
+     */
+    public function getValorPago()
+    {
+        return $this->valorPago;
+    }
+
+    /**
+     * Set valorDesconto
+     *
+     * @param string $valorDesconto
+     * @return Parcelas
+     */
+    public function setValorDesconto($valorDesconto)
+    {
+        $this->valorDesconto = $valorDesconto;
+
+        return $this;
+    }
+
+    /**
+     * Get valorDesconto
+     *
+     * @return string 
+     */
+    public function getValorDesconto()
+    {
+        return $this->valorDesconto;
+    }
+
+    /**
+     * Set valorAcrecimo
+     *
+     * @param string $valorAcrecimo
+     * @return Parcelas
+     */
+    public function setValorAcrecimo($valorAcrecimo)
+    {
+        $this->valorAcrecimo = $valorAcrecimo;
+
+        return $this;
+    }
+
+    /**
+     * Get valorAcrecimo
+     *
+     * @return string 
+     */
+    public function getValorAcrecimo()
+    {
+        return $this->valorAcrecimo;
+    }
+
+    /**
+     * Set valorPendente
+     *
+     * @param string $valorPendente
+     * @return Parcelas
+     */
+    public function setValorPendente($valorPendente)
+    {
+        $this->valorPendente = $valorPendente;
+
+        return $this;
+    }
+
+    /**
+     * Get valorPendente
+     *
+     * @return string 
+     */
+    public function getValorPendente()
+    {
+        return $this->valorPendente;
+    }
+
+    /**
+     * Set dataVencimento
+     *
+     * @param \DateTime $dataVencimento
+     * @return Parcelas
+     */
+    public function setDataVencimento($dataVencimento)
+    {
+        $this->dataVencimento = $dataVencimento;
+
+        return $this;
+    }
+
+    /**
+     * Get dataVencimento
+     *
+     * @return \DateTime 
+     */
+    public function getDataVencimento()
+    {
+        return $this->dataVencimento;
+    }
+
+    /**
+     * Set dataPagamento
+     *
+     * @param \DateTime $dataPagamento
+     * @return Parcelas
+     */
+    public function setDataPagamento($dataPagamento)
+    {
+        $this->dataPagamento = $dataPagamento;
+
+        return $this;
+    }
+
+    /**
+     * Get dataPagamento
+     *
+     * @return \DateTime 
+     */
+    public function getDataPagamento()
+    {
+        return $this->dataPagamento;
+    }
+
+    /**
+     * Set mensagem
+     *
+     * @param string $mensagem
+     * @return Parcelas
+     */
+    public function setMensagem($mensagem)
+    {
+        $this->mensagem = $mensagem;
+
+        return $this;
+    }
+
+    /**
+     * Get mensagem
+     *
+     * @return string 
+     */
+    public function getMensagem()
+    {
+        return $this->mensagem;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set idpagamento
+     *
+     * @param \ApiBundle\Entity\Pagamento $idpagamento
+     * @return Parcelas
+     */
+    public function setIdpagamento(\ApiBundle\Entity\Pagamento $idpagamento = null)
+    {
+        $this->idpagamento = $idpagamento;
+
+        return $this;
+    }
+
+    /**
+     * Get idpagamento
+     *
+     * @return \ApiBundle\Entity\Pagamento 
+     */
+    public function getIdpagamento()
+    {
+        return $this->idpagamento;
+    }
+
+    /**
+     * Set status
+     *
+     * @param \ApiBundle\Entity\StatusParcela $status
+     * @return Parcelas
+     */
+    public function setStatus(\ApiBundle\Entity\StatusParcela $status = null)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return \ApiBundle\Entity\StatusParcela 
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+}
