@@ -21,7 +21,8 @@ class AppKernel extends Kernel
             new FuncionarioBundle\FuncionarioBundle(),
             new FinanceiroBundle\FinanceiroBundle(),
             new ChefeBundle\ChefeBundle(),
-            new MasterBundle\MasterBundle()
+            new MasterBundle\MasterBundle(),
+            new ApiBundle\ApiBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

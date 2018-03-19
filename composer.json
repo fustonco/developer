@@ -9,7 +9,8 @@
             "FuncionarioBundle\\": "src/FuncionarioBundle",
             "FinanceiroBundle\\": "src/FinanceiroBundle",
             "ChefeBundle\\": "src/ChefeBundle",
-            "MasterBundle\\": "src/MasterBundle"
+            "MasterBundle\\": "src/MasterBundle",
+            "ApiBundle\\": "src/ApiBundle"
         }
     },
     "autoload-dev": {
