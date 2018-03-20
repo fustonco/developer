@@ -37,7 +37,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/v1/login")
+     * @Route("/v1/login/")
      * @Method("POST")
      */
     public function v1LoginAction(Request $request)
