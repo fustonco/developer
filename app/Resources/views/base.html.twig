@@ -574,7 +574,7 @@
                     
                     <!-- Menu Home -->
                     <li>
-                        <a href="{{ path('logout') }}">
+                        <a href="{{ path('logout') }}" class="sairReact">
                             <i class="material-icons">exit_to_app</i>
                             <span>Sair</span>
                         </a>
@@ -1483,6 +1483,15 @@
     <script src="{{ asset('js/pages/tables/jquery-datatable.js') }}"></script>
 
     {% block javascripts %}{% endblock %}
+
+    <script>
+    $('document').ready(function() {
+        $('.sairReact').click(function(event) {
+            event.preventDefault();
+            postMessage('sair', '*');
+        });
+    });
+    </script>
 </body>
 
 </html>
