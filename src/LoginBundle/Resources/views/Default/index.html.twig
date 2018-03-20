@@ -70,6 +70,7 @@
                         </div>
                     </div> #}
                 </form>
+                <button class="btn btn-block bg-pink waves-effect btn-postMessage" type="submit">TEST POSTMESSAGE</button>
             </div>
         </div>
     </div>
@@ -89,6 +90,15 @@
     <!-- Custom Js -->
     <script src="{{ asset('js/admin.js') }}"></script>
     <script src="{{ asset('js/pages/examples/sign-in.js') }}"></script>
+
+    <script>
+    $('document').ready(function() {
+        $('.btn-postMessage').click(function(event) {
+            event.preventDefault();
+            postMessage('send to react native', '*');
+        });
+    });
+    </script>
 </body>
 
 </html>
