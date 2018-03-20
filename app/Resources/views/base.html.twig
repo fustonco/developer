@@ -573,10 +573,12 @@
                     {% endif %}
                     
                     <!-- Menu Home -->
-                    <li class="sairReact">
+                    <li>
                         <a href="{{ path('logout') }}">
-                            <i class="material-icons">exit_to_app</i>
-                            <span>Sair</span>
+                            <div class="sairReact">
+                                <i class="material-icons">exit_to_app</i>
+                                <span>Sair</span>
+                            </div>
                         </a>
                     </li>
                     {# <li>
@@ -1485,9 +1487,17 @@
     {% block javascripts %}{% endblock %}
 
     <script>
-    $('document').ready(function() {
-        $('.sairReact').click(function() {
+    $(document).ready(function() {
+        $('.sairReact').click(function(event) {
+            console.log('A');
+            event.preventDefault();
+            console.log('B');
+            document.postMessage('sair', '*');
+            console.log('C');
+            window.postMessage('sair', '*');
+            console.log('D');
             postMessage('sair', '*');
+            console.log('E');
         });
     });
     </script>
