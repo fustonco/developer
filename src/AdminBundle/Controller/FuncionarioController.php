@@ -306,7 +306,7 @@ class FuncionarioController extends Controller
             $funcionario->setAtivo('S');
             $funcionario->setIddepartamento($departamento);
             $funcionario->setIdtipo($tipo);
-            // $funcionario->setSenha('func123');
+            // $funcionario->setSenha('123456');
             $em->persist($funcionario);
             $em->flush();
 
@@ -402,7 +402,7 @@ class FuncionarioController extends Controller
             $funcionario->setAtivo('S');
             $funcionario->setIddepartamento($departamento);
             $funcionario->setIdtipo($tipo);
-            $funcionario->setSenha('func123');
+            $funcionario->setSenha('123456');
             $em->persist($funcionario);
             $em->flush();
 
@@ -410,7 +410,7 @@ class FuncionarioController extends Controller
             return new Response(json_encode([
                 "description" => "Funcionario Cadastrado com Sucesso!"
             ]), 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $em->getConnection()->rollBack();
             switch($e->getMessage()){
                 case 'error_nome':
