@@ -14,6 +14,7 @@ use ChefeBundle\Entity\Pagamento;
 use ChefeBundle\Entity\Parcelas;
 use ChefeBundle\Entity\Mensagem;
 use ChefeBundle\Form\PedidoType;
+use ApiBundle\Controller\DefaultController as ApiDefault;
 
 /**
  * Pedido controller.
@@ -579,6 +580,10 @@ class PedidoController extends Controller
             $em->flush();
 
             $em->getConnection()->commit();
+
+            $apibundle = new ApiDefault;
+            $apibundle->sendPush([$para->getTokenApp()], 'Pedido Contestado', 'Seu pedido foi contestado');
+
             return new Response(json_encode([
                 'description' => 'Pedido contestado com sucesso!'
             ]), 200);
@@ -647,6 +652,10 @@ class PedidoController extends Controller
             $em->flush();
 
             $em->getConnection()->commit();
+
+            $apibundle = new ApiDefault;
+            $apibundle->sendPush([$para->getTokenApp()], 'Pedido Pendente', 'Existe um pedido pendente de sua aprovação');
+            
             return new Response(json_encode([
                 'description' => 'Pedido confirmado com sucesso!'
             ]), 200);
@@ -714,6 +723,10 @@ class PedidoController extends Controller
             $em->flush();
 
             $em->getConnection()->commit();
+
+            $apibundle = new ApiDefault;
+            $apibundle->sendPush([$para->getTokenApp()], 'Pedido Pendente', 'Existe um pedido pendente de sua aprovação');
+            
             return new Response(json_encode([
                 'description' => 'Pedido encaminhado com sucesso!'
             ]), 200);
@@ -782,6 +795,10 @@ class PedidoController extends Controller
             $em->flush();
 
             $em->getConnection()->commit();
+
+            $apibundle = new ApiDefault;
+            $apibundle->sendPush([$old_historico->getIdpara()->getTokenApp()], 'Pedido Recusado', 'Seu pedido foi recusado');
+            
             return new Response(json_encode([
                 'description' => 'Pedido recusado com sucesso!'
             ]), 200);
@@ -888,6 +905,10 @@ class PedidoController extends Controller
             $em->flush();
 
             $em->getConnection()->commit();
+
+            $apibundle = new ApiDefault;
+            $apibundle->sendPush([$para->getTokenApp()], 'Novo Pedido', 'Você tem um novo pedido');
+
             return new Response(json_encode([
                 'description' => 'Pedido cadastrado com sucesso!'
             ]), 200);

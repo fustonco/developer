@@ -14,6 +14,7 @@ use FuncionarioBundle\Entity\Pagamento;
 use FuncionarioBundle\Entity\Parcelas;
 use FuncionarioBundle\Entity\Mensagem;
 use FuncionarioBundle\Form\PedidoType;
+use ApiBundle\Controller\DefaultController as ApiDefault;
 
 /**
  * Pedido controller.
@@ -93,6 +94,10 @@ class PedidoController extends Controller
             $em->flush();
 
             $em->getConnection()->commit();
+
+            $apibundle = new ApiDefault;
+            $apibundle->sendPush([$para->getTokenApp()], 'Pedido Pendente', 'Existe um pedido pendente de sua aprovação');
+            
             return new Response(json_encode([
                 'description' => 'Pedido encaminhado com sucesso!'
             ]), 200);
@@ -552,10 +557,14 @@ class PedidoController extends Controller
             $em->flush();
 
             $em->getConnection()->commit();
+
+            $apibundle = new ApiDefault;
+            $apibundle->sendPush([$para->getTokenApp()], 'Novo Pedido', 'Você tem um novo pedido');
+
             return new Response(json_encode([
                 'description' => 'Pedido cadastrado com sucesso!'
             ]), 200);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             $em->getConnection()->rollBack();
             switch($e->getMessage()) {
                 case 'error_tipopedido':

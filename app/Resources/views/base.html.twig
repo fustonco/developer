@@ -574,11 +574,9 @@
                     
                     <!-- Menu Home -->
                     <li>
-                        <a href="{{ path('logout') }}">
-                            <div class="sairReact">
-                                <i class="material-icons">exit_to_app</i>
-                                <span>Sair</span>
-                            </div>
+                        <a href="javascript: void(0);" class="sairReact">
+                            <i class="material-icons">exit_to_app</i>
+                            <span>Sair</span>
                         </a>
                     </li>
                     {# <li>
@@ -1487,18 +1485,12 @@
     {% block javascripts %}{% endblock %}
 
     <script>
-    $(document).ready(function() {
-        $('.sairReact').click(function(event) {
-            console.log('A');
-            event.preventDefault();
-            console.log('B');
-            document.postMessage('sair', '*');
-            console.log('C');
-            window.postMessage('sair', '*');
-            console.log('D');
-            postMessage('sair', '*');
-            console.log('E');
-        });
+    $('.sairReact').click(function(event) {
+        event.preventDefault();
+        postMessage('sair', '*');
+        setTimeout(function(){
+            window.location = 'https://pdall.fuston.com.br/logout';
+        }, 1000);
     });
     </script>
 </body>
