@@ -18,14 +18,15 @@
     <field name="telefone" type="string" column="telefone" length="15" nullable="true"/>
     <field name="celular" type="string" column="celular" length="15" nullable="true"/>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
-    <many-to-one field="idtipo" target-entity="TipoUsuario">
-      <join-columns>
-        <join-column name="idTipo" referenced-column-name="id"/>
-      </join-columns>
-    </many-to-one>
+    <field name="tokenApp" type="text" column="token_app" length="65535" nullable="true"/>
     <many-to-one field="iddepartamento" target-entity="Departamento">
       <join-columns>
         <join-column name="idDepartamento" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idtipo" target-entity="TipoUsuario">
+      <join-columns>
+        <join-column name="idTipo" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

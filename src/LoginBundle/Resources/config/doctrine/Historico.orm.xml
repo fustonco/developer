@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="LoginBundle\Entity\Historico" table="historico">
+    <indexes>
+      <index name="fk_pedido_id_idx" columns="idPedido"/>
+      <index name="fk_historico_mensagem1_idx" columns="idMensagem"/>
+      <index name="fk_historico_tipo_historico1_idx" columns="tipo_historico_id"/>
+      <index name="fk_para_funcionario_idx" columns="idPara"/>
+      <index name="fk_de_funcionario_idx" columns="idDe"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="codigo" type="string" column="codigo" length="45" nullable="true"/>
+    <field name="dataPassagem" type="datetime" column="data_passagem" nullable="true"/>
+    <many-to-one field="idde" target-entity="Funcionario">
+      <join-columns>
+        <join-column name="idDe" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idmensagem" target-entity="Mensagem">
+      <join-columns>
+        <join-column name="idMensagem" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="tipoHistorico" target-entity="TipoHistorico">
+      <join-columns>
+        <join-column name="tipo_historico_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idpara" target-entity="Funcionario">
+      <join-columns>
+        <join-column name="idPara" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idpedido" target-entity="Pedido">
+      <join-columns>
+        <join-column name="idPedido" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

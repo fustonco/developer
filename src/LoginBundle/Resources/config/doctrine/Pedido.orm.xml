@@ -4,25 +4,35 @@
     <indexes>
       <index name="fk_pedido_tipo_pedido_idx" columns="idTipo"/>
       <index name="fk_pedido_fornecedor_idx" columns="idFornecedor"/>
+      <index name="fk_pedido_status_pedido1_idx" columns="status"/>
+      <index name="fk_pedido_funcionario1_idx" columns="criado_por"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="codigo" type="string" column="codigo" length="10" nullable="false"/>
-    <field name="dataVencimento" type="date" column="data_vencimento" nullable="true"/>
-    <field name="dataPedido" type="date" column="data_pedido" nullable="true"/>
-    <field name="valor" type="string" column="valor" length="45" nullable="true"/>
+    <field name="codigo" type="string" column="codigo" length="10" nullable="true"/>
+    <field name="dataPedido" type="datetime" column="data_pedido" nullable="false"/>
+    <field name="valor" type="string" column="valor" length="45" nullable="false"/>
     <field name="descricao" type="string" column="descricao" length="255" nullable="true"/>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
-    <field name="status" type="string" column="status" length="1" nullable="false"/>
-    <many-to-one field="idtipo" target-entity="TipoPedido">
-      <join-columns>
-        <join-column name="idTipo" referenced-column-name="id"/>
-      </join-columns>
-    </many-to-one>
     <many-to-one field="idfornecedor" target-entity="Fornecedor">
       <join-columns>
         <join-column name="idFornecedor" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="criadoPor" target-entity="Funcionario">
+      <join-columns>
+        <join-column name="criado_por" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="status" target-entity="StatusPedido">
+      <join-columns>
+        <join-column name="status" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idtipo" target-entity="TipoPedido">
+      <join-columns>
+        <join-column name="idTipo" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

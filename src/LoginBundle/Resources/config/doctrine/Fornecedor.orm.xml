@@ -4,7 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="nome" type="string" column="nome" length="45" nullable="true"/>
+    <field name="nome" type="string" column="nome" length="45" nullable="false"/>
     <field name="cnpj" type="string" column="cnpj" length="20" nullable="true"/>
     <field name="cpf" type="string" column="cpf" length="15" nullable="true"/>
     <field name="telefone" type="string" column="telefone" length="15" nullable="true"/>

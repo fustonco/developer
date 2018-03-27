@@ -4,21 +4,26 @@
     <indexes>
       <index name="fk_pagamento_tipo_pagamento_idx" columns="idTipo"/>
       <index name="fk_pagamento_pedido_idx" columns="idPedido"/>
+      <index name="fk_idStatus_status_pagamento_idx" columns="idStatus"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
     <field name="valorIntegral" type="string" column="valor_integral" length="45" nullable="true"/>
     <field name="parcelado" type="string" column="parcelado" length="1" nullable="true"/>
-    <field name="statusPag" type="string" column="status_pag" length="1" nullable="false"/>
-    <many-to-one field="idtipo" target-entity="TipoPagamento">
+    <many-to-one field="idstatus" target-entity="StatusPagamento">
       <join-columns>
-        <join-column name="idTipo" referenced-column-name="id"/>
+        <join-column name="idStatus" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="idpedido" target-entity="Pedido">
       <join-columns>
         <join-column name="idPedido" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idtipo" target-entity="TipoPagamento">
+      <join-columns>
+        <join-column name="idTipo" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

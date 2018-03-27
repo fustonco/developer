@@ -9,14 +9,14 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
-    <many-to-one field="idfuncionario" target-entity="Funcionario">
-      <join-columns>
-        <join-column name="idFuncionario" referenced-column-name="id"/>
-      </join-columns>
-    </many-to-one>
     <many-to-one field="idempresa" target-entity="Empresa">
       <join-columns>
         <join-column name="idEmpresa" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idfuncionario" target-entity="Funcionario">
+      <join-columns>
+        <join-column name="idFuncionario" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
   </entity>

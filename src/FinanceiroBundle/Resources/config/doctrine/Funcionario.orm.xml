@@ -18,6 +18,7 @@
     <field name="telefone" type="string" column="telefone" length="15" nullable="true"/>
     <field name="celular" type="string" column="celular" length="15" nullable="true"/>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
+    <field name="tokenApp" type="text" column="token_app" length="65535" nullable="true"/>
     <many-to-one field="iddepartamento" target-entity="Departamento">
       <join-columns>
         <join-column name="idDepartamento" referenced-column-name="id"/>

@@ -5,7 +5,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="nome" type="string" column="nome" length="45" nullable="false"/>
-    <field name="descriao" type="string" column="descriao" length="45" nullable="true"/>
+    <field name="descriao" type="string" column="descriao" length="255" nullable="true"/>
     <field name="ativo" type="string" column="ativo" length="45" nullable="false"/>
   </entity>
 </doctrine-mapping>
