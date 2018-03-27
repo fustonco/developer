@@ -1482,15 +1482,27 @@
     <script src="{{ asset('js/demo.js') }}"></script>
     <script src="{{ asset('js/pages/tables/jquery-datatable.js') }}"></script>
 
+    <script src="{{ asset('js/socket.io.js') }}"></script>
+
     {% block javascripts %}{% endblock %}
 
     <script>
+    var idSocket = null;
+    var socket = null;
+    try {
+        if(typeof io === "undefined"){throw "Websocket server Timeout";}
+        socket = io("http://" + location.hostname + ":5020");
+    } catch(err){
+        socket = null;
+        console.log(err);
+    }
+
+    socket.emit("attIdSocket", {{ app.user.id }});
+
     $('.sairReact').click(function(event) {
         event.preventDefault();
         postMessage('sair', '*');
-        setTimeout(function(){
-            window.location = 'https://pdall.fuston.com.br/logout';
-        }, 1000);
+        setTimeout(function(){window.location = 'https://pdall.fuston.com.br/logout';}, 1000);
     });
     </script>
 </body>

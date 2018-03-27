@@ -77,6 +77,18 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/teste-socket/")
+     */
+    public function sendSocketTesteAction()
+    {
+        $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+        socket_connect($socket, '127.0.0.1', 5020);
+        $response = socket_send($socket, 'attIdSocket', 1, 0);
+        socket_close($socket);
+        return new Response($response, 200);
+    }
+
+    /**
      * @Route("/teste-push/")
      */
     public function sendPushTesteAction()
