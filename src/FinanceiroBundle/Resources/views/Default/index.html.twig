@@ -80,22 +80,28 @@
                         <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                             <thead>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Nome</th>
-                                    <th>Descricao</th>
-                                    <th>Editar</th>
-                                    <th>Excluir</th>
+                                    <th>Codigo</th>
+                                    <th>Data Pedido</th>
+                                    <th>Valor</th>
+                                    <th>Descricao</th> 
+                                    <th>Status</th>
+                                    <th>Encaminhado</th>
+                                    <th>Operação</th>
                                 </tr>
                             </thead>
                             <tbody>
                             
-                                <tr>
-                                    <td>#</td>
-                                    <td>#</td>
-                                    <td>#</td>
-                                    <td><a href="#"><i class="material-icons">edit</i></a></td>
-                                    <td><a href="javascript:void(0);" class="btn-excluir" data-id="#"><i class="material-icons">delete</i></a></td>
-                                </tr>
+                                {% for p in pedidos %}
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
                             
                             </tbody>
                         </table>
