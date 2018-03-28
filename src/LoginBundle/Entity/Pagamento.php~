@@ -164,4 +164,60 @@ class Pagamento
     {
         return $this->idpedido;
     }
+    /**
+     * @var string
+     */
+    private $valorIntegral;
+
+    /**
+     * @var \LoginBundle\Entity\StatusPagamento
+     */
+    private $idstatus;
+
+
+    /**
+     * Set valorIntegral
+     *
+     * @param string $valorIntegral
+     * @return Pagamento
+     */
+    public function setValorIntegral($valorIntegral)
+    {
+        $this->valorIntegral = $valorIntegral;
+
+        return $this;
+    }
+
+    /**
+     * Get valorIntegral
+     *
+     * @return string 
+     */
+    public function getValorIntegral()
+    {
+        return $this->valorIntegral;
+    }
+
+    /**
+     * Set idstatus
+     *
+     * @param \LoginBundle\Entity\StatusPagamento $idstatus
+     * @return Pagamento
+     */
+    public function setIdstatus(\LoginBundle\Entity\StatusPagamento $idstatus = null)
+    {
+        $this->idstatus = $idstatus;
+
+        return $this;
+    }
+
+    /**
+     * Get idstatus
+     *
+     * @return \LoginBundle\Entity\StatusPagamento 
+     */
+    public function getIdstatus()
+    {
+        return $this->idstatus;
+    }
 }

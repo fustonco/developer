@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use ElephantIO\Client;
+use ElephantIO\Engine\SocketIO\Version2X;
 
 class DefaultController extends Controller
 {
@@ -77,18 +79,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/teste-socket/")
-     */
-    public function sendSocketTesteAction()
-    {
-        $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-        socket_connect($socket, '127.0.0.1', 5020);
-        $response = socket_send($socket, 'attIdSocket', 1, 0);
-        socket_close($socket);
-        return new Response($response, 200);
-    }
-
-    /**
      * @Route("/teste-push/")
      */
     public function sendPushTesteAction()
@@ -114,7 +104,7 @@ class DefaultController extends Controller
             'android_group' => 'Pdall',
         ];
         $fields = json_encode($fields);
-
+        
         $auth = "NmViNWUyMWUtMTU5OS00ZjIzLTg5ZWYtYWNiZjk4MjU5MTc2";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
@@ -130,5 +120,22 @@ class DefaultController extends Controller
         $return["allresponses"] = $response;
         $return = json_encode($return);
         return $return;
+    }
+
+    /**
+     * @Route("/teste-socket/")
+     */
+    public function sendSocketTesteAction()
+    {
+        $object = (object) ["property" => '1', "property2" => 2];
+        $this->sendSocketFromPHP("sendTo", ["tYdd_m0d97PdgEjlAAAA", "TESTE", $object]);
+    }
+
+    public function sendSocketFromPHP($string_on, $data_array)
+    {
+        $client = new Client(new Version2X("http://localhost:5020"));
+        $client->initialize();
+        $client->emit($string_on, $data_array);
+        $client->close();
     }
 }

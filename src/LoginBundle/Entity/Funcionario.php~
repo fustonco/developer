@@ -336,4 +336,32 @@ class Funcionario implements UserInterface, \Serializable
         return $this->email;
     }
 
+    /**
+     * @var string
+     */
+    private $tokenApp;
+
+
+    /**
+     * Set tokenApp
+     *
+     * @param string $tokenApp
+     * @return Funcionario
+     */
+    public function setTokenApp($tokenApp)
+    {
+        $this->tokenApp = $tokenApp;
+
+        return $this;
+    }
+
+    /**
+     * Get tokenApp
+     *
+     * @return string 
+     */
+    public function getTokenApp()
+    {
+        return $this->tokenApp;
+    }
 }

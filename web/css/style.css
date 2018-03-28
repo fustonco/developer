@@ -8048,3 +8048,15 @@ html.ie11 .bs-searchbox .form-control {
 .oddClass {
   background-color: #f7f7f7;
 }
+#leftsidebar > div.menu > div > ul > li.active > ul > li {
+  position: relative !important;
+}
+.atualizarRecebidos {
+  position: absolute !important;
+  border-radius: 50px !important;
+  background-color: red !important;
+  height: 10px !important;
+  width: 12px !important;
+  top: 5px !important;
+  right: 5px !important;
+}

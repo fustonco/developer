@@ -377,6 +377,7 @@
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recebido"
                                 %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_recebido') }}">Listar Pedidos Recebidos</a>
+                                    <span class="atualizarRecebidos" style="display: none !important;"></span>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recusado"
                                 %}active{% endif %}">
@@ -424,6 +425,7 @@
                                 <li class="{% if app.request.requestUri == "/master/pedido/recebido"
                                 %}active{% endif %}">
                                     <a href="{{ path('master_pedido_recebido') }}">Listar Pedidos Recebidos</a>
+                                    <span class="atualizarRecebidos" style="display: none !important;"></span>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/master/pedido/recusado"
                                 %}active{% endif %}">
@@ -1487,6 +1489,7 @@
     {% block javascripts %}{% endblock %}
 
     <script>
+    $(document).ready(function() { $(".atualizarRecebidos").css('display', 'none'); });
     var idSocket = null;
     var socket = null;
     try {
@@ -1496,8 +1499,21 @@
         socket = null;
         console.log(err);
     }
+    if(socket) {
+        socket.on('getSocketId', (data, callback) => {
+            return callback([{'idUser': {{ app.user.id }}, 'idSocket': data}]);
+        });
+        socket.on('atualizarRecebidos', (data) => {
+            console.log("atualizarRecebidos", data);
+            if(location.pathname === "/chefe/pedido/recebido" || location.pathname === "/master/pedido/recebido") {
+                window.location = '';
+            } else {
+                $(".atualizarRecebidos").show();
+            }
+        });
+    }
 
-    socket.emit("attIdSocket", {{ app.user.id }});
+    console.log("qwe", location.pathname);
 
     $('.sairReact').click(function(event) {
         event.preventDefault();
