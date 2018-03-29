@@ -38,6 +38,16 @@ class DefaultController extends Controller
         $pedidosRecusados = $pedidosRecusados->fetch();
         $pedidosRecusados = $pedidosRecusados["total"];
 
+        $pedidosPendentes = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
+        INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        WHERE p.status = 1 AND pc.data_vencimento = CURDATE()");
+        $pedidosPendentes->execute(array($this->getUser()->getId()));
+        $pedidosPendentes = $pedidosPendentes->fetch();
+        $pedidosPendentes = $pedidosPendentes["total"];
+
         $pedidos = $em->getConnection()->prepare("
         SELECT f.nome funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.data_pedido, p.descricao, sp.nome status, pc.valor, tp.nome tipo_pagamento
         FROM pedido p
@@ -59,7 +69,8 @@ class DefaultController extends Controller
         
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
             'pedidos'  => $pedidos,
-            'pedidosRecusados' => $pedidosRecusados
+            'pedidosRecusados' => $pedidosRecusados,
+            'pedidosPendentes' => $pedidosPendentes
         ]);
     }
 
