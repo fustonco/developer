@@ -1498,7 +1498,7 @@
     var socket = null;
     try {
         if(typeof io === "undefined"){throw "Websocket server Timeout";}
-        socket = io("http://" + location.hostname + ":5020");
+        socket = io("http://" + location.hostname + ":3020");
     } catch(err){
         socket = null;
         console.log(err);
