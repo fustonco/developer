@@ -15,7 +15,7 @@
                 
                 <div class="content">
                     <div class="text">Pedidos Aprovados Hoje</div>
-                    <div class="number count-to" data-from="0" data-to="#" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
         </div>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="content">
                     <div class="text">Pedidos Recusados Hoje</div>
-                    <div class="number count-to" data-from="0" data-to="#" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number count-to" data-from="0" data-to="{{pedidosRecusados}}" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 </div>
                 <div class="content">
                     <div class="text">Pedidos Pagos Hoje</div>
-                    <div class="number count-to" data-from="0" data-to="#" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                 </div>
                 <div class="content">
                     <div class="text">Pendentes de Pagamento Hoje</div>
-                    <div class="number count-to" data-from="0" data-to="#" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number count-to" data-from="0" data-to="{{pedidosPendentes}}" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="content">
                     <div class="text">Menssagens Não Lidas</div>
-                    <div class="number count-to" data-from="0" data-to="#" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
         </div>
@@ -83,6 +83,7 @@
                                     <th>Codigo</th>
                                     <th>Data Pedido</th>
                                     <th>Valor</th>
+                                    <th>Pagamento</th>
                                     <th>Descricao</th> 
                                     <th>Status</th>
                                     <th>Encaminhado</th>
@@ -95,7 +96,8 @@
                                     <tr>
                                         <td></td>
                                         <td>{{p.data_pedido | date("d/m/Y H:i:s")}}</td>
-                                        <td>R$ {{p.valor | number_format(2, ",", ".")}}</td>
+                                        <td>R$ {{p.valor}}</td>
+                                        <td>{{p.tipo_pagamento}}</td>
                                         <td>{{p.descricao}}</td>
                                         <td>{{p.status}}</td>
                                         <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{p.funcionario}}">{{ p.tipo_funcionario }}</span></td>
@@ -191,6 +193,8 @@
 
 {% block javascripts %}
     <script>
+        $('.count-to').countTo();
+
         function formatDateStamp(timestamp) {
             const date = new Date(timestamp * 1000);
             const hours = date.getUTCHours();
@@ -215,10 +219,6 @@
             const year = date.getFullYear();
             const formattedDate = day + '/' + month + '/' + year;
             return formattedDate + ' - ' + formattedTime;
-        }
-
-        function formataDinheiro(n) {
-            return "R$ " + Number(n).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, "$1.");
         }
 
         $('[data-toggle="tooltip"]').tooltip({
@@ -271,7 +271,7 @@
                                 let fornecedor = '';
                                 if(!data.fornecedor) {fornecedor = '';} else {fornecedor = data.fornecedor;}
                                 $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
-                                $('#valorPagamento').html(formataDinheiro(data.valor));
+                                $('#valorPagamento').html('R$ ' + data.valor);
                                 $('#encaminhadoPedido').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+data.para+'">'+data.tipo_para+'</span>');
                                 $('#descricaoPedido').html(data.descricao);
                                 $('[data-toggle="tooltip"]').tooltip({container: 'body'});
