@@ -33,10 +33,25 @@ class DefaultController extends Controller
         
         $em = $this->getDoctrine()->getManager();
 
+        $pedidosAprovados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idPara = ? AND tipo_historico_id = 3 AND DATE(data_passagem) = CURDATE()");
+        $pedidosAprovados->execute(array($this->getUser()->getId()));
+        $pedidosAprovados = $pedidosAprovados->fetch();
+        $pedidosAprovados = $pedidosAprovados["total"];
+
         $pedidosRecusados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idDe = ? AND tipo_historico_id = 2 AND DATE(data_passagem) = CURDATE()");
         $pedidosRecusados->execute(array($this->getUser()->getId()));
         $pedidosRecusados = $pedidosRecusados->fetch();
         $pedidosRecusados = $pedidosRecusados["total"];
+
+        $pedidosPagos = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
+        INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        WHERE p.status = 2 AND pc.data_pagamento = CURDATE()");
+        $pedidosPagos->execute(array($this->getUser()->getId()));
+        $pedidosPagos = $pedidosPagos->fetch();
+        $pedidosPagos = $pedidosPagos["total"];
 
         $pedidosPendentes = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -49,7 +64,7 @@ class DefaultController extends Controller
         $pedidosPendentes = $pedidosPendentes["total"];
 
         $pedidos = $em->getConnection()->prepare("
-        SELECT f.nome funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.data_pedido, p.descricao, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        SELECT f.nome funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.data_pedido, pc.data_vencimento, p.descricao, sp.nome status, pc.valor, tp.nome tipo_pagamento
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -69,7 +84,9 @@ class DefaultController extends Controller
         
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
             'pedidos'  => $pedidos,
+            'pedidosAprovados' => $pedidosAprovados,
             'pedidosRecusados' => $pedidosRecusados,
+            'pedidosPagos' => $pedidosPagos,
             'pedidosPendentes' => $pedidosPendentes
         ]);
     }
