@@ -41,7 +41,7 @@
                     <label class="form-label">Valor</label>
                     <div class="form-group form-float">
                         <div class="form-line">
-                            <input type="number" min="0" class="form-control absoluto-valor" name="valor" required aria-required="true">
+                            <input type="text" class="form-control absoluto-valor" name="valor" required aria-required="true">
                         </div>
                     </div>
                 </div>
@@ -68,6 +68,9 @@
 
 {% block javascripts %}
 <script>
+$(document).ready(function() {
+    $('input[name="valor"]').mask('000.000.000.000.000,00', {reverse: true});
+});
 let ajaxForm;
 let idPagamento = 0;
 function addEventPagamentos(id) {
@@ -100,6 +103,8 @@ function addEventPagamentos(id) {
         $('[data-pagamento="'+id+'"]').attr('data-ok', 'no');
         $('.btn-calc-'+id).html('CALCULAR');
     });
+    $('input[name="valor_integral"]').mask('000.000.000.000.000,00', {reverse: true});
+    $('.parcela1-'+id).mask('000.000.000.000.000,00', {reverse: true});
     $('.btn-calc-'+id).click(function(e){
         e.preventDefault();
 
@@ -140,8 +145,6 @@ function addEventPagamentos(id) {
             swal('Atenção', 'O valor da parcela não pode ser maior que o valor integral do pagamento', 'warning');
             return false;
         }
-        
-        
         if($('.select-parcelas-'+id).val() == 1) {
 
             if((valor_integral - parcela1) == 0) {
@@ -175,7 +178,7 @@ function addEventPagamentos(id) {
                         <label class="form-label">`+i+` Parcela</label>
                         <div class="form-group">
                             <div class="form-line">
-                                <input type="number" value="`+parseFloat(total_valor).toFixed(2)+`" min="0" class="form-control parcela`+i+`-`+id+`" name="parcela`+i+`-`+id+`" required aria-required="true">
+                                <input type="text" value="`+parseFloat(total_valor).toFixed(2)+`" class="form-control parcela`+i+`-`+id+`" name="parcela`+i+`-`+id+`" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -189,6 +192,7 @@ function addEventPagamentos(id) {
                     </div>
                 `);
                 date = $('.vencimento'+i+'-'+id).val();
+                $('.parcela'+i+'-'+id).mask('000.000.000.000.000,00', {reverse: true});
             }
             return false;
         }
@@ -202,6 +206,8 @@ function addEventPagamentos(id) {
         for(i = 2; i <= total_parcelas; i++) {
             valor_total += parseFloat($('.parcela'+i+'-'+id).val());
         }
+        valor_total = parseFloat(valor_total).toFixed(2);
+        valor_integral = parseFloat(valor_integral).toFixed(2);
         if(valor_total != valor_integral) {
             swal('Atenção','valor da soma das parcelas não corresponde ao valor integral do pagamento\n\nValor integral: '+valor_integral+'\n'+'Valor Total: '+valor_total, 'warning');
             return false;
@@ -313,7 +319,7 @@ $('#addPg').click(function(e){
                         <label class="form-label">Valor Integral</label>
                         <div class="form-group form-float">
                             <div class="form-line">
-                                <input value="" type="number" min="0" class="valor-integral-`+idPagamento+` form-control" name="valor_integral" required aria-required="true">
+                                <input value="" type="text" class="valor-integral-`+idPagamento+` form-control" name="valor_integral" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -321,7 +327,7 @@ $('#addPg').click(function(e){
                         <label class="form-label">Dias entre vencimentos</label>
                         <div class="form-group">
                             <div class="form-line">
-                                <input value="30" type="number" min="0" class="form-control intervalo-parcelas-`+idPagamento+`" name="intervalo-parcelas" required aria-required="true">
+                                <input value="30" type="text" class="form-control intervalo-parcelas-`+idPagamento+`" name="intervalo-parcelas" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -329,7 +335,7 @@ $('#addPg').click(function(e){
                         <label class="form-label">1 Parcela</label>
                         <div class="form-group">
                             <div class="form-line">
-                                <input value="" type="number" min="0" class="form-control parcela1-`+idPagamento+`" name="parcela" required aria-required="true">
+                                <input value="" type="text" class="form-control parcela1-`+idPagamento+`" name="parcela" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -376,12 +382,15 @@ $('#form_validation').submit(function(e) {
     $('[data-pagamento]').each(function(){
         if($(this).attr('data-ok') == "no") {
             canPass = false;
-        }else if($(this).attr('data-ok') == "yes"){
+        } else if($(this).attr('data-ok') == "yes"){
             let idDP = $(this).attr('data-pagamento');
             valor_absoluto += parseFloat($('.valor-integral-'+idDP).val());
         }
     });
     if(!canPass) { swal('Atenção', 'Todos os pagamentos precisam estar OK', 'warning'); return false; }
+
+    valor_absoluto = parseFloat(valor_absoluto).toFixed(2);
+    absoluto_valor = parseFloat(absoluto_valor).toFixed(2);
 
     if(valor_absoluto != absoluto_valor){
         swal('Atenção', 'Todos os pagamentos precisam ter a soma igual ao Valor do Pedido', 'warning');

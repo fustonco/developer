@@ -1486,10 +1486,14 @@
 
     <script src="{{ asset('js/socket.io.js') }}"></script>
 
+    <script src="{{ asset('js/jquery.mask.min.js') }}"></script>
+
     {% block javascripts %}{% endblock %}
 
     <script>
-    $(document).ready(function() { $(".atualizarRecebidos").css('display', 'none'); });
+    $(document).ready(function() {
+        $(".atualizarRecebidos").css('display', 'none');
+    });
     var idSocket = null;
     var socket = null;
     try {
@@ -1508,7 +1512,7 @@
             if(location.pathname === "/chefe/pedido/recebido" || location.pathname === "/master/pedido/recebido") {
                 window.location = '';
             } else {
-                $(".atualizarRecebidos").show();
+                // $(".atualizarRecebidos").show();
             }
         });
     }
