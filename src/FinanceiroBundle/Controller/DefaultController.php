@@ -34,7 +34,7 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
         
         $pedidos = $em->getConnection()->prepare("
-        SELECT f.nome funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.data_pedido, p.descricao, sp.nome status, pc.valor
+        SELECT f.nome funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.data_pedido, p.descricao, sp.nome status, pc.valor, tp.nome tipo_pagamento
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -42,6 +42,7 @@ class DefaultController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
         WHERE p.status != 3
         AND pc.data_vencimento <= CURDATE()
