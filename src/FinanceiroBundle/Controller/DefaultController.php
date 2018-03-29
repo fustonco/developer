@@ -32,7 +32,12 @@ class DefaultController extends Controller
     {
         
         $em = $this->getDoctrine()->getManager();
-        
+
+        $pedidosRecusados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idDe = ? AND tipo_historico_id = 2 AND DATE(data_passagem) = CURDATE()");
+        $pedidosRecusados->execute(array($this->getUser()->getId()));
+        $pedidosRecusados = $pedidosRecusados->fetch();
+        $pedidosRecusados = $pedidosRecusados["total"];
+
         $pedidos = $em->getConnection()->prepare("
         SELECT f.nome funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.data_pedido, p.descricao, sp.nome status, pc.valor, tp.nome tipo_pagamento
         FROM pedido p
@@ -53,7 +58,8 @@ class DefaultController extends Controller
         $pedidos = $pedidos->fetchAll();
         
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
-            'pedidos'  => $pedidos
+            'pedidos'  => $pedidos,
+            'pedidosRecusados' => $pedidosRecusados
         ]);
     }
 
