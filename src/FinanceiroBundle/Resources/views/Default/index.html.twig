@@ -94,12 +94,15 @@
                                 {% for p in pedidos %}
                                     <tr>
                                         <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>{{p.data_pedido | date("d/m/Y H:i:s")}}</td>
+                                        <td>R$ {{p.valor | number_format(2, ",", ".")}}</td>
+                                        <td>{{p.descricao}}</td>
+                                        <td>{{p.status}}</td>
+                                        <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{p.funcionario}}">{{ p.tipo_funcionario }}</span></td>
+                                        <td>
+                                            <a class="btn-ver" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
+                                            &nbsp;<a class="btn-contestar" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             
@@ -112,4 +115,330 @@
     </div>
 
     <!-- #END# Widgets -->
+
+    <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="largeModalLabel">Pedido #<span id="idPedido"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-sm-4">
+                            <h6>Data do Pedido</h6>
+                            <p id="dataPedido"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Status do Pagamento</h6>
+                            <p id="statusPagamento"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Tipo de Pagamento</h6>
+                            <p id="tipoPagamento"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Valor do Pagamento</h6>
+                            <p id="valorPagamento"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Encaminhado</h6>
+                            <p id="encaminhadoPedido"></p>
+                        </div>
+                        <div class="col-sm-12">
+                            <h6>Descrição</h6>
+                            <p id="descricaoPedido"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect btn-show-historico">Histórico</button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+                <div class="modal-footer show-historico" style="text-align: left; height: 225px; overflow: auto; display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal" data-toggle="modal" data-target="#largeModal"></button>
+
+    <div class="modal fade" id="contestacaoModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="largeModalLabel">Contestar</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <h6>Mensagem</h6>
+                            <textarea rows="5" id="mensagem-text" style="width: 100%; resize: none;"></textarea>
+                        </div>
+                        <div class="col-sm-12">
+                            <h6>Enviar para</h6>
+                            <div class="input-field select-para-create"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect btn-contestar-confirm">Contestar</button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-contestar" data-toggle="modal" data-target="#contestacaoModal"></button>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function formatDateStamp(timestamp) {
+            const date = new Date(timestamp * 1000);
+            const hours = date.getUTCHours();
+            const minutes = "0" + date.getUTCMinutes();
+            const seconds = "0" + date.getUTCSeconds();
+            const formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+            const day = (date.getDate() < 10) ? '0'+date.getDate() : date.getDate();
+            const month = ((date.getMonth() + 1) < 10) ? ('0'+(date.getMonth() + 1)) : (date.getMonth() + 1);
+            const year = date.getFullYear();
+            const formattedDate = day + '/' + month + '/' + year;
+            return formattedDate + ' - ' + formattedTime;
+        }
+
+        function formatDate(newdate) {
+            const date = new Date(newdate);
+            const hours = date.getHours();
+            const minutes = "0" + date.getMinutes();
+            const seconds = "0" + date.getSeconds();
+            const formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+            const day = (date.getDate() < 10) ? '0'+date.getDate() : date.getDate();
+            const month = ((date.getMonth() + 1) < 10) ? ('0'+(date.getMonth() + 1)) : (date.getMonth() + 1);
+            const year = date.getFullYear();
+            const formattedDate = day + '/' + month + '/' + year;
+            return formattedDate + ' - ' + formattedTime;
+        }
+
+        function formataDinheiro(n) {
+            return "R$ " + Number(n).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, "$1.");
+        }
+
+        $('[data-toggle="tooltip"]').tooltip({
+            container: 'body'
+        });
+
+        $('.btn-show-historico').click(function(e) {
+            if($('.show-historico').is(':visible')){
+                $('.show-historico').hide();
+            } else {
+                $('.show-historico').show();
+            }
+        });
+
+        let ajaxForm;
+
+        $('.btn-ver').click(function(e) {
+            e.preventDefault();
+            let id = $(this).attr('data-id');
+            if(!ajaxForm) {
+                swal({
+                    title: "Atenção",
+                    text: "Deseja realmente ver?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sim!",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true,
+                    allowClickOutside: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                        ajaxForm = $.ajax({
+                            type: "POST",
+                            url: '/financeiro/ver/',
+                            data: {
+                                id: id
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                ajaxForm = null;
+                                historico = data.historico;
+                                data = data.pedido[0];
+                                console.log('success', data);
+                                console.log('success', historico);
+                                swal.close();
+                                $('#idPedido').html(data.id);
+                                $('#dataPedido').html(formatDate(data.data_pedido));
+                                $('#statusPagamento').html(data.status);
+                                let fornecedor = '';
+                                if(!data.fornecedor) {fornecedor = '';} else {fornecedor = data.fornecedor;}
+                                $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
+                                $('#valorPagamento').html(formataDinheiro(data.valor));
+                                $('#encaminhadoPedido').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+data.para+'">'+data.tipo_para+'</span>');
+                                $('#descricaoPedido').html(data.descricao);
+                                $('[data-toggle="tooltip"]').tooltip({container: 'body'});
+                                $('.show-historico').html('');
+                                for(let i = 0; i < historico.length; i++) {
+                                    let mensagem = '';
+                                    let oddClass = '';
+                                    if ( historico[i].idmensagem ) { mensagem = historico[i].idmensagem.mensagem; }
+                                    if ( i % 2 === 0 ) { oddClass = 'oddClass' }
+                                    $('.show-historico').append(`
+                                        <div class="row clearfix">
+                                            <div class="col-sm-12 `+oddClass+`">
+                                                <h6 style="text-align: right;">`+formatDateStamp(historico[i].dataPassagem.timestamp)+`</h6>
+                                                <h6>De: `+historico[i].idde.nome+` - Para: `+historico[i].idpara.nome+`</h6>
+                                                <h6>`+historico[i].tipoHistorico.nome+`</h6>
+                                                <p>`+mensagem+`</p>
+                                            </div>
+                                        </div>
+                                    `);
+                                }
+                                $('.btn-modal').trigger('click');
+                                // MODAL
+                            },
+                            error: function(data) {
+                                ajaxForm = null;
+                                console.error('erro', data);
+                                if(data.status == 404){
+                                    swal({
+                                        title: "Erro",
+                                        text: 'Entre em contato com o suporte.',
+                                        type: "error",
+                                        allowClickOutside: false,
+                                        allowEscapeKey: false
+                                    });
+                                } else {
+                                    swal({
+                                        title: "Erro",
+                                        text: data.responseJSON.description,
+                                        type: "warning",
+                                        allowClickOutside: false,
+                                        allowEscapeKey: false
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        $('.btn-contestar').click(function(e) {
+            e.preventDefault();
+            let id = $(this).attr('data-id');
+
+            if(!ajaxForm) {
+                swal({
+                    title: "Atenção",
+                    text: "Deseja abrir contestar?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sim!",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true,
+                    allowClickOutside: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                    ajaxForm = $.ajax({
+                        type: "POST",
+                        url: '/financeiro/get/affecteds/',
+                        data: {
+                            id: id,
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            ajaxForm = null;
+                            let str = '';
+                            for(let i = 0; i < data.length; i++) {
+                                str += '<option value="'+data[i].idFuncionario+'">'+data[i].nomeFuncionario+'</option>';
+                            }
+                            $('.select-para-create').html('');
+                            $('.select-para-create').append(`
+                                <select class="form-control show-tick select-para" name="para" id="para" required aria-required="true">
+                                <option value="" selected disabled>-- Selecione --</option>
+                                `+str+`
+                                </select>
+                            `);
+                            $('.btn-modal-contestar').trigger('click');
+                            swal.close();
+
+                            $('.btn-contestar-confirm').click(function(e) {
+                                e.preventDefault();
+                                let para = $('.select-para').val();
+                                let mensagem = $('#mensagem-text').val();
+                                if(!ajaxForm) {
+                                    swal({
+                                        title: "Contestação",
+                                        text: "Deseja realmente contestar?",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonText: "Constestar",
+                                        cancelButtonText: "Cancelar",
+                                        closeOnConfirm: false,
+                                        allowClickOutside: false,
+                                        animation: "slide-from-top",
+                                        inputPlaceholder: "Escreva o motivo aqui",
+                                        showLoaderOnConfirm: true
+                                    }, function (inputValue) {
+                                        if(inputValue) {
+                                            ajaxForm = $.ajax({
+                                                type: "POST",
+                                                url: '/financeiro/contestar/',
+                                                data: {
+                                                    id: id,
+                                                    para: para,
+                                                    mensagem: mensagem
+                                                },
+                                                dataType: 'json',
+                                                success: function(data) {
+                                                    ajaxForm = null;
+                                                    console.log('success', data);
+                                                    swal({
+                                                        title: "Sucesso!",
+                                                        text: data.description,
+                                                        type: "success",
+                                                        allowClickOutside: false,
+                                                        allowEscapeKey: false
+                                                    }, function(){
+                                                        window.location = '';
+                                                    });
+                                                },
+                                                error: function(data) {
+                                                    ajaxForm = null;
+                                                    console.error('erro', data);
+                                                    if(data.status == 404){
+                                                        swal({
+                                                            title: "Erro",
+                                                            text: 'Entre em contato com o suporte.',
+                                                            type: "error",
+                                                            allowClickOutside: false,
+                                                            allowEscapeKey: false
+                                                        });
+                                                    } else {
+                                                        swal({
+                                                            title: "Erro",
+                                                            text: data.responseJSON.description,
+                                                            type: "warning",
+                                                            allowClickOutside: false,
+                                                            allowEscapeKey: false
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+
+                        },
+                        error: function(data) {
+                            ajaxForm = null;
+                            console.error('erroAffecteds', data);
+                        }
+                    });
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}
