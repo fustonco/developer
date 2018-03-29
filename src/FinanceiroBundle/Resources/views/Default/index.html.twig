@@ -15,7 +15,7 @@
                 
                 <div class="content">
                     <div class="text">Pedidos Aprovados Hoje</div>
-                    <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number count-to" data-from="0" data-to="{{pedidosAprovados}}" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 </div>
                 <div class="content">
                     <div class="text">Pedidos Pagos Hoje</div>
-                    <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
+                    <div class="number count-to" data-from="0" data-to="{{pedidosPagos}}" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        {# <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
             <div class="info-box bg-teal hover-expand-effect">
                 <div class="icon">
                     <i class="material-icons">account_box</i>
@@ -62,7 +62,7 @@
                     <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
-        </div>
+        </div> #}
     </div>
     
 
@@ -82,6 +82,7 @@
                                 <tr>
                                     <th>Codigo</th>
                                     <th>Data Pedido</th>
+                                    <th>Vencimento</th>
                                     <th>Valor</th>
                                     <th>Pagamento</th>
                                     <th>Descricao</th> 
@@ -96,6 +97,7 @@
                                     <tr>
                                         <td></td>
                                         <td>{{p.data_pedido | date("d/m/Y H:i:s")}}</td>
+                                        <td>{{p.data_vencimento | date("d/m/Y")}}</td>
                                         <td>R$ {{p.valor}}</td>
                                         <td>{{p.tipo_pagamento}}</td>
                                         <td>{{p.descricao}}</td>
