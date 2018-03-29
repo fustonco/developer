@@ -289,7 +289,7 @@ class FuncionarioController extends Controller
 
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
             if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
-            if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
+            // if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
 
             $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
             if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}
@@ -385,7 +385,7 @@ class FuncionarioController extends Controller
 
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
             if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
-            if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
+            // if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
 
             $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
             if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}

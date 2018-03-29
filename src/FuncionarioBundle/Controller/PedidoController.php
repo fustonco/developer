@@ -483,7 +483,7 @@ class PedidoController extends Controller
         try {
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
-
+    
             if(!$request->get('tipopedido')) {throw new \Exception('error_tipopedido');}
             if(!$request->get('valor')) {throw new \Exception('error_valor');}
             if(!$request->get('descricao')) {throw new \Exception('error_descricao');}
@@ -556,14 +556,13 @@ class PedidoController extends Controller
             $em->persist($historico);
             $em->flush();
 
-            $em->getConnection()->commit();
-
             $apibundle = new ApiDefault;
             $apibundle->sendPush([$para->getTokenApp()], 'Novo Pedido', 'Você tem um novo pedido');
 
             $object = (object) [];
             $apibundle->sendSocketFromPHP("sendTo", [$para->getSocket(), "atualizarRecebidos", $object]);
 
+            $em->getConnection()->commit();
             return new Response(json_encode([
                 'description' => 'Pedido cadastrado com sucesso!'
             ]), 200);

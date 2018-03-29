@@ -904,14 +904,13 @@ class PedidoController extends Controller
             $em->persist($historico);
             $em->flush();
 
-            $em->getConnection()->commit();
-
             $apibundle = new ApiDefault;
             $apibundle->sendPush([$para->getTokenApp()], 'Novo Pedido', 'Você tem um novo pedido');
 
             $object = (object) [];
             $apibundle->sendSocketFromPHP("sendTo", [$para->getSocket(), "atualizarRecebidos", $object]);
             
+            $em->getConnection()->commit();
             return new Response(json_encode([
                 'description' => 'Pedido cadastrado com sucesso!'
             ]), 200);
