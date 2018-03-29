@@ -414,12 +414,12 @@ $('#form_validation').submit(function(e) {
                 $('[data-pagamento]').each(function(){
                     if($(this).attr('data-ok') == "yes"){
                         let idDP = $(this).attr('data-pagamento');
-                        let valor_integral = parseFloat($('.valor-integral-'+idDP).val());
+                        let valor_integral = $('.valor-integral-'+idDP).val();
                         let tipopagamento = parseInt($('.tipopagamento-'+idDP).val());
                         let parcelas = [];
                         for(let i = 1; i <= parseInt($('.select-parcelas-'+idDP).val()); i++) {
                             let parcela = {
-                                valor: parseFloat($('.parcela'+i+'-'+idDP).val()),
+                                valor: $('.parcela'+i+'-'+idDP).val(),
                                 vencimento: $('.vencimento'+i+'-'+idDP).val()
                             }
                             parcelas.push(parcela);
@@ -434,13 +434,13 @@ $('#form_validation').submit(function(e) {
                 });
                 myArray = {
                     'para': parseInt($('[name="para"]').val() || 0),
-                    'valor': parseInt($('[name="valor"]').val() || 0),
+                    'valor': $('[name="valor"]').val() || 0,
                     'tipopedido': parseInt($('[name="tipopedido"]').val() || 0),
                     'forn': parseInt($('[name="forn"]').val() || 0),
                     'descricao': $('[name="descricao"]').val(),
                     'pagamentos': pagamentos
                 }
-                console.log(myArray);
+                console.log('myArray', myArray);
 
                 ajaxForm = $.ajax({
                     type: "POST",

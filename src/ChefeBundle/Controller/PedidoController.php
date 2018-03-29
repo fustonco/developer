@@ -36,7 +36,7 @@ class PedidoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getConnection()->prepare("
-        SELECT sp.id id_status_pedido, f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -854,7 +854,7 @@ class PedidoController extends Controller
             $pedido->setAtivo('S');
             $status_pedido = $em->getRepository('ChefeBundle:StatusPedido')->findOneById(1);
             $pedido->setStatus($status_pedido);
-            $criador = $em->getRepository('FuncionarioBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $criador = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
             $pedido->setCriadoPor($criador);
             $em->persist($pedido);
             $em->flush();

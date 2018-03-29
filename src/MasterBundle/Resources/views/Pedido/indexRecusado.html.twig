@@ -26,7 +26,7 @@
                                 <tr>
                                     <td>{{ entity.codigo }}</td>
                                     <td>{% if entity.dataPedido %}{{ entity.dataPedido | date('d/m/Y H:i:s') }}{% endif %}</td>
-                                    <td>R$ {{ entity.valor | number_format(2, ',', '.') }}</td>
+                                    <td>R$ {{ entity.valor }}</td>
                                     <td>{{ entity.descricao }}</td>
                                     <td>{{ entity.status }}</td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{entity.funcionario}}">{{ entity.tipo_funcionario }}</span></td>
@@ -466,7 +466,7 @@ $('.btn-ver').click(function(e) {
                         let fornecedor = '';
                         if(!data.fornecedor) {fornecedor = '';} else {fornecedor = data.fornecedor;}
                         $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
-                        $('#valorPagamento').html(formataDinheiro(data.valor));
+                        $('#valorPagamento').html("R$ "+data.valor);
                         $('#encaminhadoPedido').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+data.para+'">'+data.tipo_para+'</span>');
                         $('#descricaoPedido').html(data.descricao);
                         $('[data-toggle="tooltip"]').tooltip({container: 'body'});
