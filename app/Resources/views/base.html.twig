@@ -1484,7 +1484,7 @@
     <script src="{{ asset('js/demo.js') }}"></script>
     <script src="{{ asset('js/pages/tables/jquery-datatable.js') }}"></script>
 
-    <script src="{{ asset('js/socket.io.js') }}"></script>
+    <script src="https://node.pdall.fuston.com.br/socket.io/socket.io.js"></script>
 
     <script src="{{ asset('js/jquery.mask.min.js') }}"></script>
 
@@ -1498,7 +1498,9 @@
     var socket = null;
     try {
         if(typeof io === "undefined"){throw "Websocket server Timeout";}
-        socket = io("https://node.pdall.fuston.com.br");
+        socket = io("https://node.pdall.fuston.com.br", {
+            secure: true
+        });
     } catch(err){
         socket = null;
         console.log(err);
