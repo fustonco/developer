@@ -632,6 +632,11 @@ class PedidoController extends Controller
             ],[
                 'id' => 'DESC'
             ]);
+            
+            $pedido = $em->getRepository('MasterBundle:Pedido')->findOneById($request->get('id'));
+            $codigo = strtoupper(substr(str_shuffle(MD5(microtime())), 0, 5));
+            $old_historico->setCodigo($codigo);
+            $pedido->setCodigo($codigo);
 
             $mensagem = new Mensagem();
             $mensagem->setMensagem($request->get('mensagem'));
