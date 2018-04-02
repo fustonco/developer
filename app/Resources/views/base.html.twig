@@ -1498,7 +1498,7 @@
     var socket = null;
     try {
         if(typeof io === "undefined"){throw "Websocket server Timeout";}
-        socket = io("https://" + location.hostname + ":3020");
+        socket = io("https://pdall.fuston.com.br:3020");
     } catch(err){
         socket = null;
         console.log(err);
