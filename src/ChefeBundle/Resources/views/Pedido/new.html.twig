@@ -159,7 +159,7 @@ function addEventPagamentos(id) {
         } else {
 
             let total_parcelas = $('.select-parcelas-'+id).val();
-            let total_valor = parseFloat((valor_integral - parcela1) / (total_parcelas - 1));
+            let total_valor = parseFloat((valor_integral - parcela1) / (total_parcelas - 1)).toFixed(2);
 
             let intervalo_data = $('.intervalo-parcelas-'+id).val();
             let date = $('.vencimento1-'+id).val();
@@ -172,6 +172,7 @@ function addEventPagamentos(id) {
             $('#modal-show-'+id).addClass("md-show");
             if($('[data-pagamento="'+id+'"]').attr('data-ok') == 'yes') return false;
 
+            total_valor *= 100;
             $('.inputs-parcela-'+id).html('');
             for(i = 2; i <= total_parcelas; i++) {
                 $('.inputs-parcela-'+id).append(`
@@ -200,17 +201,25 @@ function addEventPagamentos(id) {
     });
     $('.md-close-'+id).click(function(e) {
         e.preventDefault();
-        let valor_integral = $('.valor-integral-'+id).val();
-        let total_parcelas = $('.select-parcelas-'+id).val();
-        let parcela1 = $('.parcela1-'+id).val();
-        let valor_total = parseFloat(parcela1);
+        // let valor_integral = $('.valor-integral-'+id).val();
+        // let total_parcelas = $('.select-parcelas-'+id).val();
+        // let parcela1 = $('.parcela1-'+id).val();
+        // let valor_total = parseFloat(parcela1);
+        // for(i = 2; i <= total_parcelas; i++) {
+        //     valor_total += parseFloat($('.parcela'+i+'-'+id).val());
+        // }
+        // valor_total = parseFloat(valor_total);
+        // valor_integral = parseFloat(valor_integral);
+
+        valor_integral = parseFloat($('.valor-integral-'+id).val().replace('.','').replace(',','.'));
+        total_parcelas = $('.select-parcelas-'+id).val();
+        valor_total = parseFloat($('.parcela1-'+id).val().replace('.','').replace(',','.'));
         for(i = 2; i <= total_parcelas; i++) {
-            valor_total += parseFloat($('.parcela'+i+'-'+id).val());
+            valor_total += parseFloat($('.parcela'+i+'-'+id).val().replace('.','').replace(',','.'));
         }
-        valor_total = parseFloat(valor_total);
-        valor_integral = parseFloat(valor_integral);
+
         if(valor_total != valor_integral) {
-            swal('Atenção','valor da soma das parcelas não corresponde ao valor integral do pagamento\n\nValor integral: '+valor_integral+'\n'+'Valor Total: '+valor_total, 'warning');
+            swal('Atenção','Valor da soma das parcelas não corresponde ao valor integral do pagamento\n\nValor integral: '+valor_integral+'\n'+'Valor Total: '+valor_total, 'warning');
             return false;
         } else {
             swal({
