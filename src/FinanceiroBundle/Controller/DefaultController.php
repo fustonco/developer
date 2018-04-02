@@ -12,8 +12,8 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use ApiBundle\Controller\DefaultController as ApiDefault;
 
-use MasterBundle\Entity\Historico;
-use MasterBundle\Entity\Mensagem;
+use FinanceiroBundle\Entity\Historico;
+use FinanceiroBundle\Entity\Mensagem;
 
 class DefaultController extends Controller
 {
@@ -64,7 +64,7 @@ class DefaultController extends Controller
         $pedidosPendentes = $pedidosPendentes["total"];
 
         $pedidos = $em->getConnection()->prepare("
-        SELECT f.nome funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.data_pedido, pc.data_vencimento, p.descricao, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -74,7 +74,7 @@ class DefaultController extends Controller
         INNER JOIN pagamento pg ON pg.idPedido = p.id
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
-        WHERE p.status != 3
+        WHERE p.status = 1 AND pc.status = 1
         AND pc.data_vencimento <= CURDATE()
         ORDER BY p.id DESC;
         ");
@@ -115,14 +115,28 @@ class DefaultController extends Controller
             $pedido->execute();
             $pedido = $pedido->fetchAll();
 
-            $historico = $em->getRepository('MasterBundle:Historico')->findByIdpedido($id);
-            $historico = $this->serializeJSON($historico);
+            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.nome tipo, p.valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas FROM pagamento pg
+            INNER JOIN tipo_pagamento t ON pg.idTipo = t.id
+            INNER JOIN pedido p ON idPedido = p.id
+            LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas GROUP BY idPagamento) pc ON pc.idPagamento = pg.id
+            LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas WHERE status = 2 GROUP BY idPagamento) pcp ON pcp.idPagamento = pg.id
+            WHERE idPedido = ?");
+            $pagamentos->execute(array($id));
+            $pagamentos = $pagamentos->fetchAll();
+
+            for($i = 0; $i < count($pagamentos); $i = $i + 1){
+                $parcelas = $em->getConnection()->prepare("SELECT p.id, num_parcela, valor, valor_pago, valor_pendente, valor_desconto, valor_acrecimo, DATE_FORMAT(data_vencimento, '%d/%m/%Y') data_vencimento, s.nome status, s.id status_id FROM parcelas p
+                INNER JOIN status_parcela s ON p.status = s.id
+                WHERE idPagamento = ? AND p.data_vencimento <= CURDATE()");
+                $parcelas->execute(array($pagamentos[$i]["id"]));
+                $pagamentos[$i]["parcelas"] = $parcelas->fetchAll();
+            }
 
             return new Response(json_encode([
                 'pedido' => $pedido,
-                'historico' => json_decode($historico)
+                'pagamentos' => $pagamentos
             ]), 200);
-        } catch(\Exception $e) {
+        } catch(Exception $e) {
             return new Response(json_encode([
                 "description" => "Erro ao Ver Pedido!"
             ]), 500);
@@ -173,7 +187,7 @@ class DefaultController extends Controller
             if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
             if(!$request->get('para')) {throw new \Exception('error_para');}
 
-            $old_historico = $em->getRepository('MasterBundle:Historico')->findOneBy([
+            $old_historico = $em->getRepository('FinanceiroBundle:Historico')->findOneBy([
                 'idpedido' => $request->get('id')
             ],[
                 'id' => 'DESC'
@@ -187,13 +201,13 @@ class DefaultController extends Controller
             $historico = new Historico();
             $historico->setCodigo($old_historico->getCodigo());
             $historico->setIdpedido($old_historico->getIdpedido());
-            $de = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
+            $de = $em->getRepository('FinanceiroBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
-            $para = $em->getRepository('MasterBundle:Funcionario')->findOneById($request->get('para'));
+            $para = $em->getRepository('FinanceiroBundle:Funcionario')->findOneById($request->get('para'));
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
-            $tipohistorico = $em->getRepository('MasterBundle:TipoHistorico')->findOneById(2);
+            $tipohistorico = $em->getRepository('FinanceiroBundle:TipoHistorico')->findOneById(2);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
             $em->flush();
@@ -228,6 +242,42 @@ class DefaultController extends Controller
             return new Response(json_encode([
                 'description' => 'Não foi possivel contestar o Pedido!'
             ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/confirm/")
+     */
+    public function confirmPedidoAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $parcel = $request->request->get("id");
+        $increase = $request->request->get("increase");
+        $decrease = $request->request->get("decrease");
+        $value = $request->request->get("value");
+        $description = $request->request->get("description");
+
+        try{
+            if(empty($parcel) || empty($value) || empty($description)){
+                throw new \Exception("Dados incompletos", 500);
+            }
+
+            $parcel = $em->getRepository("FinanceiroBundle:Parcelas")->findOneById($id);
+
+            if(empty($parcel) || $parcel->getStatus()->getId() != 1){
+                throw new \Exception("Parcela não encontrada", 404);
+            }
+
+            $parcel->setMensagem($description);
+
+            return new Response("success");
+        }
+        catch(\Exception $e){
+            $message = !empty($e->getMessage()) ? $e->getMessage() : "Ocorreu um erro";
+            $status = !empty($e->getCode()) ? $e->getCode() : 500;
+
+            return new Response($message, $status);
         }
     }
 }
