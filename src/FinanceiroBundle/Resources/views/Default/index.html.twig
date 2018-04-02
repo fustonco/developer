@@ -106,6 +106,7 @@
                                         <td>
                                             <a class="btn-ver" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
                                             &nbsp;<a class="btn-contestar" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a>
+                                            &nbsp;<a class="btn-show-confirm" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar pagamento">thumb_up</i></a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -191,6 +192,62 @@
         </div>
     </div>
     <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-contestar" data-toggle="modal" data-target="#contestacaoModal"></button>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirmar pagamento</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="confirmation">
+                        <div class="row clearfix">
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control">
+                                        <label class="form-label">Acréscimo (R$)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control">
+                                        <label class="form-label">Decréscimo (R$)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control">
+                                        <label class="form-label">Valor do pagamento (R$)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <textarea rows="4" class="form-control"></textarea>
+                                        <label class="form-label">Descrição</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect btn-confirm">Confirmar</button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-confirm" data-toggle="modal" data-target="#confirmModal"></button>
 {% endblock %}
 
 {% block javascripts %}
@@ -236,6 +293,10 @@
         });
 
         let ajaxForm;
+
+        $(".btn-show-confirm").click(function(){
+            $(".btn-modal-confirm").trigger("click");
+        });
 
         $('.btn-ver').click(function(e) {
             e.preventDefault();
