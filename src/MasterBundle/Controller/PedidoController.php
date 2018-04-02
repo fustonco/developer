@@ -849,7 +849,7 @@ class PedidoController extends Controller
             $codigo = strtoupper(substr(str_shuffle(MD5(microtime())), 0, 5));
 
             $pedido = new Pedido();
-            $pedido->setCodigo(null);
+            $pedido->setCodigo($codigo);
             $tipo = $em->getRepository('MasterBundle:TipoPedido')->findOneById($request->get('tipopedido'));
             $pedido->setIdtipo($tipo);
             if($request->get('forn')) {
@@ -864,7 +864,6 @@ class PedidoController extends Controller
             $pedido->setStatus($status_pedido);
             $criador = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $pedido->setCriadoPor($criador);
-            $pedido->setCodigo($codigo);
             $em->persist($pedido);
             $em->flush();
 
@@ -900,7 +899,7 @@ class PedidoController extends Controller
             }
 
             $historico = new Historico();
-            $historico->setCodigo(null);
+            $historico->setCodigo($codigo);
             $historico->setIdpedido($pedido);
             $de = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
@@ -910,15 +909,14 @@ class PedidoController extends Controller
             $historico->setIdmensagem(null);
             $tipohistorico = $em->getRepository('MasterBundle:TipoHistorico')->findOneById(1);
             $historico->setTipoHistorico($tipohistorico);
-            $historico->setCodigo($codigo);
             $em->persist($historico);
             $em->flush();
 
             $apibundle = new ApiDefault;
             $apibundle->sendPush([$para->getTokenApp()], 'Novo Pedido', 'Você tem um novo pedido');
 
-            $object = (object) [];
-            $apibundle->sendSocketFromPHP("sendTo", [$para->getSocket(), "atualizarRecebidos", $object]);
+            // $object = (object) [];
+            // $apibundle->sendSocketFromPHP("sendTo", [$para->getSocket(), "atualizarRecebidos", $object]);
             
             $em->getConnection()->commit();
             return new Response(json_encode([
