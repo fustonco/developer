@@ -13,6 +13,8 @@ use ChefeBundle\Entity\Historico;
 use ChefeBundle\Entity\Pagamento;
 use ChefeBundle\Entity\Parcelas;
 use ChefeBundle\Entity\Mensagem;
+use ChefeBundle\Entity\PedidoAnexo;
+use ChefeBundle\Entity\Anexo;
 use ChefeBundle\Form\PedidoType;
 use ApiBundle\Controller\DefaultController as ApiDefault;
 
@@ -827,30 +829,32 @@ class PedidoController extends Controller
      */
     public function cadastrarPedidoAction(Request $request)
     {
+        $request = json_decode($request->get('data'));
+        $default = new DefaultController();
         $hoje = date_create();
         try {
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
 
-            if(!$request->get('tipopedido')) {throw new \Exception('error_tipopedido');}
-            if(!$request->get('valor')) {throw new \Exception('error_valor');}
-            if(!$request->get('descricao')) {throw new \Exception('error_descricao');}
-            if(!$request->get('para')) {throw new \Exception('error_para');}
-
-            $pagamentos = $request->get('pagamentos');
+            if(!$request->tipopedido) {throw new \Exception('error_tipopedido');}
+            if(!$request->valor) {throw new \Exception('error_valor');}
+            if(!$request->descricao) {throw new \Exception('error_descricao');}
+            if(!$request->para) {throw new \Exception('error_para');}
+            
+            $pagamentos = $request->pagamentos;            
             if(count($pagamentos) == 0) {throw new \Exception('error_pagamentos');}
-
+            
             $pedido = new Pedido();
             $pedido->setCodigo(null);
-            $tipo = $em->getRepository('ChefeBundle:TipoPedido')->findOneById($request->get('tipopedido'));
+            $tipo = $em->getRepository('ChefeBundle:TipoPedido')->findOneById($request->tipopedido);
             $pedido->setIdtipo($tipo);
-            if($request->get('forn')) {
-                $fornecedor = $em->getRepository('ChefeBundle:Fornecedor')->findOneById($request->get('forn'));
+            if($request->forn) {
+                $fornecedor = $em->getRepository('ChefeBundle:Fornecedor')->findOneById($request->forn);
                 $pedido->setIdfornecedor($fornecedor);
             }
             $pedido->setDataPedido($hoje);
-            $pedido->setValor($request->get('valor'));
-            $pedido->setDescricao($request->get('descricao'));
+            $pedido->setValor($request->valor);
+            $pedido->setDescricao($request->descricao);
             $pedido->setAtivo('S');
             $status_pedido = $em->getRepository('ChefeBundle:StatusPedido')->findOneById(1);
             $pedido->setStatus($status_pedido);
@@ -862,25 +866,25 @@ class PedidoController extends Controller
             for ($i = 0; $i < count($pagamentos); $i++) {
                 $pagamento = new Pagamento();
                 $pagamento->setIdPedido($pedido);
-                $tipo_pagamento = $em->getRepository('ChefeBundle:TipoPagamento')->findOneById($pagamentos[$i]['tipopagamento']);
+                $tipo_pagamento = $em->getRepository('ChefeBundle:TipoPagamento')->findOneById($pagamentos[$i]->tipopagamento);
                 $pagamento->setIdTipo($tipo_pagamento);
-                $pagamento->setValorIntegral($pagamentos[$i]['valor_integral']);
+                $pagamento->setValorIntegral($pagamentos[$i]->valor_integral);
                 $status_pagamento = $em->getRepository('ChefeBundle:StatusPagamento')->findOneById(1);
                 $pagamento->setIdStatus($status_pagamento);
                 $em->persist($pagamento);
                 $em->flush();
     
-                $parcelas = $pagamentos[$i]['parcelas'];
-                for ($j=0; $j < count($parcelas); $j++) {     
+                $parcelas = $pagamentos[$i]->parcelas;
+                for ($j=0; $j < count($parcelas); $j++) {
                     $parcela = new Parcelas();
                     $parcela->setIdPagamento($pagamento);
                     $parcela->setNumParcela($j + 1);
-                    $parcela->setValor($parcelas[$j]['valor']);
+                    $parcela->setValor($parcelas[$j]->valor);
                     $parcela->setValorPago(null);
                     $parcela->setValorDesconto(null);
                     $parcela->setValorAcrecimo(null);
-                    $parcela->setValorPendente($parcelas[$j]['valor']);
-                    $parcela->setDataVencimento(date_create_from_format('Y-m-d', $parcelas[$j]['vencimento']));
+                    $parcela->setValorPendente($parcelas[$j]->valor);
+                    $parcela->setDataVencimento(date_create_from_format('Y-m-d', $parcelas[$j]->vencimento));
                     $parcela->setMensagem(null);
                     $status_parcela = $em->getRepository('ChefeBundle:StatusParcela')->findOneById(1);
                     $parcela->setStatus($status_parcela);
@@ -895,7 +899,7 @@ class PedidoController extends Controller
             $historico->setIdpedido($pedido);
             $de = $em->getRepository('ChefeBundle:Funcionario')->findOneById($this->getUser()->getId());
             $historico->setIdde($de);
-            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($request->get('para'));
+            $para = $em->getRepository('ChefeBundle:Funcionario')->findOneById($request->para);
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem(null);
@@ -910,6 +914,27 @@ class PedidoController extends Controller
             // $object = (object) [];
             // $apibundle->sendSocketFromPHP("sendTo", [$para->getSocket(), "atualizarRecebidos", $object]);
             
+            foreach ($_FILES as $value):
+                $nome = substr(str_shuffle(MD5(microtime())), 0, 20);
+                $path = $value['name'];
+                $ext = pathinfo($path, PATHINFO_EXTENSION);
+                $nome_file = $nome . "." . $ext;
+                move_uploaded_file($value['tmp_name'], './uploads/' . $nome_file);
+
+                $anexo = new Anexo();
+                $anexo->setCaminho($nome_file);
+                $anexo->setAtivo("S");
+                $em->persist($anexo);
+                $em->flush();
+    
+                $pedidoAnexo = new PedidoAnexo();
+                $pedidoAnexo->setIdanexo($anexo);
+                $pedidoAnexo->setIdpedido($pedido);
+                $pedidoAnexo->setAtivo("S");
+                $em->persist($pedidoAnexo);
+                $em->flush();
+            endforeach;
+
             $em->getConnection()->commit();
             return new Response(json_encode([
                 'description' => 'Pedido cadastrado com sucesso!'
