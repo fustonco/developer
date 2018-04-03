@@ -14,6 +14,7 @@ use ApiBundle\Controller\DefaultController as ApiDefault;
 
 use FinanceiroBundle\Entity\Historico;
 use FinanceiroBundle\Entity\Mensagem;
+use FinanceiroBundle\Entity\DataParcial;
 
 class DefaultController extends Controller
 {
@@ -76,8 +77,7 @@ class DefaultController extends Controller
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
         WHERE p.status = 1 AND pc.status = 1
         AND pc.data_vencimento <= CURDATE()
-        ORDER BY p.id DESC;
-        ");
+        ORDER BY p.id DESC");
         $pedidos->bindValue("para", $this->getUser()->getId());
         $pedidos->execute();
         $pedidos = $pedidos->fetchAll();
@@ -193,6 +193,16 @@ class DefaultController extends Controller
                 'id' => 'DESC'
             ]);
 
+            $pagamento = $em->getRepository("FinanceiroBundle:Pagamento")->findOneByIdpedido($request->get('id'));
+            $parcelas = $em->getRepository("FinanceiroBundle:Parcelas")->findBy(array(
+                "idpagamento" => $pagamento,
+                "status" => 2
+            ));
+
+            if(count($parcelas) > 0){
+                throw new \Exception("error_parcel");
+            }
+
             $mensagem = new Mensagem();
             $mensagem->setMensagem($request->get('mensagem'));
             $em->persist($mensagem);
@@ -238,6 +248,11 @@ class DefaultController extends Controller
                         'description' => 'Precisa escolher para quem enviar!'
                     ]), 500);
                 break;
+                case 'error_parcel':
+                    return new Response(json_encode([
+                        'description' => 'Não é possível contestar um pedido com parcelas já pagas'
+                    ]), 500);
+                break;
             }
             return new Response(json_encode([
                 'description' => 'Não foi possivel contestar o Pedido!'
@@ -251,33 +266,133 @@ class DefaultController extends Controller
     public function confirmPedidoAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $em->getConnection()->beginTransaction();
 
-        $parcel = $request->request->get("id");
-        $increase = $request->request->get("increase");
-        $decrease = $request->request->get("decrease");
+        $parcel = $request->request->get("parcel");
+        $variationValue = $request->request->get("variation_value");
+        $variationType = $request->request->get("variation_type");
         $value = $request->request->get("value");
         $description = $request->request->get("description");
 
         try{
-            if(empty($parcel) || empty($value) || empty($description)){
+            if(empty($parcel) || empty($value)){
                 throw new \Exception("Dados incompletos", 500);
             }
 
-            $parcel = $em->getRepository("FinanceiroBundle:Parcelas")->findOneById($id);
+            $parcel = $em->getRepository("FinanceiroBundle:Parcelas")->findOneById($parcel);
 
             if(empty($parcel) || $parcel->getStatus()->getId() != 1){
                 throw new \Exception("Parcela não encontrada", 404);
             }
 
-            $parcel->setMensagem($description);
+            $valueParcel = str_replace(array(".", ","), array("", "."), $parcel->getValor() ? $parcel->getValor() : 0);
+            $valueFormatted = str_replace(array(".", ","), array("", "."), $value);
+            $valuePayed = str_replace(array(".", ","), array("", "."), $parcel->getValorPago() ? $parcel->getValorPago() : 0);
+            $valuePending = str_replace(array(".", ","), array("", "."), $parcel->getValorPendente() ? $parcel->getValorPendente() : 0);
 
+            if($valueFormatted > $valueParcel){
+                throw new \Exception("O valor pago deve ser menor ou igual o valor da parcela", 500);
+            }
+
+            $valuePayed = $valuePayed + $valueFormatted;
+            $valuePending = $valuePending - $valueFormatted;
+
+            if($valuePending > 0){
+                $dataParcial = new DataParcial;
+                $dataParcial->setValor($value);
+                $dataParcial->setDataPagamento(new \DateTime);
+                $dataParcial->setIdparcela($parcel);
+
+                $em->persist($dataParcial);
+            }
+            else{
+                $parcel->setDataPagamento(new \DateTime);
+                $parcel->setStatus($em->getRepository("FinanceiroBundle:StatusParcela")->findOneById(2));
+            }
+
+            $parcel->setValorPago(number_format($valuePayed, 2, ",", "."));
+            $parcel->setValorPendente(number_format($valuePending, 2, ",", "."));
+
+            if(!empty($variationValue)){
+                if(empty($description)){
+                    throw new \Exception("É necessário uma mensagem", 500);
+                }
+
+                $parcel->setMensagem($description);
+
+                if($variationType == 1){
+                    $parcel->setValorAcrecimo($variationValue);
+                }
+                else if($variationType == 0){
+                    $parcel->setValorDesconto($variationValue);
+                }
+                else{
+                    throw new \Exception("É necessário informar o tipo de variação", 500);
+                }
+            }
+
+            $em->flush();
+
+            $checkPagamento = $em->getRepository("FinanceiroBundle:Parcelas")->findBy(array(
+                "idpagamento" => $parcel->getIdpagamento(),
+                "status" => 1
+            ));
+
+            if(count($checkPagamento) == 0){
+                $parcel->getIdpagamento()->setStatus($em->getRepository("FinanceiroBundle:StatusPagamento")->findOneById(2));
+
+                $em->flush();
+            }
+
+            $checkPedido = $em->getRepository("FinanceiroBundle:Pagamento")->findBy(array(
+                "idpedido" => $parcel->getIdpagamento()->getIdpedido(),
+                "idstatus" => 1
+            ));
+
+            if(count($checkPedido) == 0){
+                $parcel->getIdpagamento()->getIdpedido()->setStatus($em->getRepository("FinanceiroBundle:StatusPedido")->findOneById(2));
+
+                $em->flush();
+            }
+
+            $em->getConnection()->commit();
             return new Response("success");
         }
         catch(\Exception $e){
             $message = !empty($e->getMessage()) ? $e->getMessage() : "Ocorreu um erro";
             $status = !empty($e->getCode()) ? $e->getCode() : 500;
 
+            $em->getConnection()->rollBack();
             return new Response($message, $status);
         }
+    }
+
+    /**
+     * @Route("/pagamentos-efetuados/")
+     */
+    public function pagamentosEfetuadosAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $pagamentos = $em->getConnection()->prepare("
+        SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        FROM pedido p
+        INNER JOIN status_pedido sp ON sp.id = p.status
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
+        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        WHERE pc.status = 2
+        ORDER BY p.id DESC");
+        $pagamentos->bindValue("para", $this->getUser()->getId());
+        $pagamentos->execute();
+        $pagamentos = $pagamentos->fetchAll();
+
+        return $this->render("FinanceiroBundle:Default:pagamentos-efetuados.html.twig", array(
+            "pagamentos" => $pagamentos
+        ));
     }
 }
