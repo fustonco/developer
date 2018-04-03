@@ -77,8 +77,7 @@ class DefaultController extends Controller
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
         WHERE p.status = 1 AND pc.status = 1
         AND pc.data_vencimento <= CURDATE()
-        ORDER BY p.id DESC;
-        ");
+        ORDER BY p.id DESC");
         $pedidos->bindValue("para", $this->getUser()->getId());
         $pedidos->execute();
         $pedidos = $pedidos->fetchAll();
@@ -307,6 +306,7 @@ class DefaultController extends Controller
                 $em->persist($dataParcial);
             }
             else{
+                $parcel->setDataPagamento(new \DateTime);
                 $parcel->setStatus($em->getRepository("FinanceiroBundle:StatusParcela")->findOneById(2));
             }
 
@@ -365,5 +365,34 @@ class DefaultController extends Controller
             $em->getConnection()->rollBack();
             return new Response($message, $status);
         }
+    }
+
+    /**
+     * @Route("/pagamentos-efetuados/")
+     */
+    public function pagamentosEfetuadosAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $pagamentos = $em->getConnection()->prepare("
+        SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        FROM pedido p
+        INNER JOIN status_pedido sp ON sp.id = p.status
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
+        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        WHERE pc.status = 2
+        ORDER BY p.id DESC");
+        $pagamentos->bindValue("para", $this->getUser()->getId());
+        $pagamentos->execute();
+        $pagamentos = $pagamentos->fetchAll();
+
+        return $this->render("FinanceiroBundle:Default:pagamentos-efetuados.html.twig", array(
+            "pagamentos" => $pagamentos
+        ));
     }
 }
