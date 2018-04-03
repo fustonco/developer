@@ -84,7 +84,7 @@
                                     <th>Valor</th>
                                     <th>Vencimento</th>
                                     <th>Pagamento</th>
-                                    <th>Operação</th>
+                                    <th>Detalhes</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,9 +96,7 @@
                                         <td>{{p.data_vencimento | date("d/m/Y")}}</td>
                                         <td>{{p.tipo_pagamento}}</td>
                                         <td>
-                                            <a class="btn-ver" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
-                                            &nbsp;<a class="btn-contestar" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a>
-                                            &nbsp;<a class="btn-show-confirm" data-id="{{ p.parcela }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar pagamento">thumb_up</i></a>
+                                            <a class="btn-ver pointer" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -117,16 +115,18 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="largeModalLabel">Pedido <span id="idPedido"></span></h4>
+                    <h4 class="modal-title" id="largeModalLabel">Detalhes do pedido <span id="idPedido"></span></h4>
                 </div>
                 <div class="modal-body">
                     <div class="row clearfix">
-                        <div class="col-sm-4"><b>Código:</b> <span id="codPagamento"></span></div>
-                        <div class="col-sm-4"><b>Tipo de Pagamento:</b> <span id="tipoPagamento"></span></div>
-                        <div class="col-sm-4"><b>Data do Pedido:</b> <span id="dataPedido"></span></div>
                         <div class="col-sm-12"><br></div>
-                        <div class="col-sm-6"><b>fornecedor:</b> <span id="fornecedorPedido"></span></div>
-                        <div class="col-sm-6"><b>Valor:</b> <span id="valorPagamento"></span></div>
+                        <div class="col-sm-4"><b>Código:</b> <span id="codPagamento"></span></div>
+                        <div class="col-sm-4"><b>Tipo de Pag:</b> <span id="tipoPagamento"></span></div>
+                        <div class="col-sm-4"><b>Valor:</b> <span id="valorPagamento"></span></div>
+                        <div class="col-sm-12"><br></div>
+                        <div class="col-sm-4"><b>Fornecedor:</b> <span id="fornecedorPedido"></span></div>
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"><b>Data do Pedido:</b> <span id="dataPedido"></span></div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-12">
                             <h4>Descrição</h4>
@@ -140,6 +140,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button class="btn btn-link waves-effect btn-contestar" data-id=""><span data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">Contestar</span></button>
                     <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
                 </div>
                 <div class="modal-footer show-historico" style="text-align: left; height: 225px; overflow: auto; display: none;">
@@ -188,26 +189,10 @@
                     <div class="modal-body">
                         <div class="row clearfix">
                             <div class="col-md-12">
-                                <button type="button" class="btn btn-primary waves-effect add-increase">ADICIONAR ACRÉSCIMO NO PAGAMENTO</button>
-                                <button type="button" class="btn btn-primary waves-effect add-decrease">ADICIONAR DECRÉSCIMO NO PAGAMENTO</button>
-                            </div>
-
-                            <div class="col-md-12"><br><br></div>
-
-                            <div class="col-md-12 hide">
                                 <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <input name="increase" type="text" class="form-control">
-                                        <label class="form-label">Acréscimo (R$)</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-12 hide">
-                                <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <input name="decrease" type="text" class="form-control">
-                                        <label class="form-label">Decréscimo (R$)</label>
+                                    <div class="form-line focused">
+                                        <input name="parcel_value" type="text" class="form-control" disabled>
+                                        <label class="form-label">Valor da parcela (R$)</label>
                                     </div>
                                 </div>
                             </div>
@@ -221,10 +206,27 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="col-md-8">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <textarea name="description" rows="4" maxlength="255" class="form-control" required></textarea>
+                                        <input name="variation_value" type="text" class="form-control">
+                                        <label class="form-label">Valor acréscimo ou desconto (R$)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <input name="variation_type" type="radio" id="increase" value="1" class="with-gap radio-col-light-blue" checked />
+                                <label for="increase">Acréscimo</label>
+
+                                <input name="variation_type" type="radio" id="decrease" value="0" class="with-gap radio-col-light-blue" />
+                                <label for="decrease">Desconto</label>
+                            </div>
+
+                            <div class="col-md-12 hide">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <textarea name="description" rows="4" maxlength="255" class="form-control"></textarea>
                                         <label class="form-label">Descrição</label>
                                     </div>
                                 </div>
@@ -240,22 +242,20 @@
         </div>
     </div>
     <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-confirm" data-toggle="modal" data-target="#confirmModal"></button>
+    <button type="button" class="btn btn-link waves-effect btn-modal-confirm-hide" data-dismiss="modal"></button>
 {% endblock %}
 
 {% block javascripts %}
     <style>
-        .add-increase{
-            float: right;
-        }
-        .add-decrease{
-            float: left;
+        .pointer{
+            cursor: pointer;
         }
     </style>
 
     <script>
         $('.count-to').countTo();
 
-        $('input[name="increase"], input[name="decrease"], input[name="value"]').mask('000.000.000.000.000,00', {reverse: true});
+        $('input[name="variation_value"], input[name="value"]').mask('000.000.000.000.000,00', {reverse: true});
 
         function formatDateStamp(timestamp) {
             const date = new Date(timestamp * 1000);
@@ -300,16 +300,58 @@
         $("#confirmation").submit(function(e){
             e.preventDefault();
 
+            let form = $(this);
+
+            let valueParcel = parseFloat($("input[name='parcel_value']").val().replace(",", ".").replace(".", "."));
+            let valuePayed = parseFloat($("input[name='value']").val().replace(",", ".").replace(".", "."));
+
+            if(valuePayed < valueParcel){
+                swal({
+                    title: "Atenção",
+                    text: "Deseja realmente confirmar um pagamento parcial (R$ " + $("input[name='value']").val() + " / R$ " + $("input[name='parcel_value']").val() + ")?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sim!",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true,
+                    allowClickOutside: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                        sendConfirmation(form);
+                    }
+                });
+            }
+            else{
+                if(valuePayed > valueParcel){
+                    swal({
+                        title: "Erro",
+                        text: "O valor pago deve ser menor ou igual o valor da parcela",
+                        type: "error",
+                        allowClickOutside: false,
+                        allowEscapeKey: false
+                    });
+                }
+                else{
+                    sendConfirmation(form);
+                }
+            }
+        });
+
+        function sendConfirmation(form) {
             if(!ajaxForm){
                 ajaxForm = $.ajax({
                     type: "POST",
                     url: "/financeiro/confirm/",
-                    data: $(this).serialize(),
-                    dataType: "json",
+                    data: form.serialize(),
                     success: function(data){
+                        ajaxForm = null;
+
+                        $(".btn-modal-confirm-hide").trigger("click");
+
                         swal({
                             title: "Sucesso!",
-                            text: data,
+                            text: "Pagamento confirmado com sucesso!",
                             type: "success",
                             allowClickOutside: false,
                             allowEscapeKey: false
@@ -317,10 +359,12 @@
                             window.location = "";
                         });
                     },
-                    error: function(){
+                    error: function(error){
+                        ajaxForm = null;
+
                         swal({
                             title: "Erro",
-                            text: data.responseJSON.description,
+                            text: error._body,
                             type: "error",
                             allowClickOutside: false,
                             allowEscapeKey: false
@@ -328,28 +372,26 @@
                     }
                 });
             }
-        });
+        }
 
-        $(".btn-show-confirm").click(function(){
+        $(document).on("click", ".btn-show-confirm", function(){
             $("input[name='parcel']").val($(this).data("id"));
+            $("input[name='parcel_value']").val($(this).data("value"));
 
             $(".btn-modal-confirm").trigger("click");
         });
 
-        $(".add-increase").click(function(){
-            $("input[name='decrease']").val("");
-            $("input[name='increase']").parents(".col-md-12").removeClass("hide");
-            $("input[name='decrease']").parents(".col-md-12").addClass("hide");
-        });
-
-        $(".add-decrease").click(function(){
-            $("input[name='increase']").val("");
-            $("input[name='decrease']").parents(".col-md-12").removeClass("hide");
-            $("input[name='increase']").parents(".col-md-12").addClass("hide");
-        });
-
         $(document).on("click", ".pagamento", function(){
             $(this).next(".table-responsive").toggle();
+        });
+
+        $("input[name='variation_value']").keyup(function(){
+            if($(this).val()){
+                $("textarea[name='description']").attr("required", "required").parents(".col-md-12").removeClass("hide");
+            }
+            else{
+                $("textarea[name='description']").removeAttr("required").parents(".col-md-12").addClass("hide");
+            }
         });
 
         $('.btn-ver').click(function(e) {
@@ -384,13 +426,14 @@
                                 let fornecedor = '';
                                 if(!data.fornecedor) {fornecedor = '';} else {fornecedor = data.fornecedor;}
 
-                                $('#codPedido').html(data.codigo);
+                                $('#codPagamento').html(data.codigo);
                                 $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
                                 $('#dataPedido').html(formatDate(data.data_pedido));
-                                $('#fornecedorPedido').html(fornecedor ? fornecedor : "-");
+                                $('#fornecedorPedido').html(fornecedor ? fornecedor : "Fornecedor indefinido");
                                 $('#valorPagamento').html('R$ ' + data.valor);
                                 $('#descricaoPedido').html(data.descricao);
                                 $('[data-toggle="tooltip"]').tooltip({container: 'body'});
+                                $('.btn-contestar').attr('data-id', data.id);
 
                                 $("#parcelasPedido").html("");
 
@@ -432,7 +475,7 @@
                                                                 <td>` + (parcela.valor_desconto ? `R$ ` + parcela.valor_desconto : `-`) + `</td>
                                                                 <td>` + parcela.data_vencimento + `</td>
                                                                 <td>` + parcela.status + `</td>
-                                                                <td>` + (parcela.status_id == 1 ? `<a class="btn-show-confirm" data-id="` + parcela.id + `"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar pagamento">thumb_up</i></a>` : `-`) + `</td>
+                                                                <td>` + (parcela.status_id == 1 ? `<a class="btn-show-confirm pointer" data-id="` + parcela.id + `" data-value="` + parcela.valor + `"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar pagamento">thumb_up</i></a>` : `-`) + `</td>
                                                             </tr>`;
                                     }
 

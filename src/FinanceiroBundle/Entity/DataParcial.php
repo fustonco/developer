@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class DataParcial
 {
     /**
+     * @var string
+     */
+    private $valor;
+
+    /**
      * @var \DateTime
      */
     private $dataPagamento;
@@ -22,8 +27,31 @@ class DataParcial
     /**
      * @var \FinanceiroBundle\Entity\Parcelas
      */
-    private $valor;
+    private $idparcela;
 
+
+    /**
+     * Set valor
+     *
+     * @param string $valor
+     * @return DataParcial
+     */
+    public function setValor($valor)
+    {
+        $this->valor = $valor;
+
+        return $this;
+    }
+
+    /**
+     * Get valor
+     *
+     * @return string 
+     */
+    public function getValor()
+    {
+        return $this->valor;
+    }
 
     /**
      * Set dataPagamento
@@ -59,25 +87,25 @@ class DataParcial
     }
 
     /**
-     * Set valor
+     * Set idparcela
      *
-     * @param \FinanceiroBundle\Entity\Parcelas $valor
+     * @param \FinanceiroBundle\Entity\Parcelas $idparcela
      * @return DataParcial
      */
-    public function setValor(\FinanceiroBundle\Entity\Parcelas $valor = null)
+    public function setIdparcela(\FinanceiroBundle\Entity\Parcelas $idparcela = null)
     {
-        $this->valor = $valor;
+        $this->idparcela = $idparcela;
 
         return $this;
     }
 
     /**
-     * Get valor
+     * Get idparcela
      *
      * @return \FinanceiroBundle\Entity\Parcelas 
      */
-    public function getValor()
+    public function getIdparcela()
     {
-        return $this->valor;
+        return $this->idparcela;
     }
 }
