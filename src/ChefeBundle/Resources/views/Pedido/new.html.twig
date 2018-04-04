@@ -4,7 +4,8 @@
     <form id="form_validation" method="POST" novalidate="novalidate" enctype="multipart/form-data">
         <div class="card">
             <div class="header">
-                <input type="file" style="display: none;" id="upload" accept="image/jpg, image/jpeg, image/png, image/bmp" />
+                {# <input type="file" style="display: none;" id="upload" accept="image/jpg, image/jpeg, image/png, image/bmp" /> #}
+                <input type="file" style="display: none;" id="upload" />
                 <label style="float: right;" for="upload" class="btn btn-primary waves-effect">UPLOAD</label>
                 <h2>Fotos Pedido</h2>
             </div>
@@ -117,7 +118,7 @@ $(document).ready(function() {
             let clone = $( this ).clone();
             clone.removeAttr('id');
             clone.addClass('foto_upload');
-            $('.uploads').append(`<div class="col-sm-3 upload-`+uploads+`" style="margin-bottom: 0;">
+            $('.uploads').append(`<div class="col-sm-3 upload-`+uploads+`" style="margin-bottom: 5px;">
                 <div class="img-`+uploads+`" style="cursor: pointer; border: 1px solid #333333; background-position: center center; background-size: cover; background-repeat: no-repeat; background-color: rgba(50,50,50,1); position: relative; height: 300px;">
                     <button type="button" class="btn-remove-`+uploads+`" data-remove="`+uploads+`" style="z-index: 1; color: white; position: absolute; width: 100%; bottom: 0; left: 0; background-color: rgba(0,0,0,0.5);">APAGAR</button>
                 </div>
