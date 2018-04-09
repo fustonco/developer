@@ -297,6 +297,10 @@ class DefaultController extends Controller
             $valuePayed = $valuePayed + $valueFormatted;
             $valuePending = $valuePending - $valueFormatted;
 
+            if($valuePayed > $valueParcel){
+                throw new \Exception("O valor pago não deve ultrapassar o montante de R$ " . number_format($valuePending + $valueFormatted, 2, ",", "."), 500);
+            }
+
             if($valuePending > 0){
                 $dataParcial = new DataParcial;
                 $dataParcial->setValor($value);
