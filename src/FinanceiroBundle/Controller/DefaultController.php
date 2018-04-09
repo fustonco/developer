@@ -115,7 +115,7 @@ class DefaultController extends Controller
             $pedido->execute();
             $pedido = $pedido->fetchAll();
 
-            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.nome tipo, p.valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas FROM pagamento pg
+            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.nome tipo, pg.valor_integral valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas FROM pagamento pg
             INNER JOIN tipo_pagamento t ON pg.idTipo = t.id
             INNER JOIN pedido p ON idPedido = p.id
             LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas GROUP BY idPagamento) pc ON pc.idPagamento = pg.id
@@ -296,6 +296,10 @@ class DefaultController extends Controller
 
             $valuePayed = $valuePayed + $valueFormatted;
             $valuePending = $valuePending - $valueFormatted;
+
+            if($valuePayed > $valueParcel){
+                throw new \Exception("O valor pago não deve ultrapassar o montante de R$ " . number_format($valuePending + $valueFormatted, 2, ",", "."), 500);
+            }
 
             if($valuePending > 0){
                 $dataParcial = new DataParcial;
