@@ -1,7 +1,22 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    <form id="form_validation" method="POST" novalidate="novalidate">
+    <form id="form_validation" method="POST" novalidate="novalidate" enctype="multipart/form-data">
+        <div class="card">
+            <div class="header">
+                {# <input type="file" style="display: none;" id="upload" accept="image/jpg, image/jpeg, image/png, image/bmp" /> #}
+                <input type="file" style="display: none;" id="upload" />
+                <label style="float: right;" for="upload" class="btn btn-primary waves-effect">UPLOAD</label>
+                <h2>Fotos Pedido</h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-sm-12" style="margin-bottom: 0;">
+                        <div class="row uploads"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="header">
                 <a style="float: right;" href="javascript:void(0);" id="addPg">
@@ -68,8 +83,62 @@
 
 {% block javascripts %}
 <script>
+var fotos = [];
+var uploads = 1;
+var formData = new FormData();
 $(document).ready(function() {
+    function readURL(input, myThis, index) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = e.target.result;
+                myThis.css("background-image","url("+ img +")");
+                myThis.click(function() {
+                    var image = new Image();
+                    image.src = img;
+                    var w = window.open("");
+                    w.document.write(image.outerHTML);
+                });
+            }
+            reader.readAsDataURL(input.files[0]);
+            fotos.push({id: index, file: input.files[0]});
+            console.log('Fotos', fotos);
+        }
+    }
     $('input[name="valor"]').mask('000.000.000.000.000,00', {reverse: true});
+    $('#upload').click(function(e) {
+        if(fotos.length >= 4) {
+            e.preventDefault();
+            swal('Informação', 'Você só pode colocar até 4 fotos por Pedido.', 'info');
+            return false;
+        }
+    });
+    $('#upload').change(function(e) {
+        if($(this).get(0).files.length > 0) {
+            let clone = $( this ).clone();
+            clone.removeAttr('id');
+            clone.addClass('foto_upload');
+            $('.uploads').append(`<div class="col-sm-3 upload-`+uploads+`" style="margin-bottom: 5px;">
+                <div class="img-`+uploads+`" style="cursor: pointer; border: 1px solid #333333; background-position: center center; background-size: cover; background-repeat: no-repeat; background-color: rgba(50,50,50,1); position: relative; height: 300px;">
+                    <button type="button" class="btn-remove-`+uploads+`" data-remove="`+uploads+`" style="z-index: 1; color: white; position: absolute; width: 100%; bottom: 0; left: 0; background-color: rgba(0,0,0,0.5);">APAGAR</button>
+                </div>
+            </div>`);
+            $('.upload-'+uploads).append(clone);
+            readURL(this, $('.img-'+uploads), uploads);
+            $('.btn-remove-'+uploads).click(function(e) {
+                let id = $(this).data('remove');
+                for(var i = 0; i < fotos.length; i++) {
+                    if(fotos[i].id == id) {
+                        fotos.splice(i, 1);
+                    }
+                }
+                $('.upload-'+id).remove();
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            uploads++;
+        }
+    });
 });
 let ajaxForm;
 let idPagamento = 0;
@@ -449,12 +518,29 @@ $('#form_validation').submit(function(e) {
                     'pagamentos': pagamentos
                 }
                 console.log('myArray', myArray);
+                formData.append('data', JSON.stringify(myArray));
 
+                for(let i = 0; i < $('.foto_upload').length; i++) {
+                    formData.append('foto_'+i, $('.foto_upload')[i].files[0]);
+                }
+                
                 ajaxForm = $.ajax({
                     type: "POST",
                     url: '/funcionario/pedido/cadastrar/',
-                    data: myArray,
+                    data: formData,
                     dataType: 'json',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    //xhr: function() {
+                    //    var myXhr = $.ajaxSettings.xhr();
+                    //    if (myXhr.upload) {
+                    //        myXhr.upload.addEventListener('progress', function (e) {
+                    //            console.log('UPLOAD', e);
+                    //        }, false);
+                    //    }
+                    //    return myXhr;
+                    //},
                     success: function(data) {
                         ajaxForm = null;
                         console.log('success', data);
