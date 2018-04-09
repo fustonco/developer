@@ -133,7 +133,8 @@ class DefaultController extends Controller
 
     public function sendSocketFromPHP($string_on, $data_array)
     {
-        $client = new Client(new Version2X("http://localhost:5020"));
+        // $client = new Client(new Version2X("http://localhost:2020"));
+        $client = new Client(new Version2X("http://149.56.74.5:2020"));
         $client->initialize();
         $client->emit($string_on, $data_array);
         $client->close();
