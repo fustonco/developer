@@ -304,4 +304,32 @@ class Pedido
     {
         return $this->criadoPor;
     }
+    /**
+     * @var \MasterBundle\Entity\Empresa
+     */
+    private $idempresa;
+
+
+    /**
+     * Set idempresa
+     *
+     * @param \MasterBundle\Entity\Empresa $idempresa
+     * @return Pedido
+     */
+    public function setIdempresa(\MasterBundle\Entity\Empresa $idempresa = null)
+    {
+        $this->idempresa = $idempresa;
+
+        return $this;
+    }
+
+    /**
+     * Get idempresa
+     *
+     * @return \MasterBundle\Entity\Empresa 
+     */
+    public function getIdempresa()
+    {
+        return $this->idempresa;
+    }
 }

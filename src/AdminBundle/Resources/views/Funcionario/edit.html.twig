@@ -27,14 +27,13 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            {# <div class="col-sm-4">
-                                <select class="form-control show-tick" name="empresa" id="empresa" required aria-required="true">
-                                    <option value="">-- Selecione uma empresa --</option>
+                            <div class="col-sm-12">
+                                <select class="form-control show-tick" multiple="multiple" name="empresa[]" id="empresa" required aria-required="true">
                                     {% for empresa in empresas %}
-                                        <option value="{{ empresa.id }}" {% if empresa.id == funcEmpresa %}selected{% endif %}>{{ empresa.nome }}</option>
+                                        <option value="{{ empresa.id }}" {% if empresa.check %}selected{% endif %}>{{ empresa.nome }}</option>
                                     {% endfor %}
                                 </select>
-                            </div> #}
+                            </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group form-float">
@@ -52,14 +51,6 @@
                                 </div>
                             </div>
                         </div>
-                        {# <div class="col-sm-4">
-                            <div class="form-group form-float">
-                                <div class="form-line">
-                                    <input type="text" value="{{ entity.limiteAprovacao }}" class="form-control" name="limite" required aria-required="true">
-                                    <label class="form-label">Limite</label>
-                                </div>
-                            </div>
-                        </div> #}
                         <div class="col-sm-6">
                             <div class="form-group form-float">
                                 <div class="form-line">

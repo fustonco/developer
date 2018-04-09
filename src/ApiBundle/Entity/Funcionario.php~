@@ -304,4 +304,32 @@ class Funcionario
     {
         return $this->tokenApp;
     }
+    /**
+     * @var string
+     */
+    private $socket;
+
+
+    /**
+     * Set socket
+     *
+     * @param string $socket
+     * @return Funcionario
+     */
+    public function setSocket($socket)
+    {
+        $this->socket = $socket;
+
+        return $this;
+    }
+
+    /**
+     * Get socket
+     *
+     * @return string 
+     */
+    public function getSocket()
+    {
+        return $this->socket;
+    }
 }

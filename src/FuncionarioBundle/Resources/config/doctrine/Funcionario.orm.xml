@@ -14,7 +14,7 @@
     <field name="nome" type="string" column="nome" length="45" nullable="false"/>
     <field name="email" type="string" column="email" length="45" nullable="false"/>
     <field name="senha" type="string" column="senha" length="45" nullable="false"/>
-    <field name="limiteAprovacao" type="float" column="limite_aprovacao" precision="10" scale="0" nullable="false"/>
+    <field name="limiteAprovacao" type="float" column="limite_aprovacao" precision="10" scale="0" nullable="true"/>
     <field name="telefone" type="string" column="telefone" length="15" nullable="true"/>
     <field name="celular" type="string" column="celular" length="15" nullable="true"/>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>

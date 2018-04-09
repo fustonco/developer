@@ -27,8 +27,16 @@
             <div class="body">
                 <div class="row clearfix">
                     <div class="col-sm-12">
+                        <select class="form-control show-tick select-empresa" name="empresa" id="empresa" required aria-required="true">
+                            <option value="">-- Selecione a empresa --</option>
+                            {% for e in empresa %}
+                                <option value="{{ e.id }}">{{ e.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-12">
                         <select class="form-control show-tick select-para" name="para" id="para" required aria-required="true">
-                            <option value="">-- Selecione um chefe --</option>
+                            <option value="">-- Selecione um Chefe --</option>
                             {% for p in para %}
                                 <option value="{{ p.id }}">{{ p.nome }}</option>
                             {% endfor %}

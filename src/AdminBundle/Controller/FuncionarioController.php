@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AdminBundle\Entity\Funcionario;
+use AdminBundle\Entity\FuncionarioEmpresa;
 use AdminBundle\Form\FuncionarioType;
 use AdminBundle\Form\TipoUsuario;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,18 +106,16 @@ class FuncionarioController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entity = new Funcionario();
-        // $form   = $this->createCreateForm($entity);
 
         $departamento = $em->getRepository('AdminBundle:Departamento')->findAll();
         $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findAll();
-        $empresa = $em->getRepository('AdminBundle:Empresa')->findAll();
+        $empresas = $em->getRepository('AdminBundle:Empresa')->findAll();
 
         return array(
             'entity' => $entity,
-            // 'form'   => $form->createView(),
             'departamentos' => $departamento,
             'tipos' => $tipo,
-            'empresas' => $empresa
+            'empresas' => $empresas
         );
     }
 
@@ -155,31 +154,31 @@ class FuncionarioController extends Controller
     public function editAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('AdminBundle:Funcionario')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Funcionario entity.');
-        }
-
-        // $editForm = $this->createEditForm($entity);
-        // $deleteForm = $this->createDeleteForm($id);
+        if (!$entity) {throw $this->createNotFoundException('Unable to find Funcionario entity.');}
 
         $departamento = $em->getRepository('AdminBundle:Departamento')->findAll();
         $tipo = $em->getRepository('AdminBundle:TipoUsuario')->findAll();
         $empresa = $em->getRepository('AdminBundle:Empresa')->findAll();
+        $funcEmpresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findByIdfuncionario($entity->getId());
 
-        $funcEmpresa = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findOneByIdfuncionario($entity->getId());
-        if($funcEmpresa) $funcEmpresa = $funcEmpresa->getIdempresa()->getId();
+        for($i = 0; $i < count($empresa); $i++) {
+            for($j = 0; $j < count($funcEmpresa); $j++) {
+                if($empresa[$i]->getId() == $funcEmpresa[$j]->getIdempresa()->getId()) {
+                    $empresa[$i]->check = true;
+                    break;
+                } else {
+                    $empresa[$i]->check = false;
+                }
+            }
+        }
 
         return array(
-            'entity'      => $entity,
-            // 'edit_form'   => $editForm->createView(),
-            // 'delete_form' => $deleteForm->createView(),
+            'entity'        => $entity,
             'departamentos' => $departamento,
-            'tipos' => $tipo,
-            'empresas' => $empresa,
-            'funcEmpresa' => $funcEmpresa
+            'tipos'         => $tipo,
+            'empresas'      => $empresa,
+            'funcEmpresa'   => $funcEmpresa
         );
     }
 
@@ -289,7 +288,6 @@ class FuncionarioController extends Controller
 
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
             if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
-            // if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
 
             $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
             if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}
@@ -306,15 +304,31 @@ class FuncionarioController extends Controller
             $funcionario->setAtivo('S');
             $funcionario->setIddepartamento($departamento);
             $funcionario->setIdtipo($tipo);
-            // $funcionario->setSenha('123456');
             $em->persist($funcionario);
             $em->flush();
+
+            $empresas = $em->getRepository('AdminBundle:FuncionarioEmpresa')->findByIdfuncionario($funcionario);
+            for($k = 0; $k < count($empresas); $k++) {
+                $em->remove($empresas[$k]);
+                $em->flush();
+            }
+
+            $empresas = $request->get('empresa');
+            for($i = 0; $i < count($empresas); $i++) {
+                $funcionario_empresa = new FuncionarioEmpresa();
+                $funcionario_empresa->setIdfuncionario($funcionario);
+                $empresa = $em->getRepository('AdminBundle:Empresa')->findOneById($empresas[$i]);
+                $funcionario_empresa->setIdempresa($empresa);
+                $funcionario_empresa->setAtivo('S');
+                $em->persist($funcionario_empresa);
+                $em->flush();
+            }
 
             $em->getConnection()->commit();
             return new Response(json_encode([
                 "description" => "Funcionario Cadastrado com Sucesso!"
             ]), 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $em->getConnection()->rollBack();
             switch($e->getMessage()){
                 case 'error_nome':
@@ -385,7 +399,6 @@ class FuncionarioController extends Controller
 
             if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
             if(!$request->get('email') || $request->get('email') == '') {throw new \Exception('error_email');}
-            // if(!$request->get('limite') || $request->get('limite') == '') {throw new \Exception('error_limite');}
 
             $departamento = $em->getRepository('AdminBundle:Departamento')->findOneById($request->get('departamento'));
             if(!$departamento || $departamento == '') {throw new \Exception('error_departamento');}
@@ -396,7 +409,6 @@ class FuncionarioController extends Controller
             $funcionario = new Funcionario();
             $funcionario->setNome($request->get('nome'));
             $funcionario->setEmail($request->get('email'));
-            $funcionario->setLimiteAprovacao($request->get('limite'));
             $funcionario->setTelefone($request->get('telefone'));
             $funcionario->setCelular($request->get('celular'));
             $funcionario->setAtivo('S');
@@ -405,6 +417,17 @@ class FuncionarioController extends Controller
             $funcionario->setSenha('123456');
             $em->persist($funcionario);
             $em->flush();
+
+            $empresas = $request->get('empresa');
+            for($i = 0; $i < count($empresas); $i++) {
+                $funcionario_empresa = new FuncionarioEmpresa();
+                $funcionario_empresa->setIdfuncionario($funcionario);
+                $empresa = $em->getRepository('AdminBundle:Empresa')->findOneById($empresas[$i]);
+                $funcionario_empresa->setIdempresa($empresa);
+                $funcionario_empresa->setAtivo('S');
+                $em->persist($funcionario_empresa);
+                $em->flush();
+            }
 
             $em->getConnection()->commit();
             return new Response(json_encode([

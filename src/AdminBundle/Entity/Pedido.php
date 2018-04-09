@@ -304,4 +304,32 @@ class Pedido
     {
         return $this->criadoPor;
     }
+    /**
+     * @var \AdminBundle\Entity\Empresa
+     */
+    private $idempresa;
+
+
+    /**
+     * Set idempresa
+     *
+     * @param \AdminBundle\Entity\Empresa $idempresa
+     * @return Pedido
+     */
+    public function setIdempresa(\AdminBundle\Entity\Empresa $idempresa = null)
+    {
+        $this->idempresa = $idempresa;
+
+        return $this;
+    }
+
+    /**
+     * Get idempresa
+     *
+     * @return \AdminBundle\Entity\Empresa 
+     */
+    public function getIdempresa()
+    {
+        return $this->idempresa;
+    }
 }
