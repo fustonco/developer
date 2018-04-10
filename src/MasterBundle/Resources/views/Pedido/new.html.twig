@@ -518,6 +518,7 @@ $('#form_validation').submit(function(e) {
                     }
                 });
                 myArray = {
+                    'empresa': parseInt($('[name="empresa"]').val() || 0),
                     'para': parseInt($('[name="para"]').val() || 0),
                     'valor': $('[name="valor"]').val() || 0,
                     'tipopedido': parseInt($('[name="tipopedido"]').val() || 0),
