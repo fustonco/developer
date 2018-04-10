@@ -38,7 +38,7 @@ class PedidoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getConnection()->prepare("
-        SELECT sp.id id_status_pedido, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, p.idEmpresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -857,7 +857,7 @@ class PedidoController extends Controller
             
             $codigo = strtoupper(substr(str_shuffle(MD5(microtime())), 0, 5));
 
-            $empresa = $em->getRepository('FuncionarioBundle:Empresa')->findOneById($request->empresa);
+            $empresa = $em->getRepository('MasterBundle:Empresa')->findOneById($request->empresa);
             
             $pedido = new Pedido();
             $pedido->setIdempresa($empresa);
