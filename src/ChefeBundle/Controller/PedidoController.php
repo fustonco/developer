@@ -38,7 +38,7 @@ class PedidoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getConnection()->prepare("
-        SELECT sp.id id_status_pedido, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, p.idEmpresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -306,6 +306,9 @@ class PedidoController extends Controller
         $tipopedido = $em->getRepository('ChefeBundle:TipoPedido')->findBy([], [
             'nome' => 'ASC'
         ]);
+        $empresa = $em->getRepository('FuncionarioBundle:Empresa')->findBy([], [
+            'nome' => 'ASC'
+        ]);
         $tipopagamento = $em->getRepository('ChefeBundle:TipoPagamento')->findBy([], [
             'nome' => 'ASC'
         ]);
@@ -320,11 +323,11 @@ class PedidoController extends Controller
 
         return array(
             'entity' => $entity,
+            'empresa' => $empresa,
             'tipopedido' => $tipopedido,
             'tipopagamento' => $tipopagamento,
             'fornecedores' => $fornecedores,
             'para' => $para
-            // 'form'   => $form->createView(),
         );
     }
 
@@ -872,11 +875,15 @@ class PedidoController extends Controller
             if(!$request->valor) {throw new \Exception('error_valor');}
             if(!$request->descricao) {throw new \Exception('error_descricao');}
             if(!$request->para) {throw new \Exception('error_para');}
+            if(!$request->empresa) {throw new \Exception('error_empresa');}
             
             $pagamentos = $request->pagamentos;            
             if(count($pagamentos) == 0) {throw new \Exception('error_pagamentos');}
             
+            $empresa = $em->getRepository('ChefeBundle:Empresa')->findOneById($request->empresa);
+            
             $pedido = new Pedido();
+            $pedido->setIdempresa($empresa);
             $pedido->setCodigo(null);
             $tipo = $em->getRepository('ChefeBundle:TipoPedido')->findOneById($request->tipopedido);
             $pedido->setIdtipo($tipo);
@@ -976,6 +983,11 @@ class PedidoController extends Controller
         } catch(\Exception $e) {
             $em->getConnection()->rollBack();
             switch($e->getMessage()) {
+                case 'error_empresa':
+                    return new Response(json_encode([
+                        'description' => 'Empresa não pode ser vazio!'
+                    ]), 500);
+                break;
                 case 'error_tipopedido':
                     return new Response(json_encode([
                         'description' => 'Tipo de Pedido não pode ser vazio!'

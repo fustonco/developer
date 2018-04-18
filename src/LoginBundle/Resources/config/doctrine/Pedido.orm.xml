@@ -6,6 +6,7 @@
       <index name="fk_pedido_fornecedor_idx" columns="idFornecedor"/>
       <index name="fk_pedido_status_pedido1_idx" columns="status"/>
       <index name="fk_pedido_funcionario1_idx" columns="criado_por"/>
+      <index name="fk_pedido_empresa_idx" columns="idEmpresa"/>
     </indexes>
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
@@ -23,6 +24,11 @@
     <many-to-one field="criadoPor" target-entity="Funcionario">
       <join-columns>
         <join-column name="criado_por" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idempresa" target-entity="Empresa">
+      <join-columns>
+        <join-column name="idEmpresa" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="status" target-entity="StatusPedido">

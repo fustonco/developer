@@ -15,7 +15,8 @@
                                     <th>Codigo</th>
                                     <th>Data Pedido</th>
                                     <th>Valor</th>
-                                    <th>Descricao</th> 
+                                    <th>Descricao</th>
+                                    <th>Empresa</th>
                                     <th>Status</th>
                                     <th>Encaminhado</th>
                                     <th>Operação</th>
@@ -28,6 +29,7 @@
                                     <td>{% if entity.dataPedido %}{{ entity.dataPedido | date('d/m/Y H:i:s') }}{% endif %}</td>
                                     <td>R$ {{ entity.valor }}</td>
                                     <td>{{ entity.descricao }}</td>
+                                    <td>{{ entity.idEmpresa.nome }}</td>
                                     <td>{{ entity.status }}</td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{entity.funcionario}}">{{ entity.tipo_funcionario }}</span></td>
                                     <td>

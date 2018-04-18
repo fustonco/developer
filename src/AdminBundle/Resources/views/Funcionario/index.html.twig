@@ -17,12 +17,11 @@
                                     <th>Id</th>
                                     <th>Nome</th>
                                     <th>E-Mail</th>
-                                    {# <th>Limite</th> #}
                                     <th>Departamento</th>
                                     <th>Telefone</th>
                                     <th>Celular</th>
                                     <th>Tipo</th>
-                                    <th>Empresa</th>
+                                    {# <th>Empresa</th> #}
                                     <th>Editar</th>
                                     <th>Excluir</th>
                                 </tr>
@@ -33,12 +32,11 @@
                                     <td>{{ entity.id }}</td>
                                     <td>{{ entity.nome }}</td>
                                     <td>{{ entity.email }}</td>
-                                    {# <td>{{ entity.limiteAprovacao }}</td> #}
                                     <td>{{ entity.nomeDepartamento }}</td>
                                     <td>{{ entity.telefone }}</td>
                                     <td>{{ entity.celular }}</td>
                                     <td>{{ entity.tipo }}</td>
-                                    <td><a href="javascript:void(0);" class="btn-empresas" data-id="{{ entity.id }}"><i class="material-icons">search</i></a></td>
+                                    {# <td><a href="javascript:void(0);" class="btn-empresas" data-id="{{ entity.id }}"><i class="material-icons">search</i></a></td> #}
                                     <td><a href="{{ path('admin_funcionario_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
                                     <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">delete</i></a></td>
                                 </tr>
