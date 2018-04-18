@@ -120,6 +120,38 @@ class PedidoController extends Controller
     }
 
     /**
+     * Lists all Pedido entities.
+     *
+     * @Route("/aprovado", name="chefe_pedido_aprovado")
+     * @Method("GET")
+     * @Template()
+     */
+    public function indexAprovadoAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entities = $em->getConnection()->prepare("
+        SELECT f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        FROM pedido p
+        INNER JOIN status_pedido sp ON sp.id = p.status
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id
+        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        WHERE p.status = 4
+        AND p.criado_por = :criado_por
+        ORDER BY p.id DESC;
+        ");
+        $entities->bindValue("criado_por", $this->getUser()->getId());
+        $entities->execute();
+        $entities = $entities->fetchAll();
+
+        return array(
+            'entities' => $entities
+        );
+    }
+
+    /**
      * @Route("/ver/")
      */
     public function funcionarioVerPedidoAction(Request $request)

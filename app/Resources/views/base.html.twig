@@ -360,7 +360,8 @@
                         <li class="{% if app.request.requestUri == "/chefe/pedido/new" or 
                         app.request.requestUri == "/chefe/pedido/" or 
                         app.request.requestUri == "/chefe/pedido/recebido" or 
-                        app.request.requestUri == "/chefe/pedido/recusado"
+                        app.request.requestUri == "/chefe/pedido/recusado" or
+                        app.request.requestUri == "/chefe/pedido/aprovado"
                         %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">account_box</i>
@@ -382,6 +383,10 @@
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recusado"
                                 %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_recusado') }}">Listar Pedidos Recusados</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/chefe/pedido/aprovado"
+                                %}active{% endif %}">
+                                    <a href="{{ path('chefe_pedido_aprovado') }}">Listar Pedidos Aprovados</a>
                                 </li>
                             </ul>
                         </li>
@@ -408,7 +413,8 @@
                         <li class="{% if app.request.requestUri == "/master/pedido/new" or 
                         app.request.requestUri == "/master/pedido/" or 
                         app.request.requestUri == "/master/pedido/recebido" or 
-                        app.request.requestUri == "/master/pedido/recusado"
+                        app.request.requestUri == "/master/pedido/recusado" or
+                        app.request.requestUri == "/master/pedido/aprovado"
                         %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">account_box</i>
@@ -430,6 +436,10 @@
                                 <li class="{% if app.request.requestUri == "/master/pedido/recusado"
                                 %}active{% endif %}">
                                     <a href="{{ path('master_pedido_recusado') }}">Listar Pedidos Recusados</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/master/pedido/aprovado"
+                                %}active{% endif %}">
+                                    <a href="{{ path('master_pedido_aprovado') }}">Listar Pedidos Aprovados</a>
                                 </li>
                             </ul>
                         </li>
@@ -571,6 +581,12 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
+                        <li class="{% if app.request.requestUri == "/financeiro/proximos-pagamentos/" %}active{% endif %}">
+                            <a href="/financeiro/proximos-pagamentos/">
+                                <i class="material-icons">attach_money</i>
+                                <span>Próximos pagamentos</span>
+                            </a>
+                        </li>
                         <li class="{% if app.request.requestUri == "/financeiro/pagamentos-efetuados/" %}active{% endif %}">
                             <a href="/financeiro/pagamentos-efetuados/">
                                 <i class="material-icons">attach_money</i>
@@ -581,6 +597,13 @@
                     {% endif %}
                     
                     <!-- Menu Home -->
+
+                    <li>
+                        <a href="javascript: void(0);" data-toggle="modal" data-target="#changePasswordModal">
+                            <i class="material-icons">vpn_key</i>
+                            <span>Alterar senha</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="javascript: void(0);" class="sairReact">
                             <i class="material-icons">exit_to_app</i>
@@ -1409,6 +1432,52 @@
         </div>
     </section>
 
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Alterar senha</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <form id="change-password">
+                            <div class="col-sm-12">
+                                <label class="form-label">Senha antiga</label>
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="number" style="-webkit-text-security: disc;" pattern="[0-9]*" inputmode="numeric" class="form-control" name="old_password" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Nova senha</label>
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="number" style="-webkit-text-security: disc;" pattern="[0-9]*" inputmode="numeric" class="form-control" name="new_password" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Confirmar senha</label>
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="number" style="-webkit-text-security: disc;" pattern="[0-9]*" inputmode="numeric" class="form-control" name="confirm_password" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <button class="btn btn-primary waves-effect" type="submit">ALTERAR</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Jquery Core Js -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
 
@@ -1497,6 +1566,37 @@
     {% block javascripts %}{% endblock %}
 
     <script>
+    $("#change-password").submit(function(e){
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: "/change-password/",
+            data: $(this).serialize(),
+            success: function(data){
+                swal({
+                    title: "Sucesso!",
+                    text: "Senha alterada com sucesso!",
+                    type: "success",
+                    allowClickOutside: false,
+                    allowEscapeKey: false
+                }, function(){
+                    window.location = "/logout";
+                });
+            },
+            error: function(error){
+                console.log(error);
+                swal({
+                    title: "Erro",
+                    text: error.responseText,
+                    type: "error",
+                    allowClickOutside: false,
+                    allowEscapeKey: false
+                });
+            }
+        });
+    });
+
     $(document).ready(function() {
         $(".atualizarRecebidos").css('display', 'none');
     });

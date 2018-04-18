@@ -3,6 +3,7 @@
 namespace LoginBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -70,6 +71,48 @@ class DefaultController extends Controller
             case 5:
                 return $this->redirect("/master");
                 break;
+        }
+    }
+
+    /**
+     * @Route("/change-password/")
+     */
+    public function changePasswordAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $oldPassword = $request->request->get("old_password");
+        $newPassword = $request->request->get("new_password");
+        $confirmPassword = $request->request->get("confirm_password");
+
+        try{
+            if(empty($oldPassword) || empty($newPassword) || empty($confirmPassword)){
+                throw new \Exception("Dados incompletos", 500);
+            }
+
+            $oldPassword = md5($oldPassword);
+            $newPassword = md5($newPassword);
+            $confirmPassword = md5($confirmPassword);
+
+            if($newPassword != $confirmPassword){
+                throw new \Exception("Nova senha e confirmar senha devem ser iguais", 500);
+            }
+
+            if($this->getUser()->getSenha() != $oldPassword){
+                throw new \Exception("A senha antiga está errada", 500);
+            }
+
+            $this->getUser()->setSenha($newPassword);
+
+            $em->flush();
+
+            return new Response("success");
+        }
+        catch(\Exception $e){
+            $message = !empty($e->getMessage()) ? $e->getMessage() : "Ocorreu um erro";
+            $status = !empty($e->getCode()) ? $e->getCode() : 500;
+    
+            return new Response($message, $status);
         }
     }
 }

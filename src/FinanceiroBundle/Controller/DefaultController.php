@@ -59,7 +59,7 @@ class DefaultController extends Controller
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
         INNER JOIN pagamento pg ON pg.idPedido = p.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
-        WHERE p.status = 1 AND pc.data_vencimento = CURDATE()");
+        WHERE p.status = 4 AND pc.data_vencimento = CURDATE()");
         $pedidosPendentes->execute(array($this->getUser()->getId()));
         $pedidosPendentes = $pedidosPendentes->fetch();
         $pedidosPendentes = $pedidosPendentes["total"];
@@ -75,7 +75,7 @@ class DefaultController extends Controller
         INNER JOIN pagamento pg ON pg.idPedido = p.id
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
-        WHERE p.status = 1 AND pc.status = 1
+        WHERE p.status = 4 AND pc.status = 1
         AND pc.data_vencimento <= CURDATE()
         ORDER BY p.id DESC");
         $pedidos->bindValue("para", $this->getUser()->getId());
@@ -88,6 +88,38 @@ class DefaultController extends Controller
             'pedidosRecusados' => $pedidosRecusados,
             'pedidosPagos' => $pedidosPagos,
             'pedidosPendentes' => $pedidosPendentes
+        ]);
+    }
+
+    /**
+     * @Route("/proximos-pagamentos/")
+     */
+    public function proximosPagamentosAction()
+    {
+        
+        $em = $this->getDoctrine()->getManager();
+
+        $pedidos = $em->getConnection()->prepare("
+        SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        FROM pedido p
+        INNER JOIN status_pedido sp ON sp.id = p.status
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
+        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        WHERE p.status = 4 AND pc.status = 1
+        AND pc.data_vencimento > CURDATE()
+        AND pc.data_vencimento <= DATE_ADD(CURDATE(), INTERVAL 5 DAY)
+        ORDER BY p.id DESC");
+        $pedidos->bindValue("para", $this->getUser()->getId());
+        $pedidos->execute();
+        $pedidos = $pedidos->fetchAll();
+        
+        return $this->render("FinanceiroBundle:Default:proximos-pagamentos.html.twig", [
+            'pedidos'  => $pedidos
         ]);
     }
 
@@ -128,6 +160,58 @@ class DefaultController extends Controller
                 $parcelas = $em->getConnection()->prepare("SELECT p.id, num_parcela, valor, valor_pago, valor_pendente, valor_desconto, valor_acrecimo, DATE_FORMAT(data_vencimento, '%d/%m/%Y') data_vencimento, s.nome status, s.id status_id FROM parcelas p
                 INNER JOIN status_parcela s ON p.status = s.id
                 WHERE idPagamento = ? AND p.data_vencimento <= CURDATE()");
+                $parcelas->execute(array($pagamentos[$i]["id"]));
+                $pagamentos[$i]["parcelas"] = $parcelas->fetchAll();
+            }
+
+            return new Response(json_encode([
+                'pedido' => $pedido,
+                'pagamentos' => $pagamentos
+            ]), 200);
+        } catch(Exception $e) {
+            return new Response(json_encode([
+                "description" => "Erro ao Ver Pedido!"
+            ]), 500);
+        }
+    }
+
+    /**
+     * @Route("/ver-proximos/")
+     */
+    public function funcionarioVerProximosPedidoAction(Request $request)
+    {
+        $id = $request->get('id');
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            $pedido = $em->getConnection()->prepare("
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status
+            FROM pedido p 
+            INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
+            INNER JOIN status_pedido sp ON sp.id = p.status
+            LEFT JOIN historico h ON h.idPedido = p.id
+            INNER JOIN funcionario f ON f.id = h.idPara
+            INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+            LEFT JOIN fornecedor fo ON fo.id = p.idFornecedor
+            WHERE p.id = ".$id."
+            ORDER BY h.id DESC
+            ");
+            $pedido->execute();
+            $pedido = $pedido->fetchAll();
+
+            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.nome tipo, pg.valor_integral valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas FROM pagamento pg
+            INNER JOIN tipo_pagamento t ON pg.idTipo = t.id
+            INNER JOIN pedido p ON idPedido = p.id
+            LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas GROUP BY idPagamento) pc ON pc.idPagamento = pg.id
+            LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas WHERE status = 2 GROUP BY idPagamento) pcp ON pcp.idPagamento = pg.id
+            WHERE idPedido = ?");
+            $pagamentos->execute(array($id));
+            $pagamentos = $pagamentos->fetchAll();
+
+            for($i = 0; $i < count($pagamentos); $i = $i + 1){
+                $parcelas = $em->getConnection()->prepare("SELECT p.id, num_parcela, valor, valor_pago, valor_pendente, valor_desconto, valor_acrecimo, DATE_FORMAT(data_vencimento, '%d/%m/%Y') data_vencimento, s.nome status, s.id status_id FROM parcelas p
+                INNER JOIN status_parcela s ON p.status = s.id
+                WHERE idPagamento = ? AND p.data_vencimento > CURDATE() AND p.data_vencimento <= DATE_ADD(CURDATE(), INTERVAL 5 DAY)");
                 $parcelas->execute(array($pagamentos[$i]["id"]));
                 $pagamentos[$i]["parcelas"] = $parcelas->fetchAll();
             }

@@ -1,0 +1,574 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="block-header">
+        <h2>PRÓXIMOS PAGAMENTOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        Lista de pagamentos próximos do vencimento
+                    </h2>
+                </div>
+                <div class="body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover dataTable js-exportable">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Valor</th>
+                                    <th>Vencimento</th>
+                                    <th>Pagamento</th>
+                                    <th>Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            
+                                {% for p in pedidos %}
+                                    <tr>
+                                        <td>{{p.codigo}}</td>
+                                        <td>R$ {{p.valor}}</td>
+                                        <td>{{p.data_vencimento | date("d/m/Y")}}</td>
+                                        <td>{{p.tipo_pagamento}}</td>
+                                        <td>
+                                            <a class="btn-ver pointer" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- #END# Widgets -->
+
+    <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="largeModalLabel">Detalhes do pedido <span id="idPedido"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-sm-12"><br></div>
+                        <div class="col-sm-4"><b>Código:</b> <span id="codPagamento"></span></div>
+                        <div class="col-sm-4"><b>Tipo de Pag:</b> <span id="tipoPagamento"></span></div>
+                        <div class="col-sm-4"><b>Valor:</b> <span id="valorPagamento"></span></div>
+                        <div class="col-sm-12"><br></div>
+                        <div class="col-sm-4"><b>Fornecedor:</b> <span id="fornecedorPedido"></span></div>
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4"><b>Data do Pedido:</b> <span id="dataPedido"></span></div>
+                        <div class="col-sm-12"><br></div>
+                        <div class="col-sm-12">
+                            <h4>Descrição</h4>
+                            <span id="descricaoPedido"></span>
+                        </div>
+                        <div class="col-sm-12"><br></div>
+                        <div class="col-sm-12">
+                            <h4>Informações de pagamento</h4>
+                            <div id="parcelasPedido"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-link waves-effect btn-contestar" data-id=""><span data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">Contestar</span></button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+                <div class="modal-footer show-historico" style="text-align: left; height: 225px; overflow: auto; display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal" data-toggle="modal" data-target="#largeModal"></button>
+
+    <div class="modal fade" id="contestacaoModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="largeModalLabel">Contestar</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <h6>Mensagem</h6>
+                            <textarea rows="5" id="mensagem-text" style="width: 100%; resize: none;"></textarea>
+                        </div>
+                        <div class="col-sm-12">
+                            <h6>Enviar para</h6>
+                            <div class="input-field select-para-create"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect btn-contestar-confirm">Contestar</button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-contestar" data-toggle="modal" data-target="#contestacaoModal"></button>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form id="confirmation">
+                    <input type="hidden" name="parcel" />
+
+                    <div class="modal-header">
+                        <h4 class="modal-title">Confirmar pagamento</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row clearfix">
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line focused">
+                                        <input name="parcel_value" type="text" class="form-control" disabled>
+                                        <label class="form-label">Valor da parcela (R$)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input name="value" type="text" class="form-control" required>
+                                        <label class="form-label">Valor do pagamento (R$)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input name="variation_value" type="text" class="form-control">
+                                        <label class="form-label">Valor acréscimo ou desconto (R$)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <input name="variation_type" type="radio" id="increase" value="1" class="with-gap radio-col-light-blue" checked />
+                                <label for="increase">Acréscimo</label>
+
+                                <input name="variation_type" type="radio" id="decrease" value="0" class="with-gap radio-col-light-blue" />
+                                <label for="decrease">Desconto</label>
+                            </div>
+
+                            <div class="col-md-12 hide">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <textarea name="description" rows="4" maxlength="255" class="form-control"></textarea>
+                                        <label class="form-label">Descrição</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-link waves-effect">Confirmar</button>
+                        <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <button style="display: none;" type="button" class="btn btn-default waves-effect m-r-20 btn-modal-confirm" data-toggle="modal" data-target="#confirmModal"></button>
+    <button type="button" class="btn btn-link waves-effect btn-modal-confirm-hide" data-dismiss="modal"></button>
+{% endblock %}
+
+{% block javascripts %}
+    <style>
+        .pointer{
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        $('.count-to').countTo();
+
+        $('input[name="variation_value"], input[name="value"]').mask('000.000.000.000.000,00', {reverse: true});
+
+        function formatDateStamp(timestamp) {
+            const date = new Date(timestamp * 1000);
+            const hours = date.getUTCHours();
+            const minutes = "0" + date.getUTCMinutes();
+            const seconds = "0" + date.getUTCSeconds();
+            const formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+            const day = (date.getDate() < 10) ? '0'+date.getDate() : date.getDate();
+            const month = ((date.getMonth() + 1) < 10) ? ('0'+(date.getMonth() + 1)) : (date.getMonth() + 1);
+            const year = date.getFullYear();
+            const formattedDate = day + '/' + month + '/' + year;
+            return formattedDate + ' - ' + formattedTime;
+        }
+
+        function formatDate(newdate) {
+            const date = new Date(newdate);
+            const hours = date.getHours();
+            const minutes = "0" + date.getMinutes();
+            const seconds = "0" + date.getSeconds();
+            const formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+            const day = (date.getDate() < 10) ? '0'+date.getDate() : date.getDate();
+            const month = ((date.getMonth() + 1) < 10) ? ('0'+(date.getMonth() + 1)) : (date.getMonth() + 1);
+            const year = date.getFullYear();
+            const formattedDate = day + '/' + month + '/' + year;
+            return formattedDate + ' - ' + formattedTime;
+        }
+
+        $('[data-toggle="tooltip"]').tooltip({
+            container: 'body'
+        });
+
+        $('.btn-show-historico').click(function(e) {
+            if($('.show-historico').is(':visible')){
+                $('.show-historico').hide();
+            } else {
+                $('.show-historico').show();
+            }
+        });
+
+        let ajaxForm;
+
+        $("#confirmation").submit(function(e){
+            e.preventDefault();
+
+            let form = $(this);
+
+            let valueParcel = parseFloat($("input[name='parcel_value']").val().replace(",", ".").replace(".", "."));
+            let valuePayed = parseFloat($("input[name='value']").val().replace(",", ".").replace(".", "."));
+
+            if(valuePayed < valueParcel){
+                swal({
+                    title: "Atenção",
+                    text: "Deseja realmente confirmar um pagamento parcial (R$ " + $("input[name='value']").val() + " / R$ " + $("input[name='parcel_value']").val() + ")?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sim!",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true,
+                    allowClickOutside: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                        sendConfirmation(form);
+                    }
+                });
+            }
+            else{
+                if(valuePayed > valueParcel){
+                    swal({
+                        title: "Erro",
+                        text: "O valor pago deve ser menor ou igual o valor da parcela",
+                        type: "error",
+                        allowClickOutside: false,
+                        allowEscapeKey: false
+                    });
+                }
+                else{
+                    sendConfirmation(form);
+                }
+            }
+        });
+
+        function sendConfirmation(form) {
+            if(!ajaxForm){
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: "/financeiro/confirm/",
+                    data: form.serialize(),
+                    success: function(data){
+                        ajaxForm = null;
+
+                        $(".btn-modal-confirm-hide").trigger("click");
+
+                        swal({
+                            title: "Sucesso!",
+                            text: "Pagamento confirmado com sucesso!",
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = "";
+                        });
+                    },
+                    error: function(error){
+                        ajaxForm = null;
+
+                        swal({
+                            title: "Erro",
+                            text: error._body,
+                            type: "error",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        });
+                    }
+                });
+            }
+        }
+
+        $(document).on("click", ".btn-show-confirm", function(){
+            $("input[name='parcel']").val($(this).data("id"));
+            $("input[name='parcel_value']").val($(this).data("value"));
+
+            $(".btn-modal-confirm").trigger("click");
+        });
+
+        $(document).on("click", ".pagamento", function(){
+            $(this).next(".table-responsive").toggle();
+        });
+
+        $("input[name='variation_value']").keyup(function(){
+            if($(this).val()){
+                $("textarea[name='description']").attr("required", "required").parents(".col-md-12").removeClass("hide");
+            }
+            else{
+                $("textarea[name='description']").removeAttr("required").parents(".col-md-12").addClass("hide");
+            }
+        });
+
+        $('.btn-ver').click(function(e) {
+            e.preventDefault();
+            let id = $(this).attr('data-id');
+            if(!ajaxForm) {
+                swal({
+                    title: "Atenção",
+                    text: "Deseja realmente ver?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sim!",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true,
+                    allowClickOutside: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                        ajaxForm = $.ajax({
+                            type: "POST",
+                            url: '/financeiro/ver-proximos/',
+                            data: {
+                                id: id
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                ajaxForm = null;
+                                pagamentos = data.pagamentos;
+                                data = data.pedido[0];
+                                swal.close();
+
+                                let fornecedor = '';
+                                if(!data.fornecedor) {fornecedor = '';} else {fornecedor = data.fornecedor;}
+
+                                $('#codPagamento').html(data.codigo);
+                                $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
+                                $('#dataPedido').html(formatDate(data.data_pedido));
+                                $('#fornecedorPedido').html(fornecedor ? fornecedor : "Fornecedor indefinido");
+                                $('#valorPagamento').html('R$ ' + data.valor);
+                                $('#descricaoPedido').html(data.descricao);
+                                $('[data-toggle="tooltip"]').tooltip({container: 'body'});
+                                $('.btn-contestar').attr('data-id', data.id);
+
+                                $("#parcelasPedido").html("");
+
+                                let pagamentosHTML = "";
+                                for(let i = 0; i < pagamentos.length; i = i + 1){
+                                    pagamentosHTML += `<div class="pagamento row">
+                                        <div class="col-md-6"><b>Tipo:</b> ` + pagamentos[i].tipo + `</div>
+                                        <div class="col-md-6"><b>Valor:</b> R$ ` + pagamentos[i].valor + `</div>
+                                        <div class="col-md-6"><b>Num parcelas:</b> ` + pagamentos[i].parcelas_total + `x</div>
+                                        <div class="col-md-6"><b>Parcelas pagas:</b> ` + pagamentos[i].parcelas_pagas + `x</div>
+                                    </div>`;
+
+                                    pagamentosHTML += `<div class="table-responsive">
+                                                            <br><br>
+                                                            <table class="table table-bordered table-striped table-hover">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Num Parcela</th>
+                                                                        <th>Valor</th>
+                                                                        <th>Valor pago</th>
+                                                                        <th>Valor pendente</th>
+                                                                        <th>Acréscimo</th>
+                                                                        <th>Desconto</th>
+                                                                        <th>Vencimento</th>
+                                                                        <th>Status</th>
+                                                                        <th>Operações</th>
+                                                                    </tr>
+                                                                </thead>`;
+
+                                    for(let j = 0; j < pagamentos[i].parcelas.length; j = j + 1){
+                                        let parcela = pagamentos[i].parcelas[j];
+
+                                        pagamentosHTML += `<tr>
+                                                                <td>` + parcela.num_parcela + `</td>
+                                                                <td>R$ ` + parcela.valor + `</td>
+                                                                <td>` + (parcela.valor_pago ? `R$ ` + parcela.valor_pago : `-`) + `</td>
+                                                                <td>` + (parcela.valor_pendente ? `R$ ` + parcela.valor_pendente : `-`) + `</td>
+                                                                <td>` + (parcela.valor_acrecimo ? `R$ ` + parcela.valor_acrecimo : `-`) + `</td>
+                                                                <td>` + (parcela.valor_desconto ? `R$ ` + parcela.valor_desconto : `-`) + `</td>
+                                                                <td>` + parcela.data_vencimento + `</td>
+                                                                <td>` + parcela.status + `</td>
+                                                                <td>` + (parcela.status_id == 1 ? `<a class="btn-show-confirm pointer" data-id="` + parcela.id + `" data-value="` + parcela.valor + `"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar pagamento">thumb_up</i></a>` : `-`) + `</td>
+                                                            </tr>`;
+                                    }
+
+                                    pagamentosHTML += `</table></div>`;
+                                }
+
+                                $("#parcelasPedido").html(pagamentosHTML);
+
+                                $('.btn-modal').trigger('click');
+                                // MODAL
+                            },
+                            error: function(data) {
+                                ajaxForm = null;
+                                console.error('erro', data);
+                                if(data.status == 404){
+                                    swal({
+                                        title: "Erro",
+                                        text: 'Entre em contato com o suporte.',
+                                        type: "error",
+                                        allowClickOutside: false,
+                                        allowEscapeKey: false
+                                    });
+                                } else {
+                                    swal({
+                                        title: "Erro",
+                                        text: data.responseJSON.description,
+                                        type: "warning",
+                                        allowClickOutside: false,
+                                        allowEscapeKey: false
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        $('.btn-contestar').click(function(e) {
+            e.preventDefault();
+            let id = $(this).attr('data-id');
+
+            if(!ajaxForm) {
+                swal({
+                    title: "Atenção",
+                    text: "Deseja abrir contestar?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sim!",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true,
+                    allowClickOutside: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                    ajaxForm = $.ajax({
+                        type: "POST",
+                        url: '/financeiro/get/affecteds/',
+                        data: {
+                            id: id,
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            ajaxForm = null;
+                            let str = '';
+                            for(let i = 0; i < data.length; i++) {
+                                str += '<option value="'+data[i].idFuncionario+'">'+data[i].nomeFuncionario+'</option>';
+                            }
+                            $('.select-para-create').html('');
+                            $('.select-para-create').append(`
+                                <select class="form-control show-tick select-para" name="para" id="para" required aria-required="true">
+                                <option value="" selected disabled>-- Selecione --</option>
+                                `+str+`
+                                </select>
+                            `);
+                            $('.btn-modal-contestar').trigger('click');
+                            swal.close();
+
+                            $('.btn-contestar-confirm').click(function(e) {
+                                e.preventDefault();
+                                let para = $('.select-para').val();
+                                let mensagem = $('#mensagem-text').val();
+                                if(!ajaxForm) {
+                                    swal({
+                                        title: "Contestação",
+                                        text: "Deseja realmente contestar?",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonText: "Constestar",
+                                        cancelButtonText: "Cancelar",
+                                        closeOnConfirm: false,
+                                        allowClickOutside: false,
+                                        animation: "slide-from-top",
+                                        inputPlaceholder: "Escreva o motivo aqui",
+                                        showLoaderOnConfirm: true
+                                    }, function (inputValue) {
+                                        if(inputValue) {
+                                            ajaxForm = $.ajax({
+                                                type: "POST",
+                                                url: '/financeiro/contestar/',
+                                                data: {
+                                                    id: id,
+                                                    para: para,
+                                                    mensagem: mensagem
+                                                },
+                                                dataType: 'json',
+                                                success: function(data) {
+                                                    ajaxForm = null;
+                                                    console.log('success', data);
+                                                    swal({
+                                                        title: "Sucesso!",
+                                                        text: data.description,
+                                                        type: "success",
+                                                        allowClickOutside: false,
+                                                        allowEscapeKey: false
+                                                    }, function(){
+                                                        window.location = '';
+                                                    });
+                                                },
+                                                error: function(data) {
+                                                    ajaxForm = null;
+                                                    console.error('erro', data);
+                                                    if(data.status == 404){
+                                                        swal({
+                                                            title: "Erro",
+                                                            text: 'Entre em contato com o suporte.',
+                                                            type: "error",
+                                                            allowClickOutside: false,
+                                                            allowEscapeKey: false
+                                                        });
+                                                    } else {
+                                                        swal({
+                                                            title: "Erro",
+                                                            text: data.responseJSON.description,
+                                                            type: "warning",
+                                                            allowClickOutside: false,
+                                                            allowEscapeKey: false
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+
+                        },
+                        error: function(data) {
+                            ajaxForm = null;
+                            console.error('erroAffecteds', data);
+                        }
+                    });
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}
