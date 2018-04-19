@@ -660,7 +660,6 @@ class PedidoController extends Controller
             $em->getConnection()->beginTransaction();
 
             if(!$request->get('id')) {throw new \Exception('error_id');}
-            if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
             if(!$request->get('para')) {throw new \Exception('error_para');}
 
             $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
@@ -732,7 +731,6 @@ class PedidoController extends Controller
             $em->getConnection()->beginTransaction();
 
             if(!$request->get('id')) {throw new \Exception('error_id');}
-            if(!$request->get('mensagem')) {throw new \Exception('error_mensagem');}
 
             $old_historico = $em->getRepository('ChefeBundle:Historico')->findOneBy([
                 'idpedido' => $request->get('id')
