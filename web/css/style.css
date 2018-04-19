@@ -8060,3 +8060,36 @@ html.ie11 .bs-searchbox .form-control {
   top: 5px !important;
   right: 5px !important;
 }
+
+@media screen and (max-width: 799px){
+  .dt-buttons{
+    display: none;
+  }
+}
+
+@media print{
+  .content .container-fluid > *, .sidebar{
+    display: none !important;
+  }
+
+  #largeModal, largeModal *{
+    margin-top: 32px;
+    display: block !important;
+  }
+  #largeModal .modal-content{
+    box-shadow: none !important;
+  }
+  #largeModal .modal-footer, #largeModal .modal-header a{
+    display: none;
+  }
+  #largeModal .modal-header, #largeModal .modal-body{
+    padding: 0;
+  }
+  #largeModal table{
+    width: 100%;
+  }
+  #largeModal table tr th, #largeModal table tr td{
+    padding: 5px !important;
+  }
+
+}
