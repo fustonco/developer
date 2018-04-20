@@ -90,6 +90,47 @@ class DefaultController extends Controller
             'pedidosPendentes' => $pedidosPendentes
         ]);
     }
+    
+    /**
+     * @Route("/pagamentos-aprovados/")
+     */
+    public function pagamentosAprovadosAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        
+        $dataAprovacao = $request->request->get("data_aprovacao");
+        $dataVencimento = $request->request->get("data_vencimento");
+
+        dump($dataAprovacao);
+
+        $pedidos = $em->getConnection()->prepare("SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        FROM pedido p
+        INNER JOIN status_pedido sp ON sp.id = p.status
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
+        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        WHERE p.status = 4 AND pc.status = 1
+        AND (:data_aprovacao1 = '' OR DATE_FORMAT(h.data_passagem, '%d/%m/%Y') = :data_aprovacao)
+        AND (:data_vencimento1 = '' OR DATE_FORMAT(pc.data_vencimento, '%d/%m/%Y') = :data_vencimento)
+        ORDER BY p.id DESC");
+        $pedidos->bindValue("para", $this->getUser()->getId());
+        $pedidos->bindValue("data_aprovacao", $dataAprovacao);
+        $pedidos->bindValue("data_vencimento", $dataVencimento);
+        $pedidos->bindValue("data_aprovacao1", $dataAprovacao);
+        $pedidos->bindValue("data_vencimento1", $dataVencimento);
+        $pedidos->execute();
+        $pedidos = $pedidos->fetchAll();
+        
+        return $this->render("FinanceiroBundle:Default:pagamentos-aprovados.html.twig", [
+            'pedidos'  => $pedidos,
+            'data_aprovacao' => $dataAprovacao,
+            'data_vencimento' => $dataVencimento
+        ]);
+    }
 
     /**
      * @Route("/proximos-pagamentos/")

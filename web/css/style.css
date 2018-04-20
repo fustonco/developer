@@ -8061,6 +8061,10 @@ html.ie11 .bs-searchbox .form-control {
   right: 5px !important;
 }
 
+.pointer{
+  cursor: pointer;
+}
+
 @media screen and (max-width: 799px){
   .dt-buttons{
     display: none;

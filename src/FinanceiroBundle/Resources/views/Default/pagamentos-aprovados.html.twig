@@ -1,37 +1,66 @@
-{% extends 'base.html.twig' %}
+{% extends '::base.html.twig' %}
 
 {% block body %}
     <div class="block-header">
-        <h2>PAGAMENTOS EFETUADOS</h2>
+        <h2>PAGAMENTOS APROVADOS</h2>
     </div>
-
-     <div class="row clearfix">
+    
+    <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
                 <div class="header">
                     <h2>
-                        Lista de Pagamentos
+                        Lista de todos pagamentos aprovados
                     </h2>
                 </div>
                 <div class="body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label class="form-label">Pesquisar por data de aprovação</label>
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" name="data_aprovacao" value="{{data_aprovacao}}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <label class="form-label">Pesquisar por data de vencimento</label>
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" name="data_vencimento" value="{{data_vencimento}}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <br>
+                                <button class="btn btn-primary waves-effect">PESQUISAR</button>
+                            </div>
+                        </div>
+                    </form>
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                             <thead>
                                 <tr>
                                     <th>Código</th>
                                     <th>Valor</th>
-                                    <th>Data pagamento</th>
+                                    <th>Aprovação</th>
+                                    <th>Vencimento</th>
                                     <th>Pagamento</th>
                                     <th>Detalhes</th>
                                 </tr>
                             </thead>
                             <tbody>
                             
-                                {% for p in pagamentos %}
+                                {% for p in pedidos %}
                                     <tr>
                                         <td>{{p.codigo}}</td>
                                         <td>R$ {{p.valor}}</td>
-                                        <td>{{p.data_pagamento | date("d/m/Y")}}</td>
+                                        <td>{{p.data_aprovacao | date("d/m/Y")}}</td>
+                                        <td>{{p.data_vencimento | date("d/m/Y")}}</td>
                                         <td>{{p.tipo_pagamento}}</td>
                                         <td>
                                             <a class="btn-ver pointer" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
@@ -46,6 +75,8 @@
             </div>
         </div>
     </div>
+
+    <!-- #END# Widgets -->
 
     <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
@@ -76,6 +107,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button class="btn btn-link waves-effect btn-contestar" data-id=""><span data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">Contestar</span></button>
                     <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
                 </div>
                 <div class="modal-footer show-historico" style="text-align: left; height: 225px; overflow: auto; display: none;">
@@ -88,8 +120,9 @@
 
 {% block javascripts %}
     <script>
-        let ajaxForm;
-        
+        $("input[name='data_vencimento'], input[name='data_aprovacao']").mask('00/00/0000', { placeholder: '__/__/____' });
+        $('input[name="variation_value"], input[name="value"]').mask('000.000.000.000.000,00', {reverse: true});
+
         function formatDateStamp(timestamp) {
             const date = new Date(timestamp * 1000);
             const hours = date.getUTCHours();
@@ -120,6 +153,113 @@
             container: 'body'
         });
 
+        $('.btn-show-historico').click(function(e) {
+            if($('.show-historico').is(':visible')){
+                $('.show-historico').hide();
+            } else {
+                $('.show-historico').show();
+            }
+        });
+
+        let ajaxForm;
+
+        $("#confirmation").submit(function(e){
+            e.preventDefault();
+
+            let form = $(this);
+
+            let valueParcel = parseFloat($("input[name='parcel_value']").val().replace(",", ".").replace(".", "."));
+            let valuePayed = parseFloat($("input[name='value']").val().replace(",", ".").replace(".", "."));
+
+            if(valuePayed < valueParcel){
+                swal({
+                    title: "Atenção",
+                    text: "Deseja realmente confirmar um pagamento parcial (R$ " + $("input[name='value']").val() + " / R$ " + $("input[name='parcel_value']").val() + ")?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sim!",
+                    cancelButtonText: "Cancelar",
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true,
+                    allowClickOutside: false
+                }, function(isConfirm) {
+                    if (isConfirm) {
+                        sendConfirmation(form);
+                    }
+                });
+            }
+            else{
+                if(valuePayed > valueParcel){
+                    swal({
+                        title: "Erro",
+                        text: "O valor pago deve ser menor ou igual o valor da parcela",
+                        type: "error",
+                        allowClickOutside: false,
+                        allowEscapeKey: false
+                    });
+                }
+                else{
+                    sendConfirmation(form);
+                }
+            }
+        });
+
+        function sendConfirmation(form) {
+            if(!ajaxForm){
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: "/financeiro/confirm/",
+                    data: form.serialize(),
+                    success: function(data){
+                        ajaxForm = null;
+
+                        $(".btn-modal-confirm-hide").trigger("click");
+
+                        swal({
+                            title: "Sucesso!",
+                            text: "Pagamento confirmado com sucesso!",
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = "";
+                        });
+                    },
+                    error: function(error){
+                        ajaxForm = null;
+
+                        swal({
+                            title: "Erro",
+                            text: error._body,
+                            type: "error",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        });
+                    }
+                });
+            }
+        }
+
+        $(document).on("click", ".btn-show-confirm", function(){
+            $("input[name='parcel']").val($(this).data("id"));
+            $("input[name='parcel_value']").val($(this).data("value"));
+
+            $(".btn-modal-confirm").trigger("click");
+        });
+
+        $(document).on("click", ".pagamento", function(){
+            $(this).next(".table-responsive").toggle();
+        });
+
+        $("input[name='variation_value']").keyup(function(){
+            if($(this).val()){
+                $("textarea[name='description']").attr("required", "required").parents(".col-md-12").removeClass("hide");
+            }
+            else{
+                $("textarea[name='description']").removeAttr("required").parents(".col-md-12").addClass("hide");
+            }
+        });
+
         $('.btn-ver').click(function(e) {
             e.preventDefault();
             let id = $(this).attr('data-id');
@@ -138,7 +278,7 @@
                     if (isConfirm) {
                         ajaxForm = $.ajax({
                             type: "POST",
-                            url: '/financeiro/ver/',
+                            url: '/financeiro/ver-proximos/',
                             data: {
                                 id: id
                             },
@@ -159,6 +299,7 @@
                                 $('#valorPagamento').html('R$ ' + data.valor);
                                 $('#descricaoPedido').html(data.descricao);
                                 $('[data-toggle="tooltip"]').tooltip({container: 'body'});
+                                $('.btn-contestar').attr('data-id', data.id);
 
                                 $("#parcelasPedido").html("");
 
@@ -184,6 +325,7 @@
                                                                         <th>Desconto</th>
                                                                         <th>Vencimento</th>
                                                                         <th>Status</th>
+                                                                        <th>Operações</th>
                                                                     </tr>
                                                                 </thead>`;
 
@@ -199,6 +341,7 @@
                                                                 <td>` + (parcela.valor_desconto ? `R$ ` + parcela.valor_desconto : `-`) + `</td>
                                                                 <td>` + parcela.data_vencimento + `</td>
                                                                 <td>` + parcela.status + `</td>
+                                                                <td>` + (parcela.status_id == 1 ? `<a class="btn-show-confirm pointer" data-id="` + parcela.id + `" data-value="` + parcela.valor + `"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar pagamento">thumb_up</i></a>` : `-`) + `</td>
                                                             </tr>`;
                                     }
 

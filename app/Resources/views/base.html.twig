@@ -386,7 +386,7 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/aprovado"
                                 %}active{% endif %}">
-                                    <a href="{{ path('chefe_pedido_aprovado') }}">Listar Pedidos Aprovados</a>
+                                    <a href="{{ path('chefe_pedido_aprovado') }}">Meus Pedidos Aprovados</a>
                                 </li>
                             </ul>
                         </li>
@@ -579,6 +579,12 @@
                             <a href="/financeiro/">
                                 <i class="material-icons">home</i>
                                 <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="{% if app.request.requestUri == "/financeiro/pagamentos-aprovados/" %}active{% endif %}">
+                            <a href="/financeiro/pagamentos-aprovados/">
+                                <i class="material-icons">attach_money</i>
+                                <span>Pagamentos aprovados</span>
                             </a>
                         </li>
                         <li class="{% if app.request.requestUri == "/financeiro/proximos-pagamentos/" %}active{% endif %}">

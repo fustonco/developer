@@ -38,13 +38,14 @@ class PedidoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getConnection()->prepare("
-        SELECT sp.id id_status_pedido, p.idEmpresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, p.idEmpresa, e.nome empresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN empresa e ON p.idEmpresa = e.id
         WHERE p.criado_por = :criado_por
         ORDER BY p.id DESC
         ");
@@ -136,14 +137,13 @@ class PedidoController extends Controller
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
-        INNER JOIN historico h ON ht.id = h.id
-        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN historico h ON ht.id = h.id AND h.idDe = :de
+        INNER JOIN funcionario f ON f.id = h.idDe
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         WHERE p.status = 4
-        AND p.criado_por = :criado_por
         ORDER BY p.id DESC;
         ");
-        $entities->bindValue("criado_por", $this->getUser()->getId());
+        $entities->bindValue("de", $this->getUser()->getId());
         $entities->execute();
         $entities = $entities->fetchAll();
 
@@ -893,6 +893,7 @@ class PedidoController extends Controller
             $pedido = new Pedido();
             $pedido->setIdempresa($empresa);
             $pedido->setCodigo($codigo);
+            $pedido->setStatus($em->getRepository('MasterBundle:StatusPedido')->findOneById(4));
             $tipo = $em->getRepository('MasterBundle:TipoPedido')->findOneById($request->tipopedido);
             $pedido->setIdtipo($tipo);
             if($request->forn) {
