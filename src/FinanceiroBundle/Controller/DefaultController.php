@@ -101,8 +101,6 @@ class DefaultController extends Controller
         $dataAprovacao = $request->request->get("data_aprovacao");
         $dataVencimento = $request->request->get("data_vencimento");
 
-        dump($dataAprovacao);
-
         $pedidos = $em->getConnection()->prepare("SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
