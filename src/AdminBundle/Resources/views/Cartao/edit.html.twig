@@ -1,0 +1,123 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>Editar Cartão</h2>
+                </div>
+                <div class="body">
+                    <form id="form_validation" method="POST" novalidate="novalidate">
+                        <input type="hidden" name="id" value="{{ entity.id }}" />
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input type="text" class="form-control" name="titulo" value="{{entity.titulo}}" maxlength="32" required aria-required="true">
+                                <label class="form-label">Título</label>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input type="text" class="form-control" name="numero" value="{{entity.numero}}" maxlength="32" required aria-required="true">
+                                <label class="form-label">Número</label>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input type="text" class="form-control" name="bandeira" value="{{entity.bandeira}}" maxlength="32" required aria-required="true">
+                                <label class="form-label">Bandeira</label>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line focused">
+                                <input type="date" class="form-control" name="vencimento" value="{{entity.vencimento | date("Y-m-d")}}">
+                                <label class="form-label">Data de vencimento</label>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input type="text" class="form-control" name="cvc" maxlength="32" value="{{entity.cvc}}">
+                                <label class="form-label">CVC</label>
+                            </div>
+                        </div>
+                        <div class="form-group form-float">
+                            <div class="form-line focused">
+                                <input type="date" class="form-control" name="melhor_data" value="{% if entity.melhorData %}{{entity.melhorData | date("Y-m-d")}}{% endif %}">
+                                <label class="form-label">Melhor data de uso</label>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <button class="btn btn-primary waves-effect" type="submit">EDITAR</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+let ajaxForm;
+$('#form_validation').submit(function(e) {
+    e.preventDefault();
+    if(!$(this).valid()) return false;
+    if(!ajaxForm) {
+        swal({
+            title: "Atenção",
+            text: "Deseja realmente editar?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sim!",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            allowClickOutside: false
+        }, function(isConfirm) {
+            if (isConfirm) {
+                ajaxForm = $.ajax({
+                    type: "POST",
+                    url: '/admin/cartao/editar/',
+                    data: $('#form_validation').serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        ajaxForm = null;
+                        console.log('success', data);
+                        swal({
+                            title: "Sucesso",
+                            text: data.description,
+                            type: "success",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        }, function(){
+                            window.location = '';
+                        });
+                    },
+                    error: function(data) {
+                        ajaxForm = null;
+                        console.error('erro', data);
+                        if(data.status == 404){
+                            swal({
+                                title: "Erro",
+                                text: 'Entre em contato com o suporte.',
+                                type: "error",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        } else {
+                            swal({
+                                title: "Erro",
+                                text: data.responseJSON.description,
+                                type: "warning",
+                                allowClickOutside: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

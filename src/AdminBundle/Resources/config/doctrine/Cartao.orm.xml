@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AdminBundle\Entity\Cartao" table="cartao">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="titulo" type="string" column="titulo" length="64" nullable="false"/>
+    <field name="numero" type="string" column="numero" length="32" nullable="false"/>
+    <field name="bandeira" type="string" column="bandeira" length="32" nullable="false"/>
+    <field name="vencimento" type="date" column="vencimento" nullable="false"/>
+    <field name="cvc" type="string" column="cvc" length="32" nullable="true"/>
+    <field name="melhorData" type="date" column="melhor_data" nullable="true"/>
+    <field name="active" type="boolean" column="active" nullable="false"/>
+  </entity>
+</doctrine-mapping>

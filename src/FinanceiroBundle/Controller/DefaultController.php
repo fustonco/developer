@@ -172,11 +172,12 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
             LEFT JOIN historico h ON h.idPedido = p.id
+            LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
             INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
             LEFT JOIN fornecedor fo ON fo.id = p.idFornecedor
@@ -186,11 +187,14 @@ class DefaultController extends Controller
             $pedido->execute();
             $pedido = $pedido->fetchAll();
 
-            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.nome tipo, pg.valor_integral valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas FROM pagamento pg
+            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.id tipo_id, t.nome tipo, pg.valor_integral valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas, c.titulo, c.numero, c.bandeira, DATE_FORMAT(c.vencimento, '%d/%m/%Y') vencimento, DATE_FORMAT(c.melhor_data, '%d/%m/%Y') melhor_data, c.cvc, co.banco, co.agencia, co.conta, co.cpf, co.cnpj, ct.nome conta_tipo FROM pagamento pg
             INNER JOIN tipo_pagamento t ON pg.idTipo = t.id
             INNER JOIN pedido p ON idPedido = p.id
             LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas GROUP BY idPagamento) pc ON pc.idPagamento = pg.id
             LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas WHERE status = 2 GROUP BY idPagamento) pcp ON pcp.idPagamento = pg.id
+            LEFT JOIN cartao c ON pg.cartao = c.id
+            LEFT JOIN conta co ON pg.conta = co.id
+            LEFT JOIN conta_tipo ct ON co.tipo = ct.id
             WHERE idPedido = ?");
             $pagamentos->execute(array($id));
             $pagamentos = $pagamentos->fetchAll();
@@ -224,11 +228,12 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
             LEFT JOIN historico h ON h.idPedido = p.id
+            LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
             INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
             LEFT JOIN fornecedor fo ON fo.id = p.idFornecedor
@@ -238,11 +243,14 @@ class DefaultController extends Controller
             $pedido->execute();
             $pedido = $pedido->fetchAll();
 
-            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.nome tipo, pg.valor_integral valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas FROM pagamento pg
+            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.nome tipo, pg.valor_integral valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas, c.titulo, c.numero, c.bandeira, DATE_FORMAT(c.vencimento, '%d/%m/%Y') vencimento, DATE_FORMAT(c.melhor_data, '%d/%m/%Y') melhor_data, c.cvc, co.banco, co.agencia, co.conta, co.cpf, co.cnpj, ct.nome conta_tipo FROM pagamento pg
             INNER JOIN tipo_pagamento t ON pg.idTipo = t.id
             INNER JOIN pedido p ON idPedido = p.id
             LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas GROUP BY idPagamento) pc ON pc.idPagamento = pg.id
             LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas WHERE status = 2 GROUP BY idPagamento) pcp ON pcp.idPagamento = pg.id
+            LEFT JOIN cartao c ON pg.cartao = c.id
+            LEFT JOIN conta co ON pg.conta = co.id
+            LEFT JOIN conta_tipo ct ON co.tipo = ct.id
             WHERE idPedido = ?");
             $pagamentos->execute(array($id));
             $pagamentos = $pagamentos->fetchAll();

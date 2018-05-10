@@ -68,6 +68,10 @@
                             <h4>Descrição</h4>
                             <span id="descricaoPedido"></span>
                         </div>
+                        <div class="col-sm-12">
+                            <h6>Mensagem</h6>
+                            <p id="mensagemPedido"></p>
+                        </div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-12">
                             <h4>Informações de pagamento</h4>
@@ -158,6 +162,9 @@
                                 $('#fornecedorPedido').html(fornecedor ? fornecedor : "Fornecedor indefinido");
                                 $('#valorPagamento').html('R$ ' + data.valor);
                                 $('#descricaoPedido').html(data.descricao);
+
+                                $('#mensagemPedido').html(data.mensagem ? data.mensagem : '-');
+
                                 $('[data-toggle="tooltip"]').tooltip({container: 'body'});
 
                                 $("#parcelasPedido").html("");
@@ -168,8 +175,32 @@
                                         <div class="col-md-6"><b>Tipo:</b> ` + pagamentos[i].tipo + `</div>
                                         <div class="col-md-6"><b>Valor:</b> R$ ` + pagamentos[i].valor + `</div>
                                         <div class="col-md-6"><b>Num parcelas:</b> ` + pagamentos[i].parcelas_total + `x</div>
-                                        <div class="col-md-6"><b>Parcelas pagas:</b> ` + pagamentos[i].parcelas_pagas + `x</div>
-                                    </div>`;
+                                        <div class="col-md-6"><b>Parcelas pagas:</b> ` + pagamentos[i].parcelas_pagas + `x</div>`;
+
+                                    switch(pagamentos[i].tipo_id){
+                                        case '2':
+                                            pagamentosHTML += `<div class="col-sm-12"><br></div>
+                                                <div class="col-md-12"><b>Detalhes do cartão</b></div>
+                                                <div class="col-sm-12"><br></div>
+                                                <div class="col-md-6"><b>Título:</b> ` + pagamentos[i].titulo + `</div>
+                                                <div class="col-md-6"><b>Número:</b> ` + pagamentos[i].numero + `</div>
+                                                <div class="col-md-6"><b>Vencimento:</b> ` + pagamentos[i].vencimento + `</div>
+                                                <div class="col-md-6"><b>Melhor data:</b> ` + pagamentos[i].melhor_data + `</div>
+                                                <div class="col-md-6"><b>CVC:</b> ` + pagamentos[i].cvc + `</div>`;
+                                        break;
+                                        case '6':
+                                            pagamentosHTML += `<div class="col-sm-12"><br></div>
+                                            <div class="col-md-12"><b>Detalhes da conta</b></div>
+                                            <div class="col-sm-12"><br></div>
+                                            <div class="col-md-6"><b>Banco:</b> ` + pagamentos[i].banco + `</div>
+                                            <div class="col-md-6"><b>Agência:</b> ` + pagamentos[i].agencia + `</div>
+                                            <div class="col-md-6"><b>Conta:</b> ` + pagamentos[i].conta + `</div>
+                                            <div class="col-md-6"><b>Tipo:</b> ` + pagamentos[i].conta_tipo + `</div>
+                                            <div class="col-md-6"><b>CPF:</b> ` + (pagamentos[i].cpf ? pagamentos[i].cpf : `-`) + `</div>
+                                            <div class="col-md-6"><b>CNPJ:</b> ` + (pagamentos[i].cnpj ? pagamentos[i].cnpj : `-`) + `</div>`;
+                                    }
+
+                                    pagamentosHTML += `</div>`;
 
                                     pagamentosHTML += `<div class="table-responsive">
                                                             <br><br>

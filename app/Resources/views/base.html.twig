@@ -319,7 +319,9 @@
                     {% if app.user.idtipo.id == 2 %}
                         <!-- Menu Pedido -->
                         <li class="{% if app.request.requestUri == "/funcionario/pedido/new" or 
-                        app.request.requestUri == "/funcionario/pedido/" or 
+                        app.request.requestUri == "/funcionario/pedido/" or
+                        app.request.requestUri == "/funcionario/contestado/" or
+                        app.request.requestUri == "/funcionario/recusado/" or
                         app.request.attributes.get('_route') == 'func_pedido_edit'
                         %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
@@ -334,6 +336,14 @@
                                 app.request.attributes.get('_route') == 'func_pedido_edit'
                                 %}active{% endif %}">
                                     <a href="{{ path('func_pedido') }}">Listar Meus Pedidos</a>
+                                </li>
+                                 <li class="{% if app.request.requestUri == "/funcionario/contestado/"
+                                %}active{% endif %}">
+                                    <a href="{{ path('func_pedido_contestado') }}">Listar Pedidos Contestados</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/funcionario/recusado/"
+                                %}active{% endif %}">
+                                    <a href="{{ path('func_pedido_recusado') }}">Listar Pedidos Recusados</a>
                                 </li>
                             </ul>
                         </li>
@@ -361,6 +371,9 @@
                         app.request.requestUri == "/chefe/pedido/" or 
                         app.request.requestUri == "/chefe/pedido/recebido" or 
                         app.request.requestUri == "/chefe/pedido/recusado" or
+                        app.request.requestUri == "/chefe/pedido/recusados" or
+                        app.request.requestUri == "/chefe/pedido/contestado" or
+                        app.request.requestUri == "/chefe/pedido/aprovados" or
                         app.request.requestUri == "/chefe/pedido/aprovado"
                         %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
@@ -380,9 +393,21 @@
                                     <a href="{{ path('chefe_pedido_recebido') }}">Listar Pedidos Recebidos</a>
                                     <span class="atualizarRecebidos" style="display: none !important;"></span>
                                 </li>
+                                <li class="{% if app.request.requestUri == "/chefe/pedido/recusados"
+                                %}active{% endif %}">
+                                    <a href="{{ path('chefe_pedido_recusado') }}">Listar Recusados por Mim</a>
+                                </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recusado"
                                 %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_recusado') }}">Listar Pedidos Recusados</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/chefe/pedido/contestado"
+                                %}active{% endif %}">
+                                    <a href="{{ path('chefe_pedido_contestado') }}">Listar Pedidos Contestados</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/chefe/pedido/aprovados"
+                                %}active{% endif %}">
+                                    <a href="{{ path('chefe_pedido_aprovados') }}">Listar Pedidos Aprovados</a>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/aprovado"
                                 %}active{% endif %}">
@@ -414,6 +439,8 @@
                         app.request.requestUri == "/master/pedido/" or 
                         app.request.requestUri == "/master/pedido/recebido" or 
                         app.request.requestUri == "/master/pedido/recusado" or
+                        app.request.requestUri == "/master/pedido/recusados" or
+                        app.request.requestUri == "/master/pedido/contestado" or
                         app.request.requestUri == "/master/pedido/aprovado"
                         %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
@@ -435,7 +462,15 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/master/pedido/recusado"
                                 %}active{% endif %}">
-                                    <a href="{{ path('master_pedido_recusado') }}">Listar Pedidos Recusados</a>
+                                    <a href="{{ path('master_pedido_recusado') }}">Listar Recusados por mim</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/master/pedido/recusados"
+                                %}active{% endif %}">
+                                    <a href="{{ path('master_pedido_recusados') }}">Listar Pedidos Recusados</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/master/pedido/contestado"
+                                %}active{% endif %}">
+                                    <a href="{{ path('master_pedido_contestado') }}">Listar Pedidos Contestados</a>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/master/pedido/aprovado"
                                 %}active{% endif %}">
@@ -537,7 +572,6 @@
                                 </li>
                             </ul>
                         </li>
-
                         
                         <!-- Menu Fornecedor -->
                         <li class="{% if app.request.requestUri == "/admin/fornecedor/new" or app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
@@ -551,6 +585,22 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/admin/fornecedor/"  or app.request.attributes.get('_route') == 'fornecedor_edit' %}active{% endif %}">
                                     <a href="{{ path('fornecedor') }}">Listar</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Menu Cartão -->
+                        <li class="{% if app.request.requestUri == "/admin/cartao/new" or app.request.requestUri == "/admin/cartao/"  or app.request.attributes.get('_route') == 'cartao_edit' %}active{% endif %}">
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">credit_card</i>
+                                <span>Cartão</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li class="{% if app.request.requestUri == "/admin/cartao/new" %}active{% endif %}">
+                                    <a href="{{ path('cartao_new') }}">Cadastrar</a>
+                                </li>
+                                <li class="{% if app.request.requestUri == "/admin/cartao/"  or app.request.attributes.get('_route') == 'cartao_edit' %}active{% endif %}">
+                                    <a href="{{ path('cartoes') }}">Listar</a>
                                 </li>
                             </ul>
                         </li>

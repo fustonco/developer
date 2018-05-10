@@ -15,6 +15,7 @@ use FuncionarioBundle\Entity\Parcelas;
 use FuncionarioBundle\Entity\Mensagem;
 use FuncionarioBundle\Entity\PedidoAnexo;
 use FuncionarioBundle\Entity\Anexo;
+use FuncionarioBundle\Entity\Conta;
 use FuncionarioBundle\Form\PedidoType;
 use ApiBundle\Controller\DefaultController as ApiDefault;
 
@@ -49,6 +50,68 @@ class PedidoController extends Controller
         ORDER BY p.id DESC
         ");
         $entities->bindValue("criado_por", $this->getUser()->getId());
+        $entities->execute();
+        $entities = $entities->fetchAll();
+
+        return array(
+            'entities' => $entities
+        );
+    }
+
+    /**
+     * Lists all Pedido entities.
+     *
+     * @Route("/contestado", name="func_pedido_contestado")
+     * @Method("GET")
+     * @Template()
+     */
+    public function indexContestadoAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entities = $em->getConnection()->prepare("
+        SELECT sp.id id_status_pedido, p.idEmpresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        FROM pedido p
+        INNER JOIN status_pedido sp ON sp.id = p.status
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        WHERE h.tipo_historico_id = 2
+        ORDER BY p.id DESC
+        ");
+        $entities->bindValue("para", $this->getUser()->getId());
+        $entities->execute();
+        $entities = $entities->fetchAll();
+
+        return array(
+            'entities' => $entities
+        );
+    }
+
+    /**
+     * Lists all Pedido entities.
+     *
+     * @Route("/recusado", name="func_pedido_recusado")
+     * @Method("GET")
+     * @Template()
+     */
+    public function indexRecusadoAction()
+    { 
+        $em = $this->getDoctrine()->getManager();
+
+        $entities = $em->getConnection()->prepare("
+        SELECT f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        FROM pedido p
+        INNER JOIN status_pedido sp ON sp.id = p.status
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        WHERE p.status = 3
+        ORDER BY p.id DESC;
+        ");
+        $entities->bindValue("para", $this->getUser()->getId());
         $entities->execute();
         $entities = $entities->fetchAll();
 
@@ -134,11 +197,12 @@ class PedidoController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
             LEFT JOIN historico h ON h.idPedido = p.id
+            LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
             INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
             LEFT JOIN fornecedor fo ON fo.id = p.idFornecedor
@@ -151,9 +215,30 @@ class PedidoController extends Controller
             $historico = $em->getRepository('FuncionarioBundle:Historico')->findByIdpedido($id);
             $historico = $default->serializeJSON($historico);
 
+            $pagamentos = $em->getConnection()->prepare("SELECT pg.id, t.id tipo_id, t.nome tipo, pg.valor_integral valor, pc.parcelas parcelas_total, IF(pcp.parcelas, pcp.parcelas, 0) parcelas_pagas, c.titulo, c.numero, c.bandeira, DATE_FORMAT(c.vencimento, '%d/%m/%Y') vencimento, DATE_FORMAT(c.melhor_data, '%d/%m/%Y') melhor_data, c.cvc, co.banco, co.agencia, co.conta, co.cpf, co.cnpj, ct.nome conta_tipo FROM pagamento pg
+            INNER JOIN tipo_pagamento t ON pg.idTipo = t.id
+            INNER JOIN pedido p ON idPedido = p.id
+            LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas GROUP BY idPagamento) pc ON pc.idPagamento = pg.id
+            LEFT JOIN (SELECT idPagamento, count(id) parcelas FROM parcelas WHERE status = 2 GROUP BY idPagamento) pcp ON pcp.idPagamento = pg.id
+            LEFT JOIN cartao c ON pg.cartao = c.id
+            LEFT JOIN conta co ON pg.conta = co.id
+            LEFT JOIN conta_tipo ct ON co.tipo = ct.id
+            WHERE idPedido = ?");
+            $pagamentos->execute(array($id));
+            $pagamentos = $pagamentos->fetchAll();
+
+            for($i = 0; $i < count($pagamentos); $i = $i + 1){
+                $parcelas = $em->getConnection()->prepare("SELECT p.id, num_parcela, valor, valor_pago, valor_pendente, valor_desconto, valor_acrecimo, DATE_FORMAT(data_vencimento, '%d/%m/%Y') data_vencimento, s.nome status, s.id status_id FROM parcelas p
+                INNER JOIN status_parcela s ON p.status = s.id
+                WHERE idPagamento = ?");
+                $parcelas->execute(array($pagamentos[$i]["id"]));
+                $pagamentos[$i]["parcelas"] = $parcelas->fetchAll();
+            }
+
             return new Response(json_encode([
                 'pedido' => $pedido,
-                'historico' => json_decode($historico)
+                'historico' => json_decode($historico),
+                'pagamentos' => $pagamentos
             ]), 200);
         } catch(Exception $e) {
             return new Response(json_encode([
@@ -293,13 +378,20 @@ class PedidoController extends Controller
             'nome' => 'ASC'
         ]);
 
+        $contaTipo = $em->getRepository('FuncionarioBundle:ContaTipo')->findAll();
+        $cartao = $em->getRepository('FuncionarioBundle:Cartao')->findBy(['active' => true], [
+            'titulo' => 'ASC'
+        ]);
+
         return array(
             'entity' => $entity,
             'empresa' => $empresa,
             'tipopedido' => $tipopedido,
             'tipopagamento' => $tipopagamento,
             'fornecedores' => $fornecedores,
-            'para' => $para
+            'para' => $para,
+            'contaTipo' => $contaTipo,
+            'cartao' => $cartao
         );
     }
 
@@ -530,6 +622,53 @@ class PedidoController extends Controller
                 $pagamento->setValorIntegral($pagamentos[$i]->valor_integral);
                 $status_pagamento = $em->getRepository('FuncionarioBundle:StatusPagamento')->findOneById(1);
                 $pagamento->setIdStatus($status_pagamento);
+                
+                switch($tipo_pagamento->getId()){
+                    case 2:
+                        $cartao = $em->getRepository('ChefeBundle:Cartao')->findOneBy(array(
+                            'id' => $pagamentos[$i]->cartao,
+                            'active' => true
+                        ));
+
+                        if(empty($cartao)){
+                            throw new \Exception('error_cartao');
+                        }
+
+                        $pagamento->setCartao($cartao);
+
+                        break;
+                    case 6:
+                        $banco = $pagamentos[$i]->conta->banco;
+                        $agencia = $pagamentos[$i]->conta->agencia;
+                        $contaId = $pagamentos[$i]->conta->conta;
+                        $cpf = $pagamentos[$i]->conta->cpf;
+                        $cnpj = $pagamentos[$i]->conta->cnpj;
+
+                        if(empty($banco)){throw new \Exception('error_conta_banco');}
+                        if(empty($agencia)){throw new \Exception('error_conta_agencia');}
+                        if(empty($contaId)){throw new \Exception('error_conta_conta');}
+                        if(empty($cpf) && empty($cnpj)){throw new \Exception('error_conta_cpf_cnpj');}
+
+                        $contaTipo = $em->getRepository('ChefeBundle:ContaTipo')->findOneById($pagamentos[$i]->conta->tipo);
+                        
+                        if(empty($contaTipo)){
+                            throw new \Exception('error_conta_tipo');
+                        }
+
+                        $conta = new Conta;
+                        $conta->setBanco($banco);
+                        $conta->setAgencia($agencia);
+                        $conta->setConta($contaId);
+                        $conta->setCpf($cpf);
+                        $conta->setCnpj($cnpj);
+                        $conta->setTipo($contaTipo);
+
+                        $em->persist($conta);
+                        $em->flush();
+
+                        $pagamento->setConta($conta);
+                }
+
                 $em->persist($pagamento);
                 $em->flush();
     
@@ -631,6 +770,36 @@ class PedidoController extends Controller
                 case 'error_pagamentos':
                     return new Response(json_encode([
                         'description' => 'Pedido deve ter pelo menos uma forma de pagamento'
+                    ]), 500);
+                break;
+                case 'error_cartao':
+                    return new Response(json_encode([
+                        'description' => 'É necessário informar um cartão'
+                    ]), 500);
+                break;
+                case 'error_conta_banco':
+                    return new Response(json_encode([
+                        'description' => 'É necessário informar um banco'
+                    ]), 500);
+                break;
+                case 'error_conta_agencia':
+                    return new Response(json_encode([
+                        'description' => 'É necessário informar uma agência'
+                    ]), 500);
+                break;
+                case 'error_conta_conta':
+                    return new Response(json_encode([
+                        'description' => 'É necessário informar uma conta'
+                    ]), 500);
+                break;
+                case 'error_conta_cpf_cnpj':
+                    return new Response(json_encode([
+                        'description' => 'É necessário informar CPF ou CNPJ'
+                    ]), 500);
+                break;
+                case 'error_conta_tipo':
+                    return new Response(json_encode([
+                        'description' => 'É necessário informar o tipo de conta'
                     ]), 500);
                 break;
             }

@@ -155,6 +155,22 @@ function addEventPagamentos(id) {
         e.preventDefault();
         $('[data-pagamento="'+id+'"]').remove();
     });
+    $('.tipopagamento-'+id).change(function(){
+        switch($(this).val()){
+            case '2':
+                $('.transferencia-'+id).hide();
+                $('.cartao-'+id).show();
+            break;
+            case '6':
+                $('.cartao-'+id).hide();
+                $('.transferencia-'+id).show();
+            break;
+            default:
+                $('.cartao-'+id).hide();
+                $('.transferencia-'+id).hide();
+            break;
+        }
+    });
     $('.select-parcelas-'+id).change(function(e){
         $('.pagamento-icon-'+id).hide();
         $('[data-pagamento="'+id+'"]').attr('data-ok', 'no');
@@ -182,6 +198,10 @@ function addEventPagamentos(id) {
     });
     $('input[name="valor_integral"]').mask('000.000.000.000.000,00', {reverse: true});
     $('.parcela1-'+id).mask('000.000.000.000.000,00', {reverse: true});
+    
+    $('.transferencia-'+id+' input[name="cpf"]').mask('000.000.000-00');
+    $('.transferencia-'+id+' input[name="cnpj"]').mask('00.000.000/0000-00');
+
     $('.btn-calc-'+id).click(function(e){
         e.preventDefault();
 
@@ -198,11 +218,6 @@ function addEventPagamentos(id) {
         if($('.valor-integral-'+id).val() == 0 || $('.valor-integral-'+id).val() == '') {
             swal('Atenção','Preencha o valor integral!', 'warning');
             $('.valor-integral-'+id).focus();
-            return false;
-        }
-        if($('.intervalo-parcelas-'+id).val() == 0 || $('.intervalo-parcelas-'+id).val() == '') {
-            swal('Atenção','Escolha um intervalo de datas entre as parcelas!', 'warning');
-            $('.intervalo-parcelas-'+id).focus();
             return false;
         }
         if($('.parcela1-'+id).val() == 0 || $('.parcela1-'+id).val() == '') {
@@ -237,7 +252,7 @@ function addEventPagamentos(id) {
 
             let total_parcelas = $('.select-parcelas-'+id).val();
             let total_valor = parseFloat((valor_integral - parcela1) / (total_parcelas - 1)).toFixed(2);
-            let intervalo_data = $('.intervalo-parcelas-'+id).val();
+            let difencaValor = (valor_integral - parcela1) - (total_valor * (total_parcelas - 1));
             let date = $('.vencimento1-'+id).val();
 
             if((valor_integral - parcela1) == 0) {
@@ -248,9 +263,12 @@ function addEventPagamentos(id) {
             $('#modal-show-'+id).addClass("md-show");
             if($('[data-pagamento="'+id+'"]').attr('data-ok') == 'yes') return false;
 
-            total_valor *= 100;
             $('.inputs-parcela-'+id).html('');
             for(i = 2; i <= total_parcelas; i++) {
+                if(i == total_parcelas){
+                    total_valor = (parseFloat(total_valor) + difencaValor).toFixed(2);
+                }
+
                 $('.inputs-parcela-'+id).append(`
                     <div class="col-sm-6">
                         <label class="form-label">`+i+` Parcela</label>
@@ -264,7 +282,7 @@ function addEventPagamentos(id) {
                         <label class="form-label">Vencimento</label>
                         <div class="form-group">
                             <div class="form-line">
-                                <input type="date" value="`+formatDate(addDays(date, parseInt(intervalo_data)))+`" class="form-control vencimento`+i+`-`+id+`" name="vencimento`+i+`-`+id+`" required aria-required="true">
+                                <input type="date" value="`+formatDate(addDays(date))+`" class="form-control vencimento`+i+`-`+id+`" name="vencimento`+i+`-`+id+`" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -293,6 +311,8 @@ function addEventPagamentos(id) {
         for(i = 2; i <= total_parcelas; i++) {
             valor_total += parseFloat($('.parcela'+i+'-'+id).val().replace('.','').replace(',','.'));
         }
+
+        valor_total = valor_total.toFixed(2);
 
         if(valor_total != valor_integral) {
             swal('Atenção','Valor da soma das parcelas não corresponde ao valor integral do pagamento\n\nValor integral: '+valor_integral+'\n'+'Valor Total: '+valor_total, 'warning');
@@ -325,9 +345,9 @@ function formatDate(nowDate) {
     nowDate = year+'-'+month+'-'+date;
     return nowDate;
 }
-function addDays(date, days) {
+function addDays(date) {
     var result = new Date(date);
-    result.setDate(result.getDate() + days);
+    result.setMonth(result.getMonth() + 1, result.getDate() + 1);
     return result;
 }
 
@@ -393,6 +413,69 @@ $('#addPg').click(function(e){
                             {% endfor %}
                         </select>
                     </div>
+                    
+                    <div class="transferencia-`+idPagamento+`" style='display: none;'>
+                        <div class="col-sm-6">
+                            <label class="form-label">Banco</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="banco" required aria-required="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Agência</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="agencia" required aria-required="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <label class="form-label">Conta</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="conta" required aria-required="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <select class="form-control show-tick select-conta-tipo-`+idPagamento+`" name="tipo" id="conta-tipo" required aria-required="true">
+                                <option value="">-- Selecione o tipo --</option>
+                                {% for c in contaTipo %}
+                                    <option value="{{c.id}}">{{c.nome}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">CPF</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="cpf">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">CNPJ</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="cnpj">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cartao-`+idPagamento+`" style='display: none;'>
+                        <div class="col-sm-12">
+                            <select class="form-control show-tick select-cartao-`+idPagamento+`" name="cartao" id="cartao" required aria-required="true">
+                                <option value="">-- Selecione o cartão --</option>
+                                {% for c in cartao %}
+                                    <option value="{{c.id}}">{{c.numero}} - {{c.titulo}} | {{c.bandeira}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="col-sm-12">
                         <select class="form-control show-tick select-parcelas-`+idPagamento+`" name="parcelas" id="parcelas" required aria-required="true">
                             <option value="">-- Selecione as parcelas --</option>
@@ -401,19 +484,11 @@ $('#addPg').click(function(e){
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <label class="form-label">Valor Integral</label>
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <input value="" type="text" class="valor-integral-`+idPagamento+` form-control" name="valor_integral" required aria-required="true">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label">Dias entre vencimentos</label>
-                        <div class="form-group">
-                            <div class="form-line">
-                                <input value="30" type="text" class="form-control intervalo-parcelas-`+idPagamento+`" name="intervalo-parcelas" required aria-required="true">
                             </div>
                         </div>
                     </div>
@@ -502,6 +577,25 @@ $('#form_validation').submit(function(e) {
                         let valor_integral = $('.valor-integral-'+idDP).val();
                         let tipopagamento = parseInt($('.tipopagamento-'+idDP).val());
                         let parcelas = [];
+                        
+                        let cartao;
+                        let conta = {};
+
+                        switch(tipopagamento){
+                            case 2:
+                                cartao = $('.select-cartao-'+idDP).val();
+                            break;
+                            case 6:
+                                conta = {
+                                    banco: $('.transferencia-'+idDP+' input[name="banco"]').val(),
+                                    agencia: $('.transferencia-'+idDP+' input[name="agencia"]').val(),
+                                    conta: $('.transferencia-'+idDP+' input[name="conta"]').val(),
+                                    tipo: $('.select-conta-tipo-'+idDP).val(),
+                                    cpf: $('.transferencia-'+idDP+' input[name="cpf"]').val(),
+                                    cnpj: $('.transferencia-'+idDP+' input[name="cnpj"]').val(),
+                                }
+                        }
+
                         for(let i = 1; i <= parseInt($('.select-parcelas-'+idDP).val()); i++) {
                             let parcela = {
                                 valor: $('.parcela'+i+'-'+idDP).val(),
@@ -512,7 +606,9 @@ $('#form_validation').submit(function(e) {
                         let pagamento = {
                             'tipopagamento': tipopagamento,
                             'parcelas': parcelas,
-                            'valor_integral': valor_integral
+                            'valor_integral': valor_integral,
+                            'cartao': cartao,
+                            'conta': conta,
                         };
                         pagamentos.push(pagamento);
                     }

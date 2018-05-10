@@ -79,6 +79,15 @@
                             <h6>Descrição</h6>
                             <p id="descricaoPedido"></p>
                         </div>
+                        <div class="col-sm-12">
+                            <h6>Mensagem</h6>
+                            <p id="mensagemPedido"></p>
+                        </div>
+                        <div class="col-sm-12"><br></div>
+                        <div class="col-sm-12">
+                            <h4>Informações de pagamento</h4>
+                            <div id="parcelasPedido"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -232,6 +241,7 @@ $('.btn-ver').click(function(e) {
                     success: function(data) {
                         ajaxForm = null;
                         historico = data.historico;
+                        pagamentos = data.pagamentos;
                         data = data.pedido[0];
                         console.log('success', data);
                         console.log('success', historico);
@@ -245,6 +255,80 @@ $('.btn-ver').click(function(e) {
                         $('#valorPagamento').html("R$ "+data.valor);
                         $('#encaminhadoPedido').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+data.para+'">'+data.tipo_para+'</span>');
                         $('#descricaoPedido').html(data.descricao);
+                         
+                        $('#mensagemPedido').html(data.mensagem ? data.mensagem : '-');
+
+                        $("#parcelasPedido").html("");
+
+                        let pagamentosHTML = "";
+                        for(let i = 0; i < pagamentos.length; i = i + 1){
+                            pagamentosHTML += `<div class="pagamento row">
+                                <div class="col-md-6"><b>Tipo:</b> ` + pagamentos[i].tipo + `</div>
+                                <div class="col-md-6"><b>Valor:</b> R$ ` + pagamentos[i].valor + `</div>
+                                <div class="col-md-6"><b>Num parcelas:</b> ` + pagamentos[i].parcelas_total + `x</div>
+                                <div class="col-md-6"><b>Parcelas pagas:</b> ` + pagamentos[i].parcelas_pagas + `x</div>`;
+
+                            switch(pagamentos[i].tipo_id){
+                                case '2':
+                                    pagamentosHTML += `<div class="col-sm-12"><br></div>
+                                        <div class="col-md-12"><b>Detalhes do cartão</b></div>
+                                        <div class="col-sm-12"><br></div>
+                                        <div class="col-md-6"><b>Título:</b> ` + pagamentos[i].titulo + `</div>
+                                        <div class="col-md-6"><b>Número:</b> ` + pagamentos[i].numero + `</div>
+                                        <div class="col-md-6"><b>Vencimento:</b> ` + pagamentos[i].vencimento + `</div>
+                                        <div class="col-md-6"><b>Melhor data:</b> ` + pagamentos[i].melhor_data + `</div>
+                                        <div class="col-md-6"><b>CVC:</b> ` + pagamentos[i].cvc + `</div>`;
+                                break;
+                                case '6':
+                                    pagamentosHTML += `<div class="col-sm-12"><br></div>
+                                    <div class="col-md-12"><b>Detalhes da conta</b></div>
+                                    <div class="col-sm-12"><br></div>
+                                    <div class="col-md-6"><b>Banco:</b> ` + pagamentos[i].banco + `</div>
+                                    <div class="col-md-6"><b>Agência:</b> ` + pagamentos[i].agencia + `</div>
+                                    <div class="col-md-6"><b>Conta:</b> ` + pagamentos[i].conta + `</div>
+                                    <div class="col-md-6"><b>Tipo:</b> ` + pagamentos[i].conta_tipo + `</div>
+                                    <div class="col-md-6"><b>CPF:</b> ` + (pagamentos[i].cpf ? pagamentos[i].cpf : `-`) + `</div>
+                                    <div class="col-md-6"><b>CNPJ:</b> ` + (pagamentos[i].cnpj ? pagamentos[i].cnpj : `-`) + `</div>`;
+                            }
+
+                            pagamentosHTML += `</div>`;
+
+                            pagamentosHTML += `<div class="table-responsive">
+                                                    <br><br>
+                                                    <table class="table table-bordered table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Num Parcela</th>
+                                                                <th>Valor</th>
+                                                                <th>Valor pago</th>
+                                                                <th>Valor pendente</th>
+                                                                <th>Acréscimo</th>
+                                                                <th>Desconto</th>
+                                                                <th>Vencimento</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>`;
+
+                            for(let j = 0; j < pagamentos[i].parcelas.length; j = j + 1){
+                                let parcela = pagamentos[i].parcelas[j];
+
+                                pagamentosHTML += `<tr>
+                                                        <td>` + parcela.num_parcela + `</td>
+                                                        <td>R$ ` + parcela.valor + `</td>
+                                                        <td>` + (parcela.valor_pago ? `R$ ` + parcela.valor_pago : `-`) + `</td>
+                                                        <td>` + (parcela.valor_pendente ? `R$ ` + parcela.valor_pendente : `-`) + `</td>
+                                                        <td>` + (parcela.valor_acrecimo ? `R$ ` + parcela.valor_acrecimo : `-`) + `</td>
+                                                        <td>` + (parcela.valor_desconto ? `R$ ` + parcela.valor_desconto : `-`) + `</td>
+                                                        <td>` + parcela.data_vencimento + `</td>
+                                                        <td>` + parcela.status + `</td>
+                                                    </tr>`;
+                            }
+
+                            pagamentosHTML += `</table></div>`;
+                        }
+
+                        $("#parcelasPedido").html(pagamentosHTML);
+
                         $('[data-toggle="tooltip"]').tooltip({container: 'body'});
                         $('.show-historico').html('');
                         for(let i = 0; i < historico.length; i++) {
