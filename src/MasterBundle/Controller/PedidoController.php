@@ -86,6 +86,9 @@ class PedidoController extends Controller
         $entities->execute();
         $entities = $entities->fetchAll();
 
+        $api = new ApiDefault;
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
+
         return array(
             'entities' => $entities
         );
@@ -148,6 +151,9 @@ class PedidoController extends Controller
         $entities->execute();
         $entities = $entities->fetchAll();
 
+        $api = new ApiDefault;
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
+
         return array(
             'entities' => $entities
         );
@@ -179,6 +185,9 @@ class PedidoController extends Controller
         $entities->execute();
         $entities = $entities->fetchAll();
 
+        $api = new ApiDefault;
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
+
         return array(
             'entities' => $entities
         );
@@ -209,6 +218,9 @@ class PedidoController extends Controller
         $entities->bindValue("de", $this->getUser()->getId());
         $entities->execute();
         $entities = $entities->fetchAll();
+
+        $api = new ApiDefault;
+        $api->clearNotificacoesPedidos($entities, $this->getUser()->getId(), "de");
 
         return array(
             'entities' => $entities

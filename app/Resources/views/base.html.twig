@@ -339,11 +339,11 @@
                                 </li>
                                  <li class="{% if app.request.requestUri == "/funcionario/contestado/"
                                 %}active{% endif %}">
-                                    <a href="{{ path('func_pedido_contestado') }}">Listar Pedidos Contestados</a>
+                                    <a href="{{ path('func_pedido_contestado') }}">Listar Pedidos Contestados <span data-notification="contestado" class="notification-badge"></span></a>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/funcionario/recusado/"
                                 %}active{% endif %}">
-                                    <a href="{{ path('func_pedido_recusado') }}">Listar Pedidos Recusados</a>
+                                    <a href="{{ path('func_pedido_recusado') }}">Listar Pedidos Recusados <span data-notification="recusado" class="notification-badge"></span></a>
                                 </li>
                             </ul>
                         </li>
@@ -390,7 +390,7 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recebido"
                                 %}active{% endif %}">
-                                    <a href="{{ path('chefe_pedido_recebido') }}">Listar Pedidos Recebidos</a>
+                                    <a href="{{ path('chefe_pedido_recebido') }}">Listar Pedidos Recebidos <span data-notification="recebido" class="notification-badge"></span></a>
                                     <span class="atualizarRecebidos" style="display: none !important;"></span>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recusados"
@@ -399,11 +399,11 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recusado"
                                 %}active{% endif %}">
-                                    <a href="{{ path('chefe_pedido_recusado') }}">Listar Pedidos Recusados</a>
+                                    <a href="{{ path('chefe_pedido_recusado') }}">Listar Pedidos Recusados <span data-notification="recusado" class="notification-badge"></span></a>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/contestado"
                                 %}active{% endif %}">
-                                    <a href="{{ path('chefe_pedido_contestado') }}">Listar Pedidos Contestados</a>
+                                    <a href="{{ path('chefe_pedido_contestado') }}">Listar Pedidos Contestados <span data-notification="contestado" class="notification-badge"></span></a>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/aprovados"
                                 %}active{% endif %}">
@@ -411,7 +411,7 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/aprovado"
                                 %}active{% endif %}">
-                                    <a href="{{ path('chefe_pedido_aprovado') }}">Meus Pedidos Aprovados</a>
+                                    <a href="{{ path('chefe_pedido_aprovado') }}">Meus Pedidos Aprovados <span data-notification="aprovado" class="notification-badge"></span></a>
                                 </li>
                             </ul>
                         </li>
@@ -457,7 +457,7 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/master/pedido/recebido"
                                 %}active{% endif %}">
-                                    <a href="{{ path('master_pedido_recebido') }}">Listar Pedidos Recebidos</a>
+                                    <a href="{{ path('master_pedido_recebido') }}">Listar Pedidos Recebidos <span data-notification="recebido" class="notification-badge"></span></a>
                                     <span class="atualizarRecebidos" style="display: none !important;"></span>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/master/pedido/recusado"
@@ -466,15 +466,15 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/master/pedido/recusados"
                                 %}active{% endif %}">
-                                    <a href="{{ path('master_pedido_recusados') }}">Listar Pedidos Recusados</a>
+                                    <a href="{{ path('master_pedido_recusados') }}">Listar Pedidos Recusados <span data-notification="recusado" class="notification-badge"></span></a>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/master/pedido/contestado"
                                 %}active{% endif %}">
-                                    <a href="{{ path('master_pedido_contestado') }}">Listar Pedidos Contestados</a>
+                                    <a href="{{ path('master_pedido_contestado') }}">Listar Pedidos Contestados <span data-notification="contestado" class="notification-badge"></span></a>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/master/pedido/aprovado"
                                 %}active{% endif %}">
-                                    <a href="{{ path('master_pedido_aprovado') }}">Listar Pedidos Aprovados</a>
+                                    <a href="{{ path('master_pedido_aprovado') }}">Listar Pedidos Aprovados <span data-notification="aprovado" class="notification-badge"></span></a>
                                 </li>
                             </ul>
                         </li>
@@ -629,6 +629,7 @@
                             <a href="/financeiro/">
                                 <i class="material-icons">home</i>
                                 <span>Dashboard</span>
+                                <span data-notification="recebido" class="notification-badge"></span>
                             </a>
                         </li>
                         <li class="{% if app.request.requestUri == "/financeiro/pagamentos-aprovados/" %}active{% endif %}">
@@ -641,6 +642,7 @@
                             <a href="/financeiro/proximos-pagamentos/">
                                 <i class="material-icons">attach_money</i>
                                 <span>Próximos pagamentos</span>
+                                <span data-notification="recebido" class="notification-badge"></span>
                             </a>
                         </li>
                         <li class="{% if app.request.requestUri == "/financeiro/pagamentos-efetuados/" %}active{% endif %}">
@@ -1622,6 +1624,39 @@
     {% block javascripts %}{% endblock %}
 
     <script>
+    function getNotifications() {
+        $.ajax({
+            type: "POST",
+            url: "/api/notificacoes/pedidos/",
+            data: "user={{app.user.id}}",
+            dataType: "json",
+            success: function(data){
+                console.log(data);
+
+                for(let key in data){
+                    if(data[key] > 0){
+                        $("[data-notification='" + key + "']").show();
+                    }
+                    else{
+                        $("[data-notification='" + key + "']").hide();
+                    }
+                }
+            },
+            error: function(error){
+                console.log(error);
+                swal({
+                    title: "Erro",
+                    text: "Ocorreu um erro ao ler as notificações",
+                    type: "error",
+                    allowClickOutside: false,
+                    allowEscapeKey: false
+                });
+            }
+        });
+    }
+    getNotifications();
+    setInterval(getNotifications, 30000);
+
     $("#change-password").submit(function(e){
         e.preventDefault();
 

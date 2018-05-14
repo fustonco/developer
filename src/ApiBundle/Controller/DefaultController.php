@@ -79,6 +79,83 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/notificacoes/pedidos/")
+     * @Method("POST")
+     */
+    public function notificacoesPedidosAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $user = $request->request->get("user");
+
+        $notificacoes = array(
+            "recebido" => 0,
+            "contestado" => 0,
+            "recusado" => 0,
+            "aprovado" => 0,
+            "proximos_pagamentos" => 0
+        );
+
+        $pedidos = $em->getConnection()->prepare("SELECT p.id, p.status, pc.status status_parcela, h.tipo_historico_id, h.idDe, h.idPara, f.idTipo tipo_funcionario,
+        IF(pc.data_vencimento <= CURDATE(), TRUE, FALSE) vencimento,
+        IF(pc.data_vencimento <= DATE_ADD(CURDATE(), INTERVAL 5 DAY), TRUE, FALSE) proximo
+        FROM pedido p
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id
+        INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        INNER JOIN funcionario f ON f.id = ?
+        WHERE visto = false
+        AND (h.idDe = ? OR h.idPara = ?)");
+        $pedidos->execute(array($user, $user, $user));
+        $pedidos = $pedidos->fetchAll();
+
+        foreach($pedidos as $p){
+            if($p["tipo_funcionario"] == 3){
+                if(empty($p["vencimento"]) && !empty($p["proximo"])){
+                    $notificacoes["proximos_pagamentos"] = $notificacoes["proximos_pagamentos"] + 1;
+                }
+                else if(!empty($p["vencimento"])){
+                    $notificacoes["recebido"] = $notificacoes["recebido"] + 1;
+                }
+            }
+            else{
+                if($p["idPara"] == $user && $p["tipo_historico_id"] == 2){
+                    $notificacoes["contestado"] = $notificacoes["contestado"] + 1;
+                }
+                else if($p["idDe"] == $user && $p["status"] == 3){
+                    $notificacoes["recusado"] = $notificacoes["recusado"] + 1;
+                }
+                else if($p["idDe"] == $user && $p["status"] == 4){
+                    $notificacoes["aprovado"] = $notificacoes["aprovado"] + 1;
+                }
+                else if($p["idPara"] == $user && $p["status"] != 3){
+                    $notificacoes["recebido"] = $notificacoes["recebido"] + 1;
+                }
+            }
+        }
+
+        return new Response(json_encode($notificacoes));
+    }
+
+    public function clearNotificacoesPedidos($em, $pedidos, $user, $type)
+    {    
+        $vistos = array();
+
+        $type = $type == "para" ? "AND idPara = ?" : "AND idDe = ?";
+        
+        foreach($pedidos as $p){
+            $vistos[] = $p["id"];
+        }
+
+        $vistos = join(", ", $vistos);
+
+        $clearNotifications = $em->getConnection()->prepare("UPDATE historico SET visto = true
+        WHERE idPedido IN (" . $vistos . ") " . $type);
+        $clearNotifications->execute(array($user));
+    }
+
+    /**
      * @Route("/teste-push/")
      */
     public function sendPushTesteAction()

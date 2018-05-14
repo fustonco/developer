@@ -8097,3 +8097,13 @@ html.ie11 .bs-searchbox .form-control {
   }
 
 }
+
+.notification-badge{
+  right: 1em;
+  width: 1em;
+  height: 1em;
+  display: none;
+  position: absolute;
+  border-radius: 50%;
+  background-color: #2196F3;
+}

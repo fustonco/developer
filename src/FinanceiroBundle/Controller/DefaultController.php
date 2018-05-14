@@ -81,6 +81,9 @@ class DefaultController extends Controller
         $pedidos->bindValue("para", $this->getUser()->getId());
         $pedidos->execute();
         $pedidos = $pedidos->fetchAll();
+
+        $api = new ApiDefault;
+        $api->clearNotificacoesPedidos($pedidos, $this->getUser()->getId(), "para");
         
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
             'pedidos'  => $pedidos,
@@ -156,6 +159,9 @@ class DefaultController extends Controller
         $pedidos->bindValue("para", $this->getUser()->getId());
         $pedidos->execute();
         $pedidos = $pedidos->fetchAll();
+
+        $api = new ApiDefault;
+        $api->clearNotificacoesPedidos($pedidos, $this->getUser()->getId(), "para");
         
         return $this->render("FinanceiroBundle:Default:proximos-pagamentos.html.twig", [
             'pedidos'  => $pedidos
