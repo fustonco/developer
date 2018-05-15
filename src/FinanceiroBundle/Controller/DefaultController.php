@@ -83,7 +83,7 @@ class DefaultController extends Controller
         $pedidos = $pedidos->fetchAll();
 
         $api = new ApiDefault;
-        $api->clearNotificacoesPedidos($pedidos, $this->getUser()->getId(), "para");
+        $api->clearNotificacoesPedidos($em, $pedidos, $this->getUser()->getId(), "para");
         
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
             'pedidos'  => $pedidos,
@@ -115,14 +115,16 @@ class DefaultController extends Controller
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
         WHERE p.status = 4 AND pc.status = 1
-        AND (:data_aprovacao1 = '' OR DATE_FORMAT(h.data_passagem, '%d/%m/%Y') = :data_aprovacao)
-        AND (:data_vencimento1 = '' OR DATE_FORMAT(pc.data_vencimento, '%d/%m/%Y') = :data_vencimento)
+        AND (:data_aprovacao1 = '' OR :data_aprovacao2 IS NULL OR DATE_FORMAT(h.data_passagem, '%d/%m/%Y') = :data_aprovacao)
+        AND (:data_vencimento1 = '' OR :data_vencimento2 IS NULL OR DATE_FORMAT(pc.data_vencimento, '%d/%m/%Y') = :data_vencimento)
         ORDER BY p.id DESC");
         $pedidos->bindValue("para", $this->getUser()->getId());
         $pedidos->bindValue("data_aprovacao", $dataAprovacao);
         $pedidos->bindValue("data_vencimento", $dataVencimento);
         $pedidos->bindValue("data_aprovacao1", $dataAprovacao);
         $pedidos->bindValue("data_vencimento1", $dataVencimento);
+        $pedidos->bindValue("data_aprovacao2", $dataAprovacao);
+        $pedidos->bindValue("data_vencimento2", $dataVencimento);
         $pedidos->execute();
         $pedidos = $pedidos->fetchAll();
         
@@ -161,7 +163,7 @@ class DefaultController extends Controller
         $pedidos = $pedidos->fetchAll();
 
         $api = new ApiDefault;
-        $api->clearNotificacoesPedidos($pedidos, $this->getUser()->getId(), "para");
+        $api->clearNotificacoesPedidos($em, $pedidos, $this->getUser()->getId(), "para");
         
         return $this->render("FinanceiroBundle:Default:proximos-pagamentos.html.twig", [
             'pedidos'  => $pedidos
@@ -178,10 +180,11 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
+            INNER JOIN empresa e ON p.idEmpresa = e.id
             LEFT JOIN historico h ON h.idPedido = p.id
             LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
@@ -234,10 +237,11 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
+            INNER JOIN empresa e ON p.idEmpresa = e.id
             LEFT JOIN historico h ON h.idPedido = p.id
             LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara

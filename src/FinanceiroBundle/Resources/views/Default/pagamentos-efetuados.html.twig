@@ -61,8 +61,8 @@
                         <div class="col-sm-4"><b>Valor:</b> <span id="valorPagamento"></span></div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-4"><b>Fornecedor:</b> <span id="fornecedorPedido"></span></div>
-                        <div class="col-sm-4"></div>
                         <div class="col-sm-4"><b>Data do Pedido:</b> <span id="dataPedido"></span></div>
+                        <div class="col-sm-4"><b>Empresa:</b> <span id="empresaPedido"></span></div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-12">
                             <h4>Descrição</h4>
@@ -161,6 +161,7 @@
                                 $('#dataPedido').html(formatDate(data.data_pedido));
                                 $('#fornecedorPedido').html(fornecedor ? fornecedor : "Fornecedor indefinido");
                                 $('#valorPagamento').html('R$ ' + data.valor);
+                                $('#empresaPedido').html(data.empresa);
                                 $('#descricaoPedido').html(data.descricao);
 
                                 $('#mensagemPedido').html(data.mensagem ? data.mensagem : '-');

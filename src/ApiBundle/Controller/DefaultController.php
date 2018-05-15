@@ -112,10 +112,10 @@ class DefaultController extends Controller
 
         foreach($pedidos as $p){
             if($p["tipo_funcionario"] == 3){
-                if(empty($p["vencimento"]) && !empty($p["proximo"])){
+                if(empty($p["vencimento"]) && !empty($p["proximo"]) && $p["status"] == 4){
                     $notificacoes["proximos_pagamentos"] = $notificacoes["proximos_pagamentos"] + 1;
                 }
-                else if(!empty($p["vencimento"])){
+                else if(!empty($p["vencimento"]) && $p["status"] == 4){
                     $notificacoes["recebido"] = $notificacoes["recebido"] + 1;
                 }
             }
@@ -148,11 +148,13 @@ class DefaultController extends Controller
             $vistos[] = $p["id"];
         }
 
-        $vistos = join(", ", $vistos);
+        if(!empty($vistos)){
+            $vistos = join(", ", $vistos);
 
-        $clearNotifications = $em->getConnection()->prepare("UPDATE historico SET visto = true
-        WHERE idPedido IN (" . $vistos . ") " . $type);
-        $clearNotifications->execute(array($user));
+            $clearNotifications = $em->getConnection()->prepare("UPDATE historico SET visto = true
+            WHERE idPedido IN (" . $vistos . ") " . $type);
+            $clearNotifications->execute(array($user));
+        }
     }
 
     /**

@@ -395,7 +395,7 @@
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recusados"
                                 %}active{% endif %}">
-                                    <a href="{{ path('chefe_pedido_recusado') }}">Listar Recusados por Mim</a>
+                                    <a href="{{ path('chefe_pedido_recusados') }}">Listar Recusados por Mim</a>
                                 </li>
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/recusado"
                                 %}active{% endif %}">
@@ -642,7 +642,7 @@
                             <a href="/financeiro/proximos-pagamentos/">
                                 <i class="material-icons">attach_money</i>
                                 <span>Próximos pagamentos</span>
-                                <span data-notification="recebido" class="notification-badge"></span>
+                                <span data-notification="proximos_pagamentos" class="notification-badge"></span>
                             </a>
                         </li>
                         <li class="{% if app.request.requestUri == "/financeiro/pagamentos-efetuados/" %}active{% endif %}">

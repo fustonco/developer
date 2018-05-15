@@ -75,6 +75,10 @@
                             <h6>Encaminhado</h6>
                             <p id="encaminhadoPedido"></p>
                         </div>
+                        <div class="col-sm-4">
+                            <h6>Empresa</h6>
+                            <p id="empresaPedido"></p>
+                        </div>
                         <div class="col-sm-12">
                             <h6>Descrição</h6>
                             <p id="descricaoPedido"></p>
@@ -592,6 +596,7 @@ $('.btn-ver').click(function(e) {
                         $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
                         $('#valorPagamento').html("R$ "+data.valor);
                         $('#encaminhadoPedido').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+data.para+'">'+data.tipo_para+'</span>');
+                        $('#empresaPedido').html(data.empresa);
                         $('#descricaoPedido').html(data.descricao);
 
                         $('#mensagemPedido').html(data.mensagem ? data.mensagem : '-');

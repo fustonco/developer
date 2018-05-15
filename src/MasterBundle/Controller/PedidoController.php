@@ -220,7 +220,7 @@ class PedidoController extends Controller
         $entities = $entities->fetchAll();
 
         $api = new ApiDefault;
-        $api->clearNotificacoesPedidos($entities, $this->getUser()->getId(), "de");
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "de");
 
         return array(
             'entities' => $entities
@@ -238,10 +238,11 @@ class PedidoController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
+            INNER JOIN empresa e ON p.idEmpresa = e.id
             LEFT JOIN historico h ON h.idPedido = p.id
             LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
@@ -1008,8 +1009,6 @@ class PedidoController extends Controller
             $pedido->setValor($request->valor);
             $pedido->setDescricao($request->descricao);
             $pedido->setAtivo('S');
-            $status_pedido = $em->getRepository('MasterBundle:StatusPedido')->findOneById(1);
-            $pedido->setStatus($status_pedido);
             $criador = $em->getRepository('MasterBundle:Funcionario')->findOneById($this->getUser()->getId());
             $pedido->setCriadoPor($criador);
             $em->persist($pedido);
@@ -1026,7 +1025,7 @@ class PedidoController extends Controller
                 
                 switch($tipo_pagamento->getId()){
                     case 2:
-                        $cartao = $em->getRepository('ChefeBundle:Cartao')->findOneBy(array(
+                        $cartao = $em->getRepository('MasterBundle:Cartao')->findOneBy(array(
                             'id' => $pagamentos[$i]->cartao,
                             'active' => true
                         ));
@@ -1050,7 +1049,7 @@ class PedidoController extends Controller
                         if(empty($contaId)){throw new \Exception('error_conta_conta');}
                         if(empty($cpf) && empty($cnpj)){throw new \Exception('error_conta_cpf_cnpj');}
 
-                        $contaTipo = $em->getRepository('ChefeBundle:ContaTipo')->findOneById($pagamentos[$i]->conta->tipo);
+                        $contaTipo = $em->getRepository('MasterBundle:ContaTipo')->findOneById($pagamentos[$i]->conta->tipo);
                         
                         if(empty($contaTipo)){
                             throw new \Exception('error_conta_tipo');

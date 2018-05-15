@@ -86,7 +86,7 @@ class PedidoController extends Controller
         $entities = $entities->fetchAll();
 
         $api = new ApiDefault;
-        $api->clearNotificacoesPedidos($entities, $this->getUser()->getId(), "para");
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
 
         return array(
             'entities' => $entities
@@ -151,7 +151,7 @@ class PedidoController extends Controller
         $entities = $entities->fetchAll();
 
         $api = new ApiDefault;
-        $api->clearNotificacoesPedidos($entities, $this->getUser()->getId(), "para");
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
 
         return array(
             'entities' => $entities
@@ -185,7 +185,7 @@ class PedidoController extends Controller
         $entities = $entities->fetchAll();
 
         $api = new ApiDefault;
-        $api->clearNotificacoesPedidos($entities, $this->getUser()->getId(), "para");
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
 
         return array(
             'entities' => $entities
@@ -251,7 +251,7 @@ class PedidoController extends Controller
         $entities = $entities->fetchAll();
 
         $api = new ApiDefault;
-        $api->clearNotificacoesPedidos($entities, $this->getUser()->getId(), "de");
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "de");
 
         return array(
             'entities' => $entities
@@ -269,10 +269,11 @@ class PedidoController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
+            INNER JOIN empresa e ON p.idEmpresa = e.id
             LEFT JOIN historico h ON h.idPedido = p.id
             LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
