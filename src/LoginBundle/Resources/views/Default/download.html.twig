@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    body.download {
+        font-family: 'Arial', sans-serif;
+        background-color: #333333; position: relative; width: 100vw; height: 100vh; padding: 0; margin: 0;
+    }
+    div.box {
+        border-radius: 5px;
+        background-color: #FFFFFF; position: absolute; width: 90%; height: 90%; top: 50%; left: 50%; transform: translate3d(-50%, -50%, 0); text-align: center;
+    }
+    div.box a {
+        color: #FFFFFF;
+        text-decoration: none;
+        font-weight: bold;
+        background-color: #333333;
+        border-radius: 5px;
+        padding: 5px 20px;
+    }
+    </style>
+</head>
+<body class="download">
+    <div class="box">
+        <h1>Download Pdall</h1>
+        <a href="{{asset('apk/pdall.apk')}}" download>PDALL</a>
+    </div>
+</body>
+</html>

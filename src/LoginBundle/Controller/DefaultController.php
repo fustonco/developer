@@ -34,6 +34,14 @@ class DefaultController extends Controller
             "error" => $error,
         ));
     }
+    
+    /**
+     * @Route("/download" , name="download")
+     */
+    public function downloadAction()
+    {
+        return $this->render("LoginBundle:Default:download.html.twig");
+    }
 
     /**
      * @Route("/logar/{_username}/{_password}" , name="loginReact")
