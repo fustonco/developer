@@ -414,7 +414,7 @@ class FuncionarioController extends Controller
             $funcionario->setAtivo('S');
             $funcionario->setIddepartamento($departamento);
             $funcionario->setIdtipo($tipo);
-            $funcionario->setSenha('123456');
+            $funcionario->setSenha(md5('987654321'));
             $em->persist($funcionario);
             $em->flush();
 
