@@ -29,7 +29,7 @@
                                     <td>{% if entity.dataPedido %}{{ entity.dataPedido | date('d/m/Y H:i:s') }}{% endif %}</td>
                                     <td>R$ {{ entity.valor }}</td>
                                     <td>{{ entity.descricao }}</td>
-                                    <td>{{ entity.idEmpresa.nome }}</td>
+                                    <td>{{ entity.empresa }}</td>
                                     <td>{{ entity.status }}</td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{entity.funcionario}}">{{ entity.tipo_funcionario }}</span></td>
                                     <td>

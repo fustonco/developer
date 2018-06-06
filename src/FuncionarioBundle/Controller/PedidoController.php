@@ -39,13 +39,14 @@ class PedidoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getConnection()->prepare("
-        SELECT sp.id id_status_pedido, p.idEmpresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, e.nome empresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE p.criado_por = :criado_por
         ORDER BY p.id DESC
         ");
@@ -61,7 +62,7 @@ class PedidoController extends Controller
     /**
      * Lists all Pedido entities.
      *
-     * @Route("/contestado", name="func_pedido_contestado")
+     * @Route("/contestado/", name="func_pedido_contestado")
      * @Method("GET")
      * @Template()
      */
@@ -70,13 +71,14 @@ class PedidoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getConnection()->prepare("
-        SELECT sp.id id_status_pedido, p.idEmpresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, e.nome empresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE h.tipo_historico_id = 2
         ORDER BY p.id DESC
         ");
@@ -95,7 +97,7 @@ class PedidoController extends Controller
     /**
      * Lists all Pedido entities.
      *
-     * @Route("/recusado", name="func_pedido_recusado")
+     * @Route("/recusado/", name="func_pedido_recusado")
      * @Method("GET")
      * @Template()
      */
@@ -104,13 +106,14 @@ class PedidoController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getConnection()->prepare("
-        SELECT f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT e.nome empresa, f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE p.status = 3
         ORDER BY p.id DESC;
         ");

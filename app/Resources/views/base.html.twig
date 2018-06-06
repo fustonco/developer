@@ -320,8 +320,8 @@
                         <!-- Menu Pedido -->
                         <li class="{% if app.request.requestUri == "/funcionario/pedido/new" or 
                         app.request.requestUri == "/funcionario/pedido/" or
-                        app.request.requestUri == "/funcionario/contestado/" or
-                        app.request.requestUri == "/funcionario/recusado/" or
+                        app.request.requestUri == "/funcionario/pedido/contestado/" or
+                        app.request.requestUri == "/funcionario/pedido/recusado/" or
                         app.request.attributes.get('_route') == 'func_pedido_edit'
                         %}active{% endif %}">
                             <a href="javascript:void(0);" class="menu-toggle">
@@ -332,17 +332,13 @@
                                 <li class="{% if app.request.requestUri == "/funcionario/pedido/new" %}active{% endif %}">
                                     <a href="{{ path('func_pedido_new') }}">Cadastrar</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/funcionario/pedido/" or 
-                                app.request.attributes.get('_route') == 'func_pedido_edit'
-                                %}active{% endif %}">
+                                <li class="{% if app.request.requestUri == "/funcionario/pedido/" or app.request.attributes.get('_route') == 'func_pedido_edit' %}active{% endif %}">
                                     <a href="{{ path('func_pedido') }}">Listar Meus Pedidos</a>
                                 </li>
-                                 <li class="{% if app.request.requestUri == "/funcionario/contestado/"
-                                %}active{% endif %}">
+                                 <li class="{% if app.request.requestUri == "/funcionario/pedido/contestado/" %}active{% endif %}">
                                     <a href="{{ path('func_pedido_contestado') }}">Listar Pedidos Contestados <span data-notification="contestado" class="notification-badge"></span></a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/funcionario/recusado/"
-                                %}active{% endif %}">
+                                <li class="{% if app.request.requestUri == "/funcionario/pedido/recusado/" %}active{% endif %}">
                                     <a href="{{ path('func_pedido_recusado') }}">Listar Pedidos Recusados <span data-notification="recusado" class="notification-badge"></span></a>
                                 </li>
                             </ul>
