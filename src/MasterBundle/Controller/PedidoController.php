@@ -1110,8 +1110,8 @@ class PedidoController extends Controller
             $apibundle->sendPush([$para->getTokenApp()], 'Novo Pedido', 'Você tem um novo pedido');
 
             if($para->getSocket()){
-                $object = (object) [];
-                $apibundle->sendSocketFromPHP("sendTo", [$para->getSocket(), "atualizarRecebidos", $object]);
+                // $object = (object) [];
+                // $apibundle->sendSocketFromPHP("sendTo", [$para->getSocket(), "atualizarRecebidos", $object]);
             }
             
             foreach ($_FILES as $value):

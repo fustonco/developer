@@ -206,16 +206,15 @@ class DefaultController extends Controller
      */
     public function sendSocketTesteAction()
     {
-        $object = (object) ["property" => '1', "property2" => 2];
-        $this->sendSocketFromPHP("sendTo", ["tYdd_m0d97PdgEjlAAAA", "TESTE", $object]);
+        // $object = (object) ["property" => '1', "property2" => 2];
+        // $this->sendSocketFromPHP("sendTo", ["tYdd_m0d97PdgEjlAAAA", "TESTE", $object]);
     }
 
     public function sendSocketFromPHP($string_on, $data_array)
     {
-        // $client = new Client(new Version2X("http://localhost:2020"));
-        $client = new Client(new Version2X("http://pdall.com.br:2020"));
-        $client->initialize();
-        $client->emit($string_on, $data_array);
-        $client->close();
+        // $client = new Client(new Version2X("http://pdall.com.br:2020"));
+        // $client->initialize();
+        // $client->emit($string_on, $data_array);
+        // $client->close();
     }
 }
