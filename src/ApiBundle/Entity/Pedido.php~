@@ -276,4 +276,32 @@ class Pedido
     {
         return $this->idtipo;
     }
+    /**
+     * @var \ApiBundle\Entity\Empresa
+     */
+    private $idempresa;
+
+
+    /**
+     * Set idempresa
+     *
+     * @param \ApiBundle\Entity\Empresa $idempresa
+     * @return Pedido
+     */
+    public function setIdempresa(\ApiBundle\Entity\Empresa $idempresa = null)
+    {
+        $this->idempresa = $idempresa;
+
+        return $this;
+    }
+
+    /**
+     * Get idempresa
+     *
+     * @return \ApiBundle\Entity\Empresa 
+     */
+    public function getIdempresa()
+    {
+        return $this->idempresa;
+    }
 }

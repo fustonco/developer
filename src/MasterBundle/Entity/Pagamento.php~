@@ -192,4 +192,60 @@ class Pagamento
     {
         return $this->idstatus;
     }
+    /**
+     * @var \MasterBundle\Entity\Cartao
+     */
+    private $cartao;
+
+    /**
+     * @var \MasterBundle\Entity\Conta
+     */
+    private $conta;
+
+
+    /**
+     * Set cartao
+     *
+     * @param \MasterBundle\Entity\Cartao $cartao
+     * @return Pagamento
+     */
+    public function setCartao(\MasterBundle\Entity\Cartao $cartao = null)
+    {
+        $this->cartao = $cartao;
+
+        return $this;
+    }
+
+    /**
+     * Get cartao
+     *
+     * @return \MasterBundle\Entity\Cartao 
+     */
+    public function getCartao()
+    {
+        return $this->cartao;
+    }
+
+    /**
+     * Set conta
+     *
+     * @param \MasterBundle\Entity\Conta $conta
+     * @return Pagamento
+     */
+    public function setConta(\MasterBundle\Entity\Conta $conta = null)
+    {
+        $this->conta = $conta;
+
+        return $this;
+    }
+
+    /**
+     * Get conta
+     *
+     * @return \MasterBundle\Entity\Conta 
+     */
+    public function getConta()
+    {
+        return $this->conta;
+    }
 }

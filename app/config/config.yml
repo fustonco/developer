@@ -72,8 +72,29 @@ doctrine:
 
 # Swiftmailer Configuration
 swiftmailer:
-    transport: '%mailer_transport%'
-    host: '%mailer_host%'
-    username: '%mailer_user%'
-    password: '%mailer_password%'
-    spool: { type: memory }
+    default_mailer: spool_mailer
+    mailers:
+        spool_mailer:
+            transport: "%mailer_transport%"
+            # encryption: ssl
+            auth_mode: login
+            host:      "%mailer_host%"
+            username:  "%mailer_user%"
+            password:  "%mailer_password%"
+            # transport: sendmail
+            # username:  ~
+            # password:  ~
+            # host: localhost
+            port: 587
+            spool:
+                type: file
+                path: "%kernel.root_dir%/spool"
+
+# swiftmailer:
+#     transport: '%mailer_transport%'
+#     host: '%mailer_host%'
+#     username: '%mailer_user%'
+#     password: '%mailer_password%'
+#     spool:
+#         type: file
+#         path: "%kernel.root_dir%/spool"

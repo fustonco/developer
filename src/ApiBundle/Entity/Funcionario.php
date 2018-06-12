@@ -332,4 +332,32 @@ class Funcionario
     {
         return $this->socket;
     }
+    /**
+     * @var string
+     */
+    private $tokenForget;
+
+
+    /**
+     * Set tokenForget
+     *
+     * @param string $tokenForget
+     * @return Funcionario
+     */
+    public function setTokenForget($tokenForget)
+    {
+        $this->tokenForget = $tokenForget;
+
+        return $this;
+    }
+
+    /**
+     * Get tokenForget
+     *
+     * @return string 
+     */
+    public function getTokenForget()
+    {
+        return $this->tokenForget;
+    }
 }

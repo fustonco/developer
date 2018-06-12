@@ -20,6 +20,7 @@
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
     <field name="tokenApp" type="text" column="token_app" length="65535" nullable="true"/>
     <field name="socket" type="text" column="socket" length="65535" nullable="true"/>
+    <field name="tokenForget" type="text" column="token_forget" length="65535" nullable="true"/>
     <many-to-one field="iddepartamento" target-entity="Departamento">
       <join-columns>
         <join-column name="idDepartamento" referenced-column-name="id"/>

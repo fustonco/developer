@@ -13,6 +13,7 @@
     </id>
     <field name="codigo" type="string" column="codigo" length="45" nullable="true"/>
     <field name="dataPassagem" type="datetime" column="data_passagem" nullable="true"/>
+    <field name="visto" type="boolean" column="visto" nullable="false"/>
     <many-to-one field="idde" target-entity="Funcionario">
       <join-columns>
         <join-column name="idDe" referenced-column-name="id"/>

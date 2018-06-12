@@ -80,4 +80,32 @@ class DataParcial
     {
         return $this->valor;
     }
+    /**
+     * @var \ApiBundle\Entity\Parcelas
+     */
+    private $idparcela;
+
+
+    /**
+     * Set idparcela
+     *
+     * @param \ApiBundle\Entity\Parcelas $idparcela
+     * @return DataParcial
+     */
+    public function setIdparcela(\ApiBundle\Entity\Parcelas $idparcela = null)
+    {
+        $this->idparcela = $idparcela;
+
+        return $this;
+    }
+
+    /**
+     * Get idparcela
+     *
+     * @return \ApiBundle\Entity\Parcelas 
+     */
+    public function getIdparcela()
+    {
+        return $this->idparcela;
+    }
 }

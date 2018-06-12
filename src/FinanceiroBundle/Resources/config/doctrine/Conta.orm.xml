@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="FinanceiroBundle\Entity\Conta" table="conta">
+    <indexes>
+      <index name="fk_conta_tipo_conta_idx" columns="tipo"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="banco" type="string" column="banco" length="64" nullable="false"/>
+    <field name="agencia" type="string" column="agencia" length="32" nullable="false"/>
+    <field name="conta" type="string" column="conta" length="64" nullable="false"/>
+    <field name="cpf" type="string" column="cpf" length="14" nullable="true"/>
+    <field name="cnpj" type="string" column="cnpj" length="18" nullable="true"/>
+    <many-to-one field="tipo" target-entity="ContaTipo">
+      <join-columns>
+        <join-column name="tipo" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
