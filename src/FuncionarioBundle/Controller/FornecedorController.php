@@ -254,12 +254,24 @@ class FornecedorController extends Controller
         try {
             $em = $this->getDoctrine()->getManager();
             
-            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            $nome = trim($request->get('nome'));
+            $cpf = trim($request->get('cpf'));
+            $cnpj = trim($request->get('cnpj'));
+            if($nome == '') {throw new \Exception('error_nome');}
+            if($cpf == '' && $cnpj == '') {throw new \Exception('error_cpf_cnpj');}
+            if($cpf != ''){
+                $has_cpf = $em->getRepository('FuncionarioBundle:Funcionario')->findOneByCpf($cpf);
+                if($has_cpf && $has_cpf->getId() != $request->get('id')) throw new \Exception('error_cpf');
+            }
+            if($cnpj != ''){
+                $has_cnpj = $em->getRepository('FuncionarioBundle:Funcionario')->findOneByCnpj($cnpj);
+                if($has_cnpj && $has_cnpj->getId() != $request->get('id')) throw new \Exception('error_cnpj');
+            }
 
             $fornecedor = $em->getRepository("FuncionarioBundle:Fornecedor")->findOneById($request->get('id'));
-            $fornecedor->setNome($request->get('nome'));
-            $fornecedor->setCnpj($request->get('cnpj'));
-            $fornecedor->setCpf($request->get('cpf'));
+            $fornecedor->setNome($nome);
+            $fornecedor->setCnpj($cnpj);
+            $fornecedor->setCpf($cpf);
             $fornecedor->setTelefone($request->get('telefone'));
             $fornecedor->setEndereco($request->get('endereco'));
             $fornecedor->setAtivo('S');
@@ -273,6 +285,21 @@ class FornecedorController extends Controller
                 case 'error_nome':
                     return new Response(json_encode([
                         "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_cpf_cnpj':
+                    return new Response(json_encode([
+                        "description" => "Precisa ter um CNPJ ou um CPF!"
+                    ]), 500);
+                break;
+                case 'error_cpf':
+                    return new Response(json_encode([
+                        "description" => "Já existe esse CPF em nossa base de dados!"
+                    ]), 500);
+                break;
+                case 'error_cnpj':
+                    return new Response(json_encode([
+                        "description" => "Já existe esse CNPJ em nossa base de dados!"
                     ]), 500);
                 break;
             }
@@ -315,12 +342,24 @@ class FornecedorController extends Controller
         try {
             $em = $this->getDoctrine()->getManager();
 
-            if(!$request->get('nome') || $request->get('nome') == '') {throw new \Exception('error_nome');}
+            $nome = trim($request->get('nome'));
+            $cpf = trim($request->get('cpf'));
+            $cnpj = trim($request->get('cnpj'));
+            if($nome == '') {throw new \Exception('error_nome');}
+            if($cpf == '' && $cnpj == '') {throw new \Exception('error_cpf_cnpj');}
+            if($cpf != ''){
+                $has_cpf = $em->getRepository('FuncionarioBundle:Funcionario')->findOneByCpf($cpf);
+                if($has_cpf) throw new \Exception('error_cpf');
+            }
+            if($cnpj != ''){
+                $has_cnpj = $em->getRepository('FuncionarioBundle:Funcionario')->findOneByCnpj($cnpj);
+                if($has_cnpj) throw new \Exception('error_cnpj');
+            }
 
             $fornecedor = new Fornecedor();
-            $fornecedor->setNome($request->get('nome'));
-            $fornecedor->setCnpj($request->get('cnpj'));
-            $fornecedor->setCpf($request->get('cpf'));
+            $fornecedor->setNome($nome);
+            $fornecedor->setCnpj($cnpj);
+            $fornecedor->setCpf($cpf);
             $fornecedor->setTelefone($request->get('telefone'));
             $fornecedor->setEndereco($request->get('endereco'));
             $fornecedor->setAtivo('S');
@@ -334,6 +373,21 @@ class FornecedorController extends Controller
                 case 'error_nome':
                     return new Response(json_encode([
                         "description" => "Nome não pode ser vazio!"
+                    ]), 500);
+                break;
+                case 'error_cpf_cnpj':
+                    return new Response(json_encode([
+                        "description" => "Precisa ter um CNPJ ou um CPF!"
+                    ]), 500);
+                break;
+                case 'error_cpf':
+                    return new Response(json_encode([
+                        "description" => "Já existe esse CPF em nossa base de dados!"
+                    ]), 500);
+                break;
+                case 'error_cnpj':
+                    return new Response(json_encode([
+                        "description" => "Já existe esse CNPJ em nossa base de dados!"
                     ]), 500);
                 break;
             }

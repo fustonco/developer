@@ -6,6 +6,28 @@
             <div class="card">
                 <div class="header">
                     <h2>Lista de Pedidos Recusados</h2>
+                    <hr />
+                    <form class="row" method="POST">
+                        <div class="col-sm-6">
+                            <label class="form-label">De</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input value="{{de}}" name="de" type="date" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Até</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input disabled="disabled" value="{{ate}}" name="ate" type="date" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <button style="width: 100%;" type="submit" class="btn btn-primary waves-effect">BUSCAR ENTRE DATAS</button>
+                        </div>
+                    </form>
                 </div>
                 <div class="body">
                     <div class="table-responsive">
@@ -16,6 +38,7 @@
                                     <th>Data Pedido</th>
                                     <th>Valor</th>
                                     <th>Descricao</th> 
+                                    <th>Favorecido</th>
                                     <th>Status</th>
                                     <th>Encaminhado</th>
                                     <th>Operação</th>
@@ -28,6 +51,7 @@
                                     <td>{% if entity.dataPedido %}{{ entity.dataPedido | date('d/m/Y H:i:s') }}{% endif %}</td>
                                     <td>R$ {{ entity.valor }}</td>
                                     <td>{{ entity.descricao }}</td>
+                                    <td>{{ entity.fornecedor }}</td>
                                     <td>{{ entity.status }}</td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{entity.funcionario}}">{{ entity.tipo_funcionario }}</span></td>
                                     <td>
@@ -54,6 +78,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div id="fotosPedido"></div>
+                        </div>
                         <div class="col-sm-4">
                             <h6>Data do Pedido</h6>
                             <p id="dataPedido"></p>
@@ -85,6 +112,30 @@
                         <div class="col-sm-12">
                             <h6>Mensagem</h6>
                             <p id="mensagemPedido"></p>
+                        </div>
+                        <div class="col-sm-12"><br></div>
+                        <div class="col-sm-12">
+                            <h4>Informações do favorecido</h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Nome</h6>
+                            <p id="fornecedorNome"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>CNPJ</h6>
+                            <p id="fornecedorCnpj"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>CPF</h6>
+                            <p id="fornecedorCpf"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Telefone</h6>
+                            <p id="fornecedorTelefone"></p>
+                        </div>
+                        <div class="col-sm-8">
+                            <h6>Endereço</h6>
+                            <p id="fornecedorEndereco"></p>
                         </div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-12">
@@ -161,6 +212,18 @@
 
 {% block javascripts %}
 <script>
+
+$('input[name="de"]').change(function(){
+    if(!$('input[name="de"]').val() || $('input[name="de"]').val() == '') {return false;}
+    $('input[name="ate"]').val($('input[name="de"]').val());
+    $('input[name="ate"]').attr('min', $('input[name="de"]').val());
+    $('input[name="ate"]').removeAttr('disabled');
+});
+
+if($('input[name="ate"]').val() || $('input[name="ate"]').val() != '') {
+    $('input[name="ate"]').attr('min', $('input[name="de"]').val());
+    $('input[name="ate"]').removeAttr('disabled');
+}
 
 $('[data-toggle="tooltip"]').tooltip({
     container: 'body'
@@ -467,24 +530,32 @@ $('.btn-ver').click(function(e) {
                     },
                     dataType: 'json',
                     success: function(data) {
+                        console.log('success', data);
                         ajaxForm = null;
+                        anexos = data.anexos;
                         historico = data.historico;
                         pagamentos = data.pagamentos;
                         data = data.pedido[0];
-                        console.log('success', data);
-                        console.log('success', historico);
                         swal.close();
                         $('#idPedido').html(data.id);
                         $('#dataPedido').html(formatDate(data.data_pedido));
                         $('#statusPagamento').html(data.status);
-                        let fornecedor = '';
-                        if(!data.fornecedor) {fornecedor = '';} else {fornecedor = data.fornecedor;}
-                        $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
+                        $('#tipoPagamento').html('<span>'+data.tipo+'</span>');
                         $('#valorPagamento').html("R$ "+data.valor);
                         $('#encaminhadoPedido').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+data.para+'">'+data.tipo_para+'</span>');
                         $('#empresaPedido').html(data.empresa);
                         $('#descricaoPedido').html(data.descricao);
+                        $('#fornecedorNome').html(data.fornecedorNome == '' ? 'Sem Nome' : data.fornecedorNome);
+                        $('#fornecedorCnpj').html(data.fornecedorCnpj == '' ? 'Sem CNPJ' : data.fornecedorCnpj);
+                        $('#fornecedorCpf').html(data.fornecedorCpf == '' ? 'Sem CPF' : data.fornecedorCpf);
+                        $('#fornecedorTelefone').html(data.fornecedorTelefone == '' ? 'Sem Telefone' : data.fornecedorTelefone);
+                        $('#fornecedorEndereco').html(data.fornecedorEndereco == '' ? 'Sem Endereço' : data.fornecedorEndereco);
 
+                        $('#fotosPedido').html('');
+                        for(var i = 0; i < anexos.length; i++) {
+                            $('#fotosPedido').append(`<a class="pointer" href="/uploads/`+anexos[i].caminho+`" target="_blank"><i class="material-icons" style="font-size: 4rem;">image</i></a>`);
+                        }
+                        
                         $('#mensagemPedido').html(data.mensagem ? data.mensagem : '-');
 
                         $("#parcelasPedido").html("");

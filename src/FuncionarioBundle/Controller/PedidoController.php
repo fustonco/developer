@@ -26,20 +26,23 @@ use ApiBundle\Controller\DefaultController as ApiDefault;
  */
 class PedidoController extends Controller
 {
-
     /**
      * Lists all Pedido entities.
      *
      * @Route("/", name="func_pedido")
-     * @Method("GET")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
+        $de = $request->get('de') ? $request->get('de') : '';
+        $ate = $request->get('ate') ? $request->get('ate') : '';
+        $str = "";
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
+
         $entities = $em->getConnection()->prepare("
-        SELECT sp.id id_status_pedido, e.nome empresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, e.nome empresa, f.nome funcionario, f.id idFuncionario, fo.nome fornecedor, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -47,7 +50,9 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
+        INNER JOIN fornecedor fo ON fo.id = f.id
         WHERE p.criado_por = :criado_por
+        ".$str."
         ORDER BY p.id DESC
         ");
         $entities->bindValue("criado_por", $this->getUser()->getId());
@@ -55,7 +60,9 @@ class PedidoController extends Controller
         $entities = $entities->fetchAll();
 
         return array(
-            'entities' => $entities
+            'entities' => $entities,
+            'de' => $de,
+            'ate' => $ate
         );
     }
 
@@ -63,12 +70,16 @@ class PedidoController extends Controller
      * Lists all Pedido entities.
      *
      * @Route("/contestado/", name="func_pedido_contestado")
-     * @Method("GET")
      * @Template()
      */
-    public function indexContestadoAction()
+    public function indexContestadoAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+
+        $de = $request->get('de') ? $request->get('de') : '';
+        $ate = $request->get('ate') ? $request->get('ate') : '';
+        $str = "";
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
 
         $entities = $em->getConnection()->prepare("
         SELECT sp.id id_status_pedido, e.nome empresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
@@ -80,6 +91,7 @@ class PedidoController extends Controller
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE h.tipo_historico_id = 2
+        ".$str."
         ORDER BY p.id DESC
         ");
         $entities->bindValue("para", $this->getUser()->getId());
@@ -90,7 +102,9 @@ class PedidoController extends Controller
         $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
 
         return array(
-            'entities' => $entities
+            'entities' => $entities,
+            'de' => $de,
+            'ate' => $ate
         );
     }
 
@@ -98,12 +112,16 @@ class PedidoController extends Controller
      * Lists all Pedido entities.
      *
      * @Route("/recusado/", name="func_pedido_recusado")
-     * @Method("GET")
      * @Template()
      */
-    public function indexRecusadoAction()
+    public function indexRecusadoAction(Request $request)
     { 
         $em = $this->getDoctrine()->getManager();
+
+        $de = $request->get('de') ? $request->get('de') : '';
+        $ate = $request->get('ate') ? $request->get('ate') : '';
+        $str = "";
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
 
         $entities = $em->getConnection()->prepare("
         SELECT e.nome empresa, f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
@@ -115,6 +133,7 @@ class PedidoController extends Controller
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE p.status = 3
+        ".$str."
         ORDER BY p.id DESC;
         ");
         $entities->bindValue("para", $this->getUser()->getId());
@@ -125,7 +144,9 @@ class PedidoController extends Controller
         $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
 
         return array(
-            'entities' => $entities
+            'entities' => $entities,
+            'de' => $de,
+            'ate' => $ate
         );
     }
 
@@ -162,6 +183,7 @@ class PedidoController extends Controller
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
+            $historico->setVisto(0);
             $tipohistorico = $em->getRepository('FuncionarioBundle:TipoHistorico')->findOneById(1);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
@@ -206,7 +228,7 @@ class PedidoController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedorNome, fo.cnpj fornecedorCnpj, fo.cpf fornecedorCpf, fo.telefone fornecedorTelefone, fo.endereco fornecedorEndereco, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
@@ -245,12 +267,20 @@ class PedidoController extends Controller
                 $pagamentos[$i]["parcelas"] = $parcelas->fetchAll();
             }
 
+            $anexos = $em->getConnection()->prepare("SELECT a.caminho
+            FROM pedido_anexo pa
+            INNER JOIN anexo a ON a.id = pa.idAnexo
+            WHERE pa.idPedido = ?");
+            $anexos->execute(array($id));
+            $anexos = $anexos->fetchAll();
+
             return new Response(json_encode([
                 'pedido' => $pedido,
                 'historico' => json_decode($historico),
-                'pagamentos' => $pagamentos
+                'pagamentos' => $pagamentos,
+                'anexos' => $anexos
             ]), 200);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             return new Response(json_encode([
                 "description" => "Erro ao Ver Pedido!"
             ]), 500);
@@ -562,8 +592,8 @@ class PedidoController extends Controller
             
             $fornecedores = $em->getRepository("FuncionarioBundle:Fornecedor")->createQueryBuilder('f')
             ->where("f.ativo = 'S'")
-            ->andWhere('f.cnpj LIKE :cnpj')
-            ->setParameter('cnpj', '%'.$request->get('cnpj_fornecedor_input').'%')
+            ->andWhere('f.nome LIKE :nome')
+            ->setParameter('nome', '%'.$request->get('cnpj_fornecedor_input').'%')
             ->getQuery()
             ->getResult();
             if(!$fornecedores) {throw new \Exception('error_fornecedores');}
@@ -586,11 +616,11 @@ class PedidoController extends Controller
      */
     public function cadastrarPedidoAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
         $request = json_decode($request->get('data'));
         $default = new DefaultController();
         $hoje = date_create();
         try {
-            $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
     
             if(!$request->tipopedido) {throw new \Exception('error_tipopedido');}
@@ -598,6 +628,7 @@ class PedidoController extends Controller
             if(!$request->descricao) {throw new \Exception('error_descricao');}
             if(!$request->para) {throw new \Exception('error_para');}
             if(!$request->empresa) {throw new \Exception('error_empresa');}
+            if(!$request->forn) {throw new \Exception('error_forn');}
             
             $pagamentos = $request->pagamentos;            
             if(count($pagamentos) == 0) {throw new \Exception('error_pagamentos');}
@@ -609,10 +640,8 @@ class PedidoController extends Controller
             $pedido->setCodigo(null);
             $tipo = $em->getRepository('FuncionarioBundle:TipoPedido')->findOneById($request->tipopedido);
             $pedido->setIdtipo($tipo);
-            if($request->forn) {
-                $fornecedor = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneById($request->forn);
-                $pedido->setIdfornecedor($fornecedor);
-            }
+            $fornecedor = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneById($request->forn);
+            $pedido->setIdfornecedor($fornecedor);
             $pedido->setDataPedido($hoje);
             $pedido->setValor($request->valor);
             $pedido->setDescricao($request->descricao);
@@ -711,6 +740,7 @@ class PedidoController extends Controller
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem(null);
+            $historico->setVisto(0);
             $tipohistorico = $em->getRepository('FuncionarioBundle:TipoHistorico')->findOneById(1);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
@@ -810,6 +840,11 @@ class PedidoController extends Controller
                 case 'error_conta_tipo':
                     return new Response(json_encode([
                         'description' => 'É necessário informar o tipo de conta'
+                    ]), 500);
+                break;
+                case 'error_forn':
+                    return new Response(json_encode([
+                        'description' => 'É necessário informar o favorecido'
                     ]), 500);
                 break;
             }

@@ -29,10 +29,15 @@ class DefaultController extends Controller
     /**
      * @Route("/")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         
         $em = $this->getDoctrine()->getManager();
+
+        $de = $request->get('de') ? $request->get('de') : '';
+        $ate = $request->get('ate') ? $request->get('ate') : '';
+        $str = "";
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
 
         $pedidosAprovados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idPara = ? AND tipo_historico_id = 3 AND DATE(data_passagem) = CURDATE()");
         $pedidosAprovados->execute(array($this->getUser()->getId()));
@@ -65,8 +70,9 @@ class DefaultController extends Controller
         $pedidosPendentes = $pedidosPendentes["total"];
 
         $pedidos = $em->getConnection()->prepare("
-        SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         FROM pedido p
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
@@ -77,6 +83,7 @@ class DefaultController extends Controller
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
         WHERE p.status = 4 AND pc.status = 1
         AND pc.data_vencimento <= CURDATE()
+        ".$str."
         ORDER BY p.id DESC");
         $pedidos->bindValue("para", $this->getUser()->getId());
         $pedidos->execute();
@@ -90,7 +97,9 @@ class DefaultController extends Controller
             'pedidosAprovados' => $pedidosAprovados,
             'pedidosRecusados' => $pedidosRecusados,
             'pedidosPagos' => $pedidosPagos,
-            'pedidosPendentes' => $pedidosPendentes
+            'pedidosPendentes' => $pedidosPendentes,
+            'de' => $de,
+            'ate' => $ate
         ]);
     }
     
@@ -101,11 +110,16 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         
-        $dataAprovacao = $request->request->get("data_aprovacao");
-        $dataVencimento = $request->request->get("data_vencimento");
+        $de = $request->get('de') ? $request->get('de') : '';
+        $ate = $request->get('ate') ? $request->get('ate') : '';
+        $str = "";
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
 
-        $pedidos = $em->getConnection()->prepare("SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        $pedidos = $em->getConnection()->prepare("
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
@@ -115,37 +129,75 @@ class DefaultController extends Controller
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
         WHERE p.status = 4 AND pc.status = 1
-        AND (:data_aprovacao1 = '' OR :data_aprovacao2 IS NULL OR DATE_FORMAT(h.data_passagem, '%d/%m/%Y') = :data_aprovacao)
-        AND (:data_vencimento1 = '' OR :data_vencimento2 IS NULL OR DATE_FORMAT(pc.data_vencimento, '%d/%m/%Y') = :data_vencimento)
+        ".$str."
         ORDER BY p.id DESC");
         $pedidos->bindValue("para", $this->getUser()->getId());
-        $pedidos->bindValue("data_aprovacao", $dataAprovacao);
-        $pedidos->bindValue("data_vencimento", $dataVencimento);
-        $pedidos->bindValue("data_aprovacao1", $dataAprovacao);
-        $pedidos->bindValue("data_vencimento1", $dataVencimento);
-        $pedidos->bindValue("data_aprovacao2", $dataAprovacao);
-        $pedidos->bindValue("data_vencimento2", $dataVencimento);
         $pedidos->execute();
         $pedidos = $pedidos->fetchAll();
         
         return $this->render("FinanceiroBundle:Default:pagamentos-aprovados.html.twig", [
             'pedidos'  => $pedidos,
-            'data_aprovacao' => $dataAprovacao,
-            'data_vencimento' => $dataVencimento
+            'de' => $de,
+            'ate' => $ate
         ]);
+    }
+
+    /**
+     * @Route("/pagamentos-efetuados/")
+     */
+    public function pagamentosEfetuadosAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $de = $request->get('de') ? $request->get('de') : '';
+        $ate = $request->get('ate') ? $request->get('ate') : '';
+        $str = "";
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
+
+        // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        $pagamentos = $em->getConnection()->prepare("
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        FROM pedido p
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
+        INNER JOIN status_pedido sp ON sp.id = p.status
+        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
+        INNER JOIN pagamento pg ON pg.idPedido = p.id
+        INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
+        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        WHERE pc.status = 2
+        ".$str."
+        ORDER BY p.id DESC");
+        $pagamentos->bindValue("para", $this->getUser()->getId());
+        $pagamentos->execute();
+        $pagamentos = $pagamentos->fetchAll();
+
+        return $this->render("FinanceiroBundle:Default:pagamentos-efetuados.html.twig", array(
+            "pagamentos" => $pagamentos,
+            'de' => $de,
+            'ate' => $ate
+        ));
     }
 
     /**
      * @Route("/proximos-pagamentos/")
      */
-    public function proximosPagamentosAction()
+    public function proximosPagamentosAction(Request $request)
     {
-        
         $em = $this->getDoctrine()->getManager();
 
+        $de = $request->get('de') ? $request->get('de') : '';
+        $ate = $request->get('ate') ? $request->get('ate') : '';
+        $str = "";
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
+
+        // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         $pedidos = $em->getConnection()->prepare("
-        SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
@@ -155,6 +207,7 @@ class DefaultController extends Controller
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
         WHERE p.status = 4 AND pc.status = 1
+        ".$str."
         AND pc.data_vencimento > CURDATE()
         AND pc.data_vencimento <= DATE_ADD(CURDATE(), INTERVAL 5 DAY)
         ORDER BY p.id DESC");
@@ -166,7 +219,9 @@ class DefaultController extends Controller
         $api->clearNotificacoesPedidos($em, $pedidos, $this->getUser()->getId(), "para");
         
         return $this->render("FinanceiroBundle:Default:proximos-pagamentos.html.twig", [
-            'pedidos'  => $pedidos
+            'pedidos'  => $pedidos,
+            'de' => $de,
+            'ate' => $ate
         ]);
     }
 
@@ -175,12 +230,13 @@ class DefaultController extends Controller
      */
     public function funcionarioVerPedidoAction(Request $request)
     {
+        $default = new DefaultController;
+        $em = $this->getDoctrine()->getManager();
         $id = $request->get('id');
         try {
-            $em = $this->getDoctrine()->getManager();
 
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedorNome, fo.cnpj fornecedorCnpj, fo.cpf fornecedorCpf, fo.telefone fornecedorTelefone, fo.endereco fornecedorEndereco, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
@@ -208,6 +264,9 @@ class DefaultController extends Controller
             $pagamentos->execute(array($id));
             $pagamentos = $pagamentos->fetchAll();
 
+            $historico = $em->getRepository('ChefeBundle:Historico')->findByIdpedido($id);
+            $historico = $default->serializeJSON($historico);
+
             for($i = 0; $i < count($pagamentos); $i = $i + 1){
                 $parcelas = $em->getConnection()->prepare("SELECT p.id, num_parcela, valor, valor_pago, valor_pendente, valor_desconto, valor_acrecimo, DATE_FORMAT(data_vencimento, '%d/%m/%Y') data_vencimento, s.nome status, s.id status_id FROM parcelas p
                 INNER JOIN status_parcela s ON p.status = s.id
@@ -216,9 +275,18 @@ class DefaultController extends Controller
                 $pagamentos[$i]["parcelas"] = $parcelas->fetchAll();
             }
 
+            $anexos = $em->getConnection()->prepare("SELECT a.caminho
+            FROM pedido_anexo pa
+            INNER JOIN anexo a ON a.id = pa.idAnexo
+            WHERE pa.idPedido = ?");
+            $anexos->execute(array($id));
+            $anexos = $anexos->fetchAll();
+
             return new Response(json_encode([
                 'pedido' => $pedido,
-                'pagamentos' => $pagamentos
+                'historico' => json_decode($historico),
+                'pagamentos' => $pagamentos,
+                'anexos' => $anexos
             ]), 200);
         } catch(Exception $e) {
             return new Response(json_encode([
@@ -232,12 +300,14 @@ class DefaultController extends Controller
      */
     public function funcionarioVerProximosPedidoAction(Request $request)
     {
+        $default = new DefaultController;
+        $em = $this->getDoctrine()->getManager();
         $id = $request->get('id');
         try {
-            $em = $this->getDoctrine()->getManager();
 
+            // SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
             $pedido = $em->getConnection()->prepare("
-            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedor, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
+            SELECT p.id, p.codigo, f.nome para, fo.nome fornecedorNome, fo.cnpj fornecedorCnpj, fo.cpf fornecedorCpf, fo.telefone fornecedorTelefone, fo.endereco fornecedorEndereco, tu.nome tipo_para, tp.nome tipo, p.idFornecedor, p.data_pedido, p.valor, p.descricao, p.ativo, sp.nome status, m.mensagem, e.nome empresa
             FROM pedido p 
             INNER JOIN tipo_pedido tp ON tp.id = p.idTipo
             INNER JOIN status_pedido sp ON sp.id = p.status
@@ -273,9 +343,21 @@ class DefaultController extends Controller
                 $pagamentos[$i]["parcelas"] = $parcelas->fetchAll();
             }
 
+            $historico = $em->getRepository('FinanceiroBundle:Historico')->findByIdpedido($id);
+            $historico = $default->serializeJSON($historico);
+
+            $anexos = $em->getConnection()->prepare("SELECT a.caminho
+            FROM pedido_anexo pa
+            INNER JOIN anexo a ON a.id = pa.idAnexo
+            WHERE pa.idPedido = ?");
+            $anexos->execute(array($id));
+            $anexos = $anexos->fetchAll();
+
             return new Response(json_encode([
                 'pedido' => $pedido,
-                'pagamentos' => $pagamentos
+                'pagamentos' => $pagamentos,
+                'historico' => json_decode($historico),
+                'anexos' => $anexos
             ]), 200);
         } catch(Exception $e) {
             return new Response(json_encode([
@@ -358,6 +440,7 @@ class DefaultController extends Controller
             $historico->setIdpara($para);
             $historico->setDataPassagem($hoje);
             $historico->setIdmensagem($mensagem);
+            $historico->setVisto(0);
             $tipohistorico = $em->getRepository('FinanceiroBundle:TipoHistorico')->findOneById(2);
             $historico->setTipoHistorico($tipohistorico);
             $em->persist($historico);
@@ -510,34 +593,5 @@ class DefaultController extends Controller
             $em->getConnection()->rollBack();
             return new Response($message, $status);
         }
-    }
-
-    /**
-     * @Route("/pagamentos-efetuados/")
-     */
-    public function pagamentosEfetuadosAction()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $pagamentos = $em->getConnection()->prepare("
-        SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, sp.nome status, pc.valor, tp.nome tipo_pagamento
-        FROM pedido p
-        INNER JOIN status_pedido sp ON sp.id = p.status
-        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
-        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
-        INNER JOIN funcionario f ON f.id = h.idPara
-        INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
-        INNER JOIN pagamento pg ON pg.idPedido = p.id
-        INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
-        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
-        WHERE pc.status = 2
-        ORDER BY p.id DESC");
-        $pagamentos->bindValue("para", $this->getUser()->getId());
-        $pagamentos->execute();
-        $pagamentos = $pagamentos->fetchAll();
-
-        return $this->render("FinanceiroBundle:Default:pagamentos-efetuados.html.twig", array(
-            "pagamentos" => $pagamentos
-        ));
     }
 }

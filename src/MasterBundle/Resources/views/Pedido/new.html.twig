@@ -50,14 +50,19 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-sm-12 col-sm-offset-0 cnpj_fornecedor" style="display: none;">
-                        <label class="form-label">CNPJ Fornecedor</label>
-                        <div class="form-group form-float">
-                            <div class="form-line">
-                                <input type="text" name="cnpj_forn" class="form-control cnpj_fornecedor_input" required aria-required="true">
-                            </div>
+                </div>
+                <div class="col-sm-10">
+                    <label class="form-label">Favorecido</label>
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <input type="text" name="cnpj_forn" class="form-control cnpj_fornecedor_input" aria-required="true">
                         </div>
                     </div>
+                </div>
+                <div class="col-sm-2" style="margin: 0 !important; padding: 0 !important;">
+                    <button style="width: 100%; margin-top: 30px;" class="btn btn-primary waves-effect btn-search">BUSCAR</button>
+                </div>
+                <div class="col-sm-12">
                     <div class="list-fornecedores" style="display: none;"></div>
                 </div>
                 <div class="col-sm-6">
@@ -351,17 +356,19 @@ function addDays(date) {
     return result;
 }
 
-$('.select-tipo-pedido').change(function(e){
+{# $('.select-tipo-pedido').change(function(e){
     if($(this).val() == 4) {
         $('.cnpj_fornecedor').show();
     }else{
         $('.cnpj_fornecedor').hide();
     }
-});
-$('.cnpj_fornecedor_input').keyup(function(e){
-    if($('.cnpj_fornecedor_input').val().length <= 2) return false;
-
-    console.log($('.cnpj_fornecedor_input').val());
+}); #}
+function returnCnpj(cnpj) {return cnpj == "" ? 'Sem CNPJ' : cnpj;}
+function returnCpf(cpf) {return cpf == "" ? 'Sem CPF' : cpf;}
+$('.btn-search').click(function(e){
+    e.preventDefault();
+    // if($('.cnpj_fornecedor_input').val().length <= 2) return false;
+    $('.list-fornecedores').html('');
     $.ajax({
         type: "POST",
         url: '/master/pedido/get/fornecedores',
@@ -373,13 +380,13 @@ $('.cnpj_fornecedor_input').keyup(function(e){
             console.log('success', data);
             let forns = "";
             for(i = 0; i < data.description.length; i++){
-                forns += `<option value="`+data.description[i].id+`">`+data.description[i].nome+`</option>`;
+                forns += `<option value="`+data.description[i].id+`">`+data.description[i].nome+` - `+returnCnpj(data.description[i].cnpj)+` - `+returnCpf(data.description[i].cpf)+`</option>`;
             }
             $('.list-fornecedores').html(`
                 <div class="row clearfix">
                     <div class="col-sm-12">
                         <select class="form-control show-tick" name="forn" id="forn" required aria-required="true">
-                            <option value="">Escolha um Fornecedor</option>
+                            <option value="" selected>Escolha um Fornecedor</option>
                             `+forns+`
                         </select>
                     </div>

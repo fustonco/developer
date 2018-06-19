@@ -1,7 +1,7 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    <div class="block-header">
+    {# <div class="block-header">
         <h2>DASHBOARD</h2>
     </div>
 
@@ -52,7 +52,7 @@
                 </div>
             </div>
         </div>
-        {# <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
             <div class="info-box bg-teal hover-expand-effect">
                 <div class="icon">
                     <i class="material-icons">account_box</i>
@@ -62,8 +62,8 @@
                     <div class="number count-to" data-from="0" data-to="0" data-speed="1000" data-fresh-interval="20">0</div>
                 </div>
             </div>
-        </div> #}
-    </div>
+        </div>
+    </div> #}
     
 
     
@@ -71,9 +71,29 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="card">
                 <div class="header">
-                    <h2>
-                        Lista de Pedidos
-                    </h2>
+                    <h2>Lista de Pedidos</h2>
+                    <hr />
+                    <form class="row" method="POST">
+                        <div class="col-sm-6">
+                            <label class="form-label">De</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input value="{{de}}" name="de" type="date" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Até</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input disabled="disabled" value="{{ate}}" name="ate" type="date" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <button style="width: 100%;" type="submit" class="btn btn-primary waves-effect">BUSCAR ENTRE DATAS</button>
+                        </div>
+                    </form>
                 </div>
                 <div class="body">
                     <div class="table-responsive">
@@ -81,6 +101,7 @@
                             <thead>
                                 <tr>
                                     <th>Código</th>
+                                    <th>Favorecido</th>
                                     <th>Valor</th>
                                     <th>Vencimento</th>
                                     <th>Pagamento</th>
@@ -92,6 +113,7 @@
                                 {% for p in pedidos %}
                                     <tr>
                                         <td>{{p.codigo}}</td>
+                                        <td>{{p.fornecedor}}</td>
                                         <td>R$ {{p.valor}}</td>
                                         <td>{{p.data_vencimento | date("d/m/Y")}}</td>
                                         <td>{{p.tipo_pagamento}}</td>
@@ -119,12 +141,14 @@
                 </div>
                 <div class="modal-body">
                     <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div id="fotosPedido"></div>
+                        </div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-4"><b>Código:</b> <span id="codPagamento"></span></div>
                         <div class="col-sm-4"><b>Tipo de Pag:</b> <span id="tipoPagamento"></span></div>
                         <div class="col-sm-4"><b>Valor:</b> <span id="valorPagamento"></span></div>
                         <div class="col-sm-12"><br></div>
-                        <div class="col-sm-4"><b>Fornecedor:</b> <span id="fornecedorPedido"></span></div>
                         <div class="col-sm-4"><b>Data do Pedido:</b> <span id="dataPedido"></span></div>
                         <div class="col-sm-4"><b>Empresa:</b> <span id="empresaPedido"></span></div>
                         <div class="col-sm-12"><br></div>
@@ -138,12 +162,37 @@
                         </div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-12">
+                            <h4>Informações do favorecido</h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Nome</h6>
+                            <p id="fornecedorNome"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>CNPJ</h6>
+                            <p id="fornecedorCnpj"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>CPF</h6>
+                            <p id="fornecedorCpf"></p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Telefone</h6>
+                            <p id="fornecedorTelefone"></p>
+                        </div>
+                        <div class="col-sm-8">
+                            <h6>Endereço</h6>
+                            <p id="fornecedorEndereco"></p>
+                        </div>
+                        <div class="col-sm-12"><br></div>
+                        <div class="col-sm-12">
                             <h4>Informações de pagamento</h4>
                             <div id="parcelasPedido"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect btn-show-historico">Histórico</button>
                     <button class="btn btn-link waves-effect btn-contestar" data-id=""><span data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">Contestar</span></button>
                     <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
                 </div>
@@ -251,6 +300,19 @@
 
 {% block javascripts %}
     <script>
+
+        $('input[name="de"]').change(function(){
+            if(!$('input[name="de"]').val() || $('input[name="de"]').val() == '') {return false;}
+            $('input[name="ate"]').val($('input[name="de"]').val());
+            $('input[name="ate"]').attr('min', $('input[name="de"]').val());
+            $('input[name="ate"]').removeAttr('disabled');
+        });
+
+        if($('input[name="ate"]').val() || $('input[name="ate"]').val() != '') {
+            $('input[name="ate"]').attr('min', $('input[name="de"]').val());
+            $('input[name="ate"]').removeAttr('disabled');
+        }
+
         $('.count-to').countTo();
 
         $('input[name="variation_value"], input[name="value"]').mask('000.000.000.000.000,00', {reverse: true});
@@ -416,21 +478,29 @@
                             },
                             dataType: 'json',
                             success: function(data) {
+                                console.log('success', data);
                                 ajaxForm = null;
+                                anexos = data.anexos;
+                                historico = data.historico;
                                 pagamentos = data.pagamentos;
                                 data = data.pedido[0];
                                 swal.close();
-
-                                let fornecedor = '';
-                                if(!data.fornecedor) {fornecedor = '';} else {fornecedor = data.fornecedor;}
-
                                 $('#codPagamento').html(data.codigo);
-                                $('#tipoPagamento').html('<span data-toggle="tooltip" data-placement="top" title="" data-original-title="'+fornecedor+'">'+data.tipo+'</span>');
+                                $('#tipoPagamento').html('<span>'+data.tipo+'</span>');
                                 $('#dataPedido').html(formatDate(data.data_pedido));
-                                $('#fornecedorPedido').html(fornecedor ? fornecedor : "Fornecedor indefinido");
                                 $('#valorPagamento').html('R$ ' + data.valor);
                                 $('#empresaPedido').html(data.empresa);
                                 $('#descricaoPedido').html(data.descricao);
+                                $('#fornecedorNome').html(data.fornecedorNome == '' ? 'Sem Nome' : data.fornecedorNome);
+                                $('#fornecedorCnpj').html(data.fornecedorCnpj == '' ? 'Sem CNPJ' : data.fornecedorCnpj);
+                                $('#fornecedorCpf').html(data.fornecedorCpf == '' ? 'Sem CPF' : data.fornecedorCpf);
+                                $('#fornecedorTelefone').html(data.fornecedorTelefone == '' ? 'Sem Telefone' : data.fornecedorTelefone);
+                                $('#fornecedorEndereco').html(data.fornecedorEndereco == '' ? 'Sem Endereço' : data.fornecedorEndereco);
+
+                                $('#fotosPedido').html('');
+                                for(var i = 0; i < anexos.length; i++) {
+                                    $('#fotosPedido').append(`<a class="pointer" href="/uploads/`+anexos[i].caminho+`" target="_blank"><i class="material-icons" style="font-size: 4rem;">image</i></a>`);
+                                }
 
                                 $('#mensagemPedido').html(data.mensagem ? data.mensagem : '-');
 
@@ -510,6 +580,24 @@
 
                                 $("#parcelasPedido").html(pagamentosHTML);
 
+                                $('[data-toggle="tooltip"]').tooltip({container: 'body'});
+                                $('.show-historico').html('');
+                                for(let i = 0; i < historico.length; i++) {
+                                    let mensagem = '';
+                                    let oddClass = '';
+                                    if ( historico[i].idmensagem ) { mensagem = historico[i].idmensagem.mensagem; }
+                                    if ( i % 2 === 0 ) { oddClass = 'oddClass' }
+                                    $('.show-historico').append(`
+                                        <div class="row clearfix">
+                                            <div class="col-sm-12 `+oddClass+`">
+                                                <h6 style="text-align: right;">`+formatDateStamp(historico[i].dataPassagem.timestamp)+`</h6>
+                                                <h6>De: `+historico[i].idde.nome+` - Para: `+historico[i].idpara.nome+`</h6>
+                                                <h6>`+historico[i].tipoHistorico.nome+`</h6>
+                                                <p>`+mensagem+`</p>
+                                            </div>
+                                        </div>
+                                    `);
+                                }
                                 $('.btn-modal').trigger('click');
                                 // MODAL
                             },
