@@ -164,4 +164,60 @@ class Pagamento
     {
         return $this->idtipo;
     }
+    /**
+     * @var \FinanceiroBundle\Entity\Cartao
+     */
+    private $cartao;
+
+    /**
+     * @var \FinanceiroBundle\Entity\Conta
+     */
+    private $conta;
+
+
+    /**
+     * Set cartao
+     *
+     * @param \FinanceiroBundle\Entity\Cartao $cartao
+     * @return Pagamento
+     */
+    public function setCartao(\FinanceiroBundle\Entity\Cartao $cartao = null)
+    {
+        $this->cartao = $cartao;
+
+        return $this;
+    }
+
+    /**
+     * Get cartao
+     *
+     * @return \FinanceiroBundle\Entity\Cartao 
+     */
+    public function getCartao()
+    {
+        return $this->cartao;
+    }
+
+    /**
+     * Set conta
+     *
+     * @param \FinanceiroBundle\Entity\Conta $conta
+     * @return Pagamento
+     */
+    public function setConta(\FinanceiroBundle\Entity\Conta $conta = null)
+    {
+        $this->conta = $conta;
+
+        return $this;
+    }
+
+    /**
+     * Get conta
+     *
+     * @return \FinanceiroBundle\Entity\Conta 
+     */
+    public function getConta()
+    {
+        return $this->conta;
+    }
 }

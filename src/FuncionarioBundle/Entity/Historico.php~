@@ -220,4 +220,32 @@ class Historico
     {
         return $this->idpedido;
     }
+    /**
+     * @var boolean
+     */
+    private $visto;
+
+
+    /**
+     * Set visto
+     *
+     * @param boolean $visto
+     * @return Historico
+     */
+    public function setVisto($visto)
+    {
+        $this->visto = $visto;
+
+        return $this;
+    }
+
+    /**
+     * Get visto
+     *
+     * @return boolean 
+     */
+    public function getVisto()
+    {
+        return $this->visto;
+    }
 }

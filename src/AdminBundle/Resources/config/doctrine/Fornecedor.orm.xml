@@ -4,11 +4,12 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="nome" type="string" column="nome" length="45" nullable="false"/>
-    <field name="cnpj" type="string" column="cnpj" length="20" nullable="true"/>
-    <field name="cpf" type="string" column="cpf" length="15" nullable="true"/>
-    <field name="telefone" type="string" column="telefone" length="15" nullable="true"/>
-    <field name="endereco" type="string" column="endereco" length="255" nullable="true"/>
+    <field name="nome" type="text" column="nome" length="65535" nullable="false"/>
+    <field name="fantasia" type="text" column="fantasia" length="65535" nullable="false"/>
+    <field name="cnpj" type="text" column="cnpj" length="65535" nullable="true"/>
+    <field name="cpf" type="text" column="cpf" length="65535" nullable="true"/>
+    <field name="telefone" type="text" column="telefone" length="65535" nullable="true"/>
+    <field name="endereco" type="text" column="endereco" length="65535" nullable="true"/>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
   </entity>
 </doctrine-mapping>

@@ -1,15 +1,2 @@
-php app/console doctrine:mapping:import --force AdminBundle xml
-php app/console doctrine:mapping:import --force ApiBundle xml
-php app/console doctrine:mapping:import --force ChefeBundle xml
-php app/console doctrine:mapping:import --force FinanceiroBundle xml
-php app/console doctrine:mapping:import --force FuncionarioBundle xml
-php app/console doctrine:mapping:import --force LoginBundle xml
-php app/console doctrine:mapping:import --force MasterBundle xml
-
-php app/console doctrine:generate:entities AdminBundle
-php app/console doctrine:generate:entities ApiBundle
-php app/console doctrine:generate:entities ChefeBundle
-php app/console doctrine:generate:entities FinanceiroBundle
-php app/console doctrine:generate:entities FuncionarioBundle
-php app/console doctrine:generate:entities LoginBundle
-php app/console doctrine:generate:entities MasterBundle
+php app/console doctrine:mapping:import --force AdminBundle xml && php app/console doctrine:mapping:import --force ApiBundle xml && php app/console doctrine:mapping:import --force ChefeBundle xml && php app/console doctrine:mapping:import --force FinanceiroBundle xml && php app/console doctrine:mapping:import --force FuncionarioBundle xml && php app/console doctrine:mapping:import --force LoginBundle xml && php app/console doctrine:mapping:import --force MasterBundle xml
+php app/console doctrine:generate:entities AdminBundle && php app/console doctrine:generate:entities ApiBundle && php app/console doctrine:generate:entities ChefeBundle && php app/console doctrine:generate:entities FinanceiroBundle && php app/console doctrine:generate:entities FuncionarioBundle && php app/console doctrine:generate:entities LoginBundle && php app/console doctrine:generate:entities MasterBundle

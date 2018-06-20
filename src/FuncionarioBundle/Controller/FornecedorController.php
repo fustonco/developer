@@ -255,21 +255,23 @@ class FornecedorController extends Controller
             $em = $this->getDoctrine()->getManager();
             
             $nome = trim($request->get('nome'));
+            $fantasia = trim($request->get('fantasia'));
             $cpf = trim($request->get('cpf'));
             $cnpj = trim($request->get('cnpj'));
             if($nome == '') {throw new \Exception('error_nome');}
             if($cpf == '' && $cnpj == '') {throw new \Exception('error_cpf_cnpj');}
             if($cpf != ''){
-                $has_cpf = $em->getRepository('FuncionarioBundle:Funcionario')->findOneByCpf($cpf);
+                $has_cpf = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneByCpf($cpf);
                 if($has_cpf && $has_cpf->getId() != $request->get('id')) throw new \Exception('error_cpf');
             }
             if($cnpj != ''){
-                $has_cnpj = $em->getRepository('FuncionarioBundle:Funcionario')->findOneByCnpj($cnpj);
+                $has_cnpj = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneByCnpj($cnpj);
                 if($has_cnpj && $has_cnpj->getId() != $request->get('id')) throw new \Exception('error_cnpj');
             }
 
             $fornecedor = $em->getRepository("FuncionarioBundle:Fornecedor")->findOneById($request->get('id'));
             $fornecedor->setNome($nome);
+            $fornecedor->setFantasia($fantasia);
             $fornecedor->setCnpj($cnpj);
             $fornecedor->setCpf($cpf);
             $fornecedor->setTelefone($request->get('telefone'));
@@ -280,7 +282,7 @@ class FornecedorController extends Controller
             return new Response(json_encode([
                 "description" => "Fornecedor Cadastrado com Sucesso!"
             ]), 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             switch($e->getMessage()){
                 case 'error_nome':
                     return new Response(json_encode([
@@ -343,21 +345,23 @@ class FornecedorController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $nome = trim($request->get('nome'));
+            $fantasia = trim($request->get('fantasia'));
             $cpf = trim($request->get('cpf'));
             $cnpj = trim($request->get('cnpj'));
             if($nome == '') {throw new \Exception('error_nome');}
             if($cpf == '' && $cnpj == '') {throw new \Exception('error_cpf_cnpj');}
             if($cpf != ''){
-                $has_cpf = $em->getRepository('FuncionarioBundle:Funcionario')->findOneByCpf($cpf);
+                $has_cpf = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneByCpf($cpf);
                 if($has_cpf) throw new \Exception('error_cpf');
             }
             if($cnpj != ''){
-                $has_cnpj = $em->getRepository('FuncionarioBundle:Funcionario')->findOneByCnpj($cnpj);
+                $has_cnpj = $em->getRepository('FuncionarioBundle:Fornecedor')->findOneByCnpj($cnpj);
                 if($has_cnpj) throw new \Exception('error_cnpj');
             }
 
             $fornecedor = new Fornecedor();
             $fornecedor->setNome($nome);
+            $fornecedor->setFantasia($fantasia);
             $fornecedor->setCnpj($cnpj);
             $fornecedor->setCpf($cpf);
             $fornecedor->setTelefone($request->get('telefone'));
