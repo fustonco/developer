@@ -51,7 +51,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.criado_por = :criado_por
         ".$str."
         ORDER BY p.id DESC
@@ -92,7 +92,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status != 3
         ".$str."
         ORDER BY p.id DESC;
@@ -135,7 +135,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status = 3
         ".$str."
         ORDER BY p.id DESC;
@@ -178,7 +178,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status = 3
         ".$str."
         ORDER BY p.id DESC;
@@ -221,7 +221,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
-        LEFT JOIN fornecedor fo ON fo.id = p.idFornecedor
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE h.tipo_historico_id = 2
         ".$str."
         ORDER BY p.id DESC
@@ -264,7 +264,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status = 4
         ".$str."
         AND p.criado_por = :criado_por
@@ -304,7 +304,7 @@ class PedidoController extends Controller
             LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
             INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
-            LEFT JOIN fornecedor fo ON fo.id = p.idFornecedor
+            INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
             WHERE p.id = ".$id."
             ORDER BY h.id DESC
             ");
@@ -340,9 +340,6 @@ class PedidoController extends Controller
             WHERE pa.idPedido = ?");
             $anexos->execute(array($id));
             $anexos = $anexos->fetchAll();
-
-            $api = new ApiDefault;
-            $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
 
             return new Response(json_encode([
                 'pedido' => $pedido,

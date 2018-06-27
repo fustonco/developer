@@ -156,7 +156,7 @@ class DefaultController extends Controller
 
         // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         $pagamentos = $em->getConnection()->prepare("
-        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
@@ -193,7 +193,6 @@ class DefaultController extends Controller
         $str = "";
         if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
 
-        // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         $pedidos = $em->getConnection()->prepare("
         SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
@@ -245,7 +244,7 @@ class DefaultController extends Controller
             LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
             INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
-            LEFT JOIN fornecedor fo ON fo.id = p.idFornecedor
+            INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
             WHERE p.id = ".$id."
             ORDER BY h.id DESC
             ");

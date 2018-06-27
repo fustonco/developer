@@ -50,7 +50,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.criado_por = :criado_por
         ".$str."
         ORDER BY p.id DESC
@@ -82,7 +82,7 @@ class PedidoController extends Controller
         if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
 
         $entities = $em->getConnection()->prepare("
-        SELECT sp.id id_status_pedido, e.nome empresa, f.nome funcionario, f.id idFuncionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, e.nome empresa, f.nome funcionario, f.id idFuncionario, fo.nome fornecedor, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -90,6 +90,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE h.tipo_historico_id = 2
         ".$str."
         ORDER BY p.id DESC
@@ -124,7 +125,7 @@ class PedidoController extends Controller
         if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
 
         $entities = $em->getConnection()->prepare("
-        SELECT e.nome empresa, f.nome funcionario, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
+        SELECT sp.id id_status_pedido, e.nome empresa, f.nome funcionario, f.id idFuncionario, fo.nome fornecedor, tu.id id_tipo_funcionario, tu.nome tipo_funcionario, p.id, p.codigo, p.idTipo, p.idFornecedor, p.data_pedido dataPedido, p.valor, p.descricao, p.ativo, sp.nome status
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
@@ -132,6 +133,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status = 3
         ".$str."
         ORDER BY p.id DESC;
@@ -237,7 +239,7 @@ class PedidoController extends Controller
             LEFT JOIN mensagem m ON h.idMensagem = m.id
             INNER JOIN funcionario f ON f.id = h.idPara
             INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
-            LEFT JOIN fornecedor fo ON fo.id = p.idFornecedor
+            INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
             WHERE p.id = ".$id."
             ORDER BY h.id DESC
             ");

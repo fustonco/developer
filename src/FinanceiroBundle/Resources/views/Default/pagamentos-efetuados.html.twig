@@ -153,6 +153,14 @@
             $('input[name="ate"]').removeAttr('disabled');
         }
 
+        $('.btn-show-historico').click(function(e) {
+            if($('.show-historico').is(':visible')){
+                $('.show-historico').hide();
+            } else {
+                $('.show-historico').show();
+            }
+        });
+
         let ajaxForm;
         
         function formatDateStamp(timestamp) {
@@ -219,7 +227,6 @@
                                 $('#codPagamento').html(data.codigo);
                                 $('#tipoPagamento').html('<span>'+data.tipo+'</span>');
                                 $('#dataPedido').html(formatDate(data.data_pedido));
-                                $('#fornecedorPedido').html(fornecedor ? fornecedor : "Fornecedor indefinido");
                                 $('#valorPagamento').html('R$ ' + data.valor);
                                 $('#empresaPedido').html(data.empresa);
                                 $('#descricaoPedido').html(data.descricao);
