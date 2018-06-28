@@ -366,36 +366,44 @@ class PedidoController extends Controller
             $pagamento = $em->getConnection()->prepare("SELECT * FROM pagamento WHERE idPedido = ".$request->get('id'));
             $pagamento->execute();
             $pagamento = $pagamento->fetchAll();
-            if(!$pagamento){throw new \Exception("error_pagamento");}
             for($i = 0; $i < count($pagamento); $i++) {
                 $entities = $em->getConnection()->prepare("DELETE FROM parcelas WHERE idPagamento = ".$pagamento[$i]["id"]);
                 $entities->execute();
             }
-            $entities = $em->getConnection()->prepare("DELETE FROM pagamento WHERE idPedido = ".$request->get('id'));
-            $entities->execute();
+            $pagamento = $em->getConnection()->prepare("DELETE FROM pagamento WHERE idPedido = ".$request->get('id'));
+            $pagamento->execute();
 
             $historico = $em->getConnection()->prepare("SELECT * FROM historico WHERE idPedido = ".$request->get('id'));
             $historico->execute();
             $historico = $historico->fetchAll();
-            if(!$historico){throw new \Exception("error_historico");}
-            $entities = $em->getConnection()->prepare("DELETE FROM historico WHERE idPedido = ".$request->get('id'));
-            $entities->execute();
-
             for($i = 0; $i < count($historico); $i++) {
                 if($historico[$i]["idMensagem"]) {
                     $entities = $em->getConnection()->prepare("DELETE FROM mensagem WHERE id = ".$historico[$i]["idMensagem"]);
                     $entities->execute();
                 }
             }
+            $historico = $em->getConnection()->prepare("DELETE FROM historico WHERE idPedido = ".$request->get('id'));
+            $historico->execute();
+
+            $pedido_anexo = $em->getConnection()->prepare("SELECT * FROM pedido_anexo WHERE idPedido = ".$request->get('id'));
+            $pedido_anexo->execute();
+            $pedido_anexo = $pedido_anexo->fetchAll();
+            $entities = $em->getConnection()->prepare("DELETE FROM pedido_anexo WHERE idPedido = ".$request->get('id'));
+            $entities->execute();
+            for($i = 0; $i < count($pedido_anexo); $i++) {
+                if($pedido_anexo[$i]["idAnexo"]) {
+                    $entities = $em->getConnection()->prepare("DELETE FROM anexo WHERE id = ".$pedido_anexo[$i]["idAnexo"]);
+                    $entities->execute();
+                }
+            }
 
             $entities = $em->getConnection()->prepare("DELETE FROM pedido WHERE id = ".$request->get('id'));
             $entities->execute();
-            
             $em->getConnection()->commit();
             return new Response(json_encode([
                 "description" => "Pedido Excluido com Sucesso!"
             ]), 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $em->getConnection()->rollBack();
             if(strpos($e->getMessage(), 'FOREIGN')) {
                 return new Response(json_encode([
