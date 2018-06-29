@@ -51,7 +51,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.criado_por = :criado_por
         ".$str."
         ORDER BY p.id DESC
@@ -134,7 +134,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status = 3
         ".$str."
         ORDER BY p.id DESC;
@@ -150,7 +150,7 @@ class PedidoController extends Controller
         );
     }
 
-   /**
+    /**
      * Lists all Pedido entities.
      *
      * @Route("/recusado", name="chefe_pedido_recusado")
@@ -174,7 +174,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status = 3
         ".$str."
         ORDER BY p.id DESC;
@@ -260,7 +260,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status = 4
         ".$str."
         ORDER BY p.id DESC;
@@ -300,7 +300,7 @@ class PedidoController extends Controller
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
-        INNER JOIN fornecedor fo ON fo.id = f.id
+        INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         WHERE p.status = 4
         ".$str."
         AND p.criado_por = :criado_por
