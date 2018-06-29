@@ -36,6 +36,14 @@ class DefaultController extends Controller
     }
     
     /**
+     * @Route("/politica" , name="politica")
+     */
+    public function politicaAction()
+    {
+        return $this->render("LoginBundle:Default:politica.html.twig");
+    }
+    
+    /**
      * @Route("/download" , name="download")
      */
     public function downloadAction()
