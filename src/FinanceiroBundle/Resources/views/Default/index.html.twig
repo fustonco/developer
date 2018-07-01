@@ -64,7 +64,6 @@
             </div>
         </div>
     </div> #}
-    
 
     
     <div class="row clearfix">
@@ -362,8 +361,11 @@
 
             let form = $(this);
 
-            let valueParcel = parseFloat($("input[name='parcel_value']").val().replace(",", ".").replace(".", "."));
-            let valuePayed = parseFloat($("input[name='value']").val().replace(",", ".").replace(".", "."));
+            let valueParcel = parseFloat($("input[name='parcel_value']").val().replace(".", "").replace(",", "."));
+            let valuePayed = parseFloat($("input[name='value']").val().replace(".", "").replace(",", "."));
+
+            console.log("valueParcel", valueParcel);
+            console.log("valuePayed", valuePayed);
 
             if(valuePayed < valueParcel){
                 swal({
@@ -406,9 +408,8 @@
                     data: form.serialize(),
                     success: function(data){
                         ajaxForm = null;
-
+                        console.log("Success", data);
                         $(".btn-modal-confirm-hide").trigger("click");
-
                         swal({
                             title: "Sucesso!",
                             text: "Pagamento confirmado com sucesso!",
@@ -421,11 +422,20 @@
                     },
                     error: function(error){
                         ajaxForm = null;
-
+                        console.error("Erro", error);
                         swal({
                             title: "Erro",
-                            text: error._body,
+                            text: error.responseText,
                             type: "error",
+                            allowClickOutside: false,
+                            allowEscapeKey: false
+                        });
+                    },
+                    beforeSend: function() {
+                        swal({
+                            title: "Processando",
+                            text: "Efetuando pagamento",
+                            type: "info",
                             allowClickOutside: false,
                             allowEscapeKey: false
                         });

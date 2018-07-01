@@ -37,37 +37,37 @@ class DefaultController extends Controller
         $de = $request->get('de') ? $request->get('de') : '';
         $ate = $request->get('ate') ? $request->get('ate') : '';
         $str = "";
-        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND pc.data_vencimento BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
 
-        $pedidosAprovados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idPara = ? AND tipo_historico_id = 3 AND DATE(data_passagem) = CURDATE()");
-        $pedidosAprovados->execute(array($this->getUser()->getId()));
-        $pedidosAprovados = $pedidosAprovados->fetch();
-        $pedidosAprovados = $pedidosAprovados["total"];
+        // $pedidosAprovados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idPara = ? AND tipo_historico_id = 3 AND DATE(data_passagem) = CURDATE()");
+        // $pedidosAprovados->execute(array($this->getUser()->getId()));
+        // $pedidosAprovados = $pedidosAprovados->fetch();
+        // $pedidosAprovados = $pedidosAprovados["total"];
 
-        $pedidosRecusados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idDe = ? AND tipo_historico_id = 2 AND DATE(data_passagem) = CURDATE()");
-        $pedidosRecusados->execute(array($this->getUser()->getId()));
-        $pedidosRecusados = $pedidosRecusados->fetch();
-        $pedidosRecusados = $pedidosRecusados["total"];
+        // $pedidosRecusados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idDe = ? AND tipo_historico_id = 2 AND DATE(data_passagem) = CURDATE()");
+        // $pedidosRecusados->execute(array($this->getUser()->getId()));
+        // $pedidosRecusados = $pedidosRecusados->fetch();
+        // $pedidosRecusados = $pedidosRecusados["total"];
 
-        $pedidosPagos = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
-        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
-        INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
-        INNER JOIN pagamento pg ON pg.idPedido = p.id
-        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
-        WHERE p.status = 2 AND pc.data_pagamento = CURDATE()");
-        $pedidosPagos->execute(array($this->getUser()->getId()));
-        $pedidosPagos = $pedidosPagos->fetch();
-        $pedidosPagos = $pedidosPagos["total"];
+        // $pedidosPagos = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
+        // INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        // INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
+        // INNER JOIN pagamento pg ON pg.idPedido = p.id
+        // INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        // WHERE p.status = 2 AND pc.data_pagamento = CURDATE()");
+        // $pedidosPagos->execute(array($this->getUser()->getId()));
+        // $pedidosPagos = $pedidosPagos->fetch();
+        // $pedidosPagos = $pedidosPagos["total"];
 
-        $pedidosPendentes = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
-        INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
-        INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
-        INNER JOIN pagamento pg ON pg.idPedido = p.id
-        INNER JOIN parcelas pc ON pc.idPagamento = pg.id
-        WHERE p.status = 4 AND pc.data_vencimento = CURDATE()");
-        $pedidosPendentes->execute(array($this->getUser()->getId()));
-        $pedidosPendentes = $pedidosPendentes->fetch();
-        $pedidosPendentes = $pedidosPendentes["total"];
+        // $pedidosPendentes = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
+        // INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
+        // INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
+        // INNER JOIN pagamento pg ON pg.idPedido = p.id
+        // INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        // WHERE p.status = 4 AND pc.data_vencimento = CURDATE()");
+        // $pedidosPendentes->execute(array($this->getUser()->getId()));
+        // $pedidosPendentes = $pedidosPendentes->fetch();
+        // $pedidosPendentes = $pedidosPendentes["total"];
 
         $pedidos = $em->getConnection()->prepare("
         SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
@@ -82,7 +82,6 @@ class DefaultController extends Controller
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
         WHERE p.status = 4 AND pc.status = 1
-        AND pc.data_vencimento <= CURDATE()
         ".$str."
         ORDER BY p.id DESC");
         $pedidos->bindValue("para", $this->getUser()->getId());
@@ -94,10 +93,10 @@ class DefaultController extends Controller
         
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
             'pedidos'  => $pedidos,
-            'pedidosAprovados' => $pedidosAprovados,
-            'pedidosRecusados' => $pedidosRecusados,
-            'pedidosPagos' => $pedidosPagos,
-            'pedidosPendentes' => $pedidosPendentes,
+            // 'pedidosAprovados' => $pedidosAprovados,
+            // 'pedidosRecusados' => $pedidosRecusados,
+            // 'pedidosPagos' => $pedidosPagos,
+            // 'pedidosPendentes' => $pedidosPendentes,
             'de' => $de,
             'ate' => $ate
         ]);
@@ -152,7 +151,7 @@ class DefaultController extends Controller
         $de = $request->get('de') ? $request->get('de') : '';
         $ate = $request->get('ate') ? $request->get('ate') : '';
         $str = "";
-        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND pc.data_pagamento BETWEEN '".$de."' AND '".$ate."' ";}
 
         // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         $pagamentos = $em->getConnection()->prepare("
@@ -263,13 +262,10 @@ class DefaultController extends Controller
             $pagamentos->execute(array($id));
             $pagamentos = $pagamentos->fetchAll();
 
-            $historico = $em->getRepository('ChefeBundle:Historico')->findByIdpedido($id);
-            $historico = $default->serializeJSON($historico);
-
             for($i = 0; $i < count($pagamentos); $i = $i + 1){
                 $parcelas = $em->getConnection()->prepare("SELECT p.id, num_parcela, valor, valor_pago, valor_pendente, valor_desconto, valor_acrecimo, DATE_FORMAT(data_vencimento, '%d/%m/%Y') data_vencimento, s.nome status, s.id status_id FROM parcelas p
                 INNER JOIN status_parcela s ON p.status = s.id
-                WHERE idPagamento = ? AND p.data_vencimento <= CURDATE()");
+                WHERE idPagamento = ?");
                 $parcelas->execute(array($pagamentos[$i]["id"]));
                 $pagamentos[$i]["parcelas"] = $parcelas->fetchAll();
             }
@@ -281,13 +277,16 @@ class DefaultController extends Controller
             $anexos->execute(array($id));
             $anexos = $anexos->fetchAll();
 
+            $historico = $em->getRepository('ChefeBundle:Historico')->findByIdpedido($id);
+            $historico = $default->serializeJSON($historico);
+
             return new Response(json_encode([
                 'pedido' => $pedido,
                 'historico' => json_decode($historico),
                 'pagamentos' => $pagamentos,
                 'anexos' => $anexos
             ]), 200);
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             return new Response(json_encode([
                 "description" => "Erro ao Ver Pedido!"
             ]), 500);
@@ -566,7 +565,7 @@ class DefaultController extends Controller
             ));
 
             if(count($checkPagamento) == 0){
-                $parcel->getIdpagamento()->setStatus($em->getRepository("FinanceiroBundle:StatusPagamento")->findOneById(2));
+                $parcel->getIdpagamento()->setIdstatus($em->getRepository("FinanceiroBundle:StatusPagamento")->findOneById(2));
 
                 $em->flush();
             }
@@ -586,10 +585,9 @@ class DefaultController extends Controller
             return new Response("success");
         }
         catch(\Exception $e){
+            $em->getConnection()->rollBack();
             $message = !empty($e->getMessage()) ? $e->getMessage() : "Ocorreu um erro";
             $status = !empty($e->getCode()) ? $e->getCode() : 500;
-
-            $em->getConnection()->rollBack();
             return new Response($message, $status);
         }
     }

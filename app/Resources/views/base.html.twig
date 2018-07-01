@@ -623,24 +623,24 @@
                         <!-- Menu financeiro -->
                         <li class="{% if app.request.requestUri == "/financeiro/" %}active{% endif %}">
                             <a href="/financeiro/">
-                                <i class="material-icons">home</i>
-                                <span>Dashboard</span>
+                                <i class="material-icons">attach_money</i>
+                                <span>Pagamentos aprovados</span>
                                 <span data-notification="recebido" class="notification-badge"></span>
                             </a>
                         </li>
-                        <li class="{% if app.request.requestUri == "/financeiro/pagamentos-aprovados/" %}active{% endif %}">
+                        {# <li class="{% if app.request.requestUri == "/financeiro/pagamentos-aprovados/" %}active{% endif %}">
                             <a href="/financeiro/pagamentos-aprovados/">
                                 <i class="material-icons">attach_money</i>
                                 <span>Pagamentos aprovados</span>
                             </a>
-                        </li>
-                        <li class="{% if app.request.requestUri == "/financeiro/proximos-pagamentos/" %}active{% endif %}">
+                        </li> #}
+                        {# <li class="{% if app.request.requestUri == "/financeiro/proximos-pagamentos/" %}active{% endif %}">
                             <a href="/financeiro/proximos-pagamentos/">
                                 <i class="material-icons">attach_money</i>
                                 <span>Próximos pagamentos</span>
                                 <span data-notification="proximos_pagamentos" class="notification-badge"></span>
                             </a>
-                        </li>
+                        </li> #}
                         <li class="{% if app.request.requestUri == "/financeiro/pagamentos-efetuados/" %}active{% endif %}">
                             <a href="/financeiro/pagamentos-efetuados/">
                                 <i class="material-icons">attach_money</i>

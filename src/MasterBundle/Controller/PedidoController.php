@@ -265,12 +265,10 @@ class PedidoController extends Controller
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
-        WHERE p.status = 4
+        WHERE p.status = 4 OR p.status = 2
         ".$str."
-        AND p.criado_por = :criado_por
         ORDER BY p.id DESC;
         ");
-        $entities->bindValue("criado_por", $this->getUser()->getId());
         $entities->execute();
         $entities = $entities->fetchAll();
 
