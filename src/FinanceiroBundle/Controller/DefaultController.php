@@ -93,6 +93,7 @@ class DefaultController extends Controller
         
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
             'pedidos'  => $pedidos,
+            'hoje' => date("Y-m-d"),
             // 'pedidosAprovados' => $pedidosAprovados,
             // 'pedidosRecusados' => $pedidosRecusados,
             // 'pedidosPagos' => $pedidosPagos,
@@ -495,9 +496,10 @@ class DefaultController extends Controller
         $variationType = $request->request->get("variation_type");
         $value = $request->request->get("value");
         $description = $request->request->get("description");
+        $data_pagamento = $request->request->get("data_pagamento");
 
         try{
-            if(empty($parcel) || empty($value)){
+            if(empty($parcel) || empty($value) || empty($data_pagamento)){
                 throw new \Exception("Dados incompletos", 500);
             }
 
@@ -526,13 +528,13 @@ class DefaultController extends Controller
             if($valuePending > 0){
                 $dataParcial = new DataParcial;
                 $dataParcial->setValor($value);
-                $dataParcial->setDataPagamento(new \DateTime);
+                $dataParcial->setDataPagamento(date_create($data_pagamento));
                 $dataParcial->setIdparcela($parcel);
 
                 $em->persist($dataParcial);
             }
             else{
-                $parcel->setDataPagamento(new \DateTime);
+                $parcel->setDataPagamento(date_create($data_pagamento));
                 $parcel->setStatus($em->getRepository("FinanceiroBundle:StatusParcela")->findOneById(2));
             }
 

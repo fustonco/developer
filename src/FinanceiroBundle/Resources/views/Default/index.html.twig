@@ -251,9 +251,18 @@
 
                             <div class="col-md-12">
                                 <div class="form-group form-float">
-                                    <div class="form-line">
+                                    <div class="form-line focused">
                                         <input name="value" type="text" class="form-control" required>
                                         <label class="form-label">Valor do pagamento (R$)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line focused">
+                                        <input name="data_pagamento" type="date" value="{{ hoje }}" class="form-control" required>
+                                        <label class="form-label">Data do Pagamento</label>
                                     </div>
                                 </div>
                             </div>
@@ -447,6 +456,7 @@
         $(document).on("click", ".btn-show-confirm", function(){
             $("input[name='parcel']").val($(this).data("id"));
             $("input[name='parcel_value']").val($(this).data("value"));
+            $("input[name='value']").val($(this).data("value"));
 
             $(".btn-modal-confirm").trigger("click");
         });
