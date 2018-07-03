@@ -536,7 +536,7 @@ $('#addPg').click(function(e){
     `);
     addEventPagamentos(idPagamento);
     idPagamento++;
-    swal('Atenção', 'Forma de pagamento adicionada!', 'warning');
+    {# swal('Atenção', 'Forma de pagamento adicionada!', 'warning'); #}
 });
 $('#form_validation').submit(function(e) {
     e.preventDefault();
@@ -695,5 +695,6 @@ $('#form_validation').submit(function(e) {
         });
     }
 });
+$('#addPg').click();
 </script>
 {% endblock %}
