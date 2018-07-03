@@ -192,4 +192,32 @@ class Fornecedor
     {
         return $this->id;
     }
+    /**
+     * @var string
+     */
+    private $fantasia;
+
+
+    /**
+     * Set fantasia
+     *
+     * @param string $fantasia
+     * @return Fornecedor
+     */
+    public function setFantasia($fantasia)
+    {
+        $this->fantasia = $fantasia;
+
+        return $this;
+    }
+
+    /**
+     * Get fantasia
+     *
+     * @return string 
+     */
+    public function getFantasia()
+    {
+        return $this->fantasia;
+    }
 }

@@ -220,4 +220,32 @@ class Fornecedor
     {
         return $this->fantasia;
     }
+    /**
+     * @var string
+     */
+    private $celular;
+
+
+    /**
+     * Set celular
+     *
+     * @param string $celular
+     * @return Fornecedor
+     */
+    public function setCelular($celular)
+    {
+        $this->celular = $celular;
+
+        return $this;
+    }
+
+    /**
+     * Get celular
+     *
+     * @return string 
+     */
+    public function getCelular()
+    {
+        return $this->celular;
+    }
 }

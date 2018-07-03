@@ -41,11 +41,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="form-group form-float">
                                 <div class="form-line">
                                     <input type="text" class="form-control" name="telefone">
                                     <label class="form-label">Telefone</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" class="form-control" name="celular">
+                                    <label class="form-label">Celular</label>
                                 </div>
                             </div>
                         </div>
@@ -75,6 +83,7 @@ $(document).ready(function() {
     $('input[name="cnpj"]').mask('00.000.000/0000-00');
     $('input[name="cpf"]').mask('000.000.000-00');
     $('input[name="telefone"]').mask('(00) 0000-0000');
+    $('input[name="celular"]').mask('(00) 00000-0000');
 });
 let ajaxForm;
 $('#form_validation').submit(function(e) {

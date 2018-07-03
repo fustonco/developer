@@ -20,6 +20,7 @@
                                     <th>CNPJ</th>
                                     <th>CPF</th>
                                     <th>Telefone</th>
+                                    <th>Celular</th>
                                     <th>Endereço</th>
                                     <th>Editar</th>
                                     <th>Excluir</th>
@@ -34,6 +35,7 @@
                                     <td>{{ entity.cnpj }}</td>
                                     <td>{{ entity.cpf }}</td>
                                     <td>{{ entity.telefone }}</td>
+                                    <td>{{ entity.celular }}</td>
                                     <td>{{ entity.endereco }}</td>
                                     <td><a href="{{ path('func_fornecedor_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
                                     <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">delete</i></a></td>

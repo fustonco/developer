@@ -9,6 +9,7 @@
     <field name="cnpj" type="text" column="cnpj" length="65535" nullable="true"/>
     <field name="cpf" type="text" column="cpf" length="65535" nullable="true"/>
     <field name="telefone" type="text" column="telefone" length="65535" nullable="true"/>
+    <field name="celular" type="text" column="celular" length="65535" nullable="true"/>
     <field name="endereco" type="text" column="endereco" length="65535" nullable="true"/>
     <field name="ativo" type="string" column="ativo" length="1" nullable="false"/>
   </entity>

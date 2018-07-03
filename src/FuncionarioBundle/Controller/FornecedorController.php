@@ -275,6 +275,7 @@ class FornecedorController extends Controller
             $fornecedor->setCnpj($cnpj);
             $fornecedor->setCpf($cpf);
             $fornecedor->setTelefone($request->get('telefone'));
+            $fornecedor->setCelular($request->get('celular'));
             $fornecedor->setEndereco($request->get('endereco'));
             $fornecedor->setAtivo('S');
             $em->persist($fornecedor);
@@ -365,6 +366,7 @@ class FornecedorController extends Controller
             $fornecedor->setCnpj($cnpj);
             $fornecedor->setCpf($cpf);
             $fornecedor->setTelefone($request->get('telefone'));
+            $fornecedor->setCelular($request->get('celular'));
             $fornecedor->setEndereco($request->get('endereco'));
             $fornecedor->setAtivo('S');
             $em->persist($fornecedor);
