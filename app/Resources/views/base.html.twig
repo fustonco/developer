@@ -501,6 +501,13 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
+
+                        <li class="{% if app.request.requestUri == "/admin/pedidos/" %}active{% endif %}">
+                            <a href="/admin/pedidos/">
+                                <i class="material-icons">receipt</i>
+                                <span>Listar Pedidos</span>
+                            </a>
+                        </li>
                             
                         <!-- Menu Grupo -->
                         <li class="{% if app.request.requestUri == "/admin/grupo/new" or app.request.requestUri == "/admin/grupo/" or app.request.attributes.get('_route') == 'grupo_edit' %}active{% endif %}">
