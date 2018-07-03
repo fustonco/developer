@@ -51,8 +51,8 @@
                                     <td>{{ entity.codigo }}</td>
                                     <td>{% if entity.dataPedido %}{{ entity.dataPedido | date('d/m/Y H:i:s') }}{% endif %}</td>
                                     <td>R$ {{ entity.valor }}</td>
-                                    <td>{{ entity.descricao }}</td>
-                                    <td>{{ entity.fornecedor }}</td>
+                                    <td>{{ entity.descricao|length > 25 ? entity.descricao|slice(0, 25) ~ '...' : entity.descricao }}</td>
+                                    <td>{{ entity.fornecedor|length > 25 ? entity.fornecedor|slice(0, 25) ~ '...' : entity.fornecedor }}</td>
                                     <td>{{ entity.empresa }}</td>
                                     <td>{{ entity.status }}</td>
                                     <td><span data-toggle="tooltip" data-placement="top" title="" data-original-title="{{entity.funcionario}}">{{ entity.tipo_funcionario }}</span></td>
@@ -88,7 +88,7 @@
                             <p id="statusPagamento"></p>
                         </div>
                         <div class="col-sm-4">
-                            <h6>Tipo de Pagamento</h6>
+                            <h6>Tipo do Pedido</h6>
                             <p id="tipoPagamento"></p>
                         </div>
                         <div class="col-sm-4">
