@@ -217,8 +217,8 @@ class PedidoController extends Controller
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
-        INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
-        INNER JOIN funcionario f ON f.id = h.idPara
+        INNER JOIN historico h ON ht.id = h.id AND h.idDe = :de
+        INNER JOIN funcionario f ON f.id = h.idDe
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON e.id = p.idEmpresa
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
@@ -226,12 +226,12 @@ class PedidoController extends Controller
         ".$str."
         ORDER BY p.id DESC
         ");
-        $entities->bindValue("para", $this->getUser()->getId());
+        $entities->bindValue("de", $this->getUser()->getId());
         $entities->execute();
         $entities = $entities->fetchAll();
 
         $api = new ApiDefault;
-        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "para");
+        $api->clearNotificacoesPedidos($em, $entities, $this->getUser()->getId(), "de");
 
         return array(
             'entities' => $entities,
