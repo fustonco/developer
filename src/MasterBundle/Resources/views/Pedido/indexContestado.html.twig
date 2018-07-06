@@ -36,6 +36,7 @@
                                 <tr>
                                     <th>Codigo</th>
                                     <th>Data Pedido</th>
+                                    <th>Data Contestado</th>
                                     <th>Valor</th>
                                     <th>Descricao</th> 
                                     <th>Favorecido</th>
@@ -49,6 +50,7 @@
                                 <tr>
                                     <td>{{ entity.codigo }}</td>
                                     <td>{% if entity.dataPedido %}{{ entity.dataPedido | date('d/m/Y H:i:s') }}{% endif %}</td>
+                                    <td>{% if entity.dataPassagem %}{{ entity.dataPassagem | date('d/m/Y H:i:s') }}{% endif %}</td>
                                     <td>R$ {{ entity.valor }}</td>
                                     <td>{{ entity.descricao|length > 25 ? entity.descricao|slice(0, 25) ~ '...' : entity.descricao }}</td>
                                     <td>{{ entity.fornecedor|length > 25 ? entity.fornecedor|slice(0, 25) ~ '...' : entity.fornecedor }}</td>
