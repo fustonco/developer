@@ -296,12 +296,11 @@ $('.btn-confirmar').click(function(e) {
                     ajaxForm = null;
                     let str = '';
                     for(let i = 0; i < data.length; i++) {
-                        str += '<option value="'+data[i].idFuncionario+'">'+data[i].nomeFuncionario+'</option>';
+                        str += '<option selected value="'+data[i].idFuncionario+'">'+data[i].nomeFuncionario+'</option>';
                     }
                     $('.select-para-financeiro-create').html('');
                     $('.select-para-financeiro-create').append(`
                         <select class="form-control show-tick select-para-financeiro" name="para" id="para" required aria-required="true">
-                        <option value="" selected disabled>-- Selecione --</option>
                         `+str+`
                         </select>
                     `);
