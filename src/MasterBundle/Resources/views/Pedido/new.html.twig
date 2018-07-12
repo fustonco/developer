@@ -119,13 +119,13 @@ $(document).ready(function() {
         }
     }
     $('input[name="valor"]').mask('000.000.000.000.000,00', {reverse: true});
-     $('#upload').click(function(e) {
+    {# $('#upload').click(function(e) {
         if(fotos.length >= 4) {
             e.preventDefault();
             swal('Informação', 'Você só pode colocar até 4 fotos por Pedido.', 'info');
             return false;
         }
-    });
+    }); #}
     $('#upload').change(function(e) {
         if($(this).get(0).files.length > 0) {
             let clone = $( this ).clone();
