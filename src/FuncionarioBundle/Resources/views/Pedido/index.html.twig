@@ -48,7 +48,7 @@
                             <tbody>
                             {% for entity in entities %}
                                 <tr>
-                                    <td>{{ entity.codigo }}</td>
+                                    <td>{% if entity.codigo %}<b>{{ entity.codigo }}</b>{% else %}{{ entity.id }}{% endif %}</td>
                                     <td>{% if entity.dataPedido %}{{ entity.dataPedido | date('d/m/Y H:i:s') }}{% endif %}</td>
                                     <td>R$ {{ entity.valor }}</td>
                                     <td>{{ entity.descricao|length > 25 ? entity.descricao|slice(0, 25) ~ '...' : entity.descricao }}</td>

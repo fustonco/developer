@@ -37,40 +37,10 @@ class DefaultController extends Controller
         $de = $request->get('de') ? $request->get('de') : '';
         $ate = $request->get('ate') ? $request->get('ate') : '';
         $str = "";
-        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND pc.data_vencimento BETWEEN '".$de." 00:00:01' AND '".$ate." 23:59:59' ";}
-
-        // $pedidosAprovados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idPara = ? AND tipo_historico_id = 3 AND DATE(data_passagem) = CURDATE()");
-        // $pedidosAprovados->execute(array($this->getUser()->getId()));
-        // $pedidosAprovados = $pedidosAprovados->fetch();
-        // $pedidosAprovados = $pedidosAprovados["total"];
-
-        // $pedidosRecusados = $em->getConnection()->prepare("SELECT COUNT(id) total FROM historico WHERE idDe = ? AND tipo_historico_id = 2 AND DATE(data_passagem) = CURDATE()");
-        // $pedidosRecusados->execute(array($this->getUser()->getId()));
-        // $pedidosRecusados = $pedidosRecusados->fetch();
-        // $pedidosRecusados = $pedidosRecusados["total"];
-
-        // $pedidosPagos = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
-        // INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
-        // INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
-        // INNER JOIN pagamento pg ON pg.idPedido = p.id
-        // INNER JOIN parcelas pc ON pc.idPagamento = pg.id
-        // WHERE p.status = 2 AND pc.data_pagamento = CURDATE()");
-        // $pedidosPagos->execute(array($this->getUser()->getId()));
-        // $pedidosPagos = $pedidosPagos->fetch();
-        // $pedidosPagos = $pedidosPagos["total"];
-
-        // $pedidosPendentes = $em->getConnection()->prepare("SELECT COUNT(p.id) total FROM pedido p
-        // INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
-        // INNER JOIN historico h ON ht.id = h.id AND h.idPara = ?
-        // INNER JOIN pagamento pg ON pg.idPedido = p.id
-        // INNER JOIN parcelas pc ON pc.idPagamento = pg.id
-        // WHERE p.status = 4 AND pc.data_vencimento = CURDATE()");
-        // $pedidosPendentes->execute(array($this->getUser()->getId()));
-        // $pedidosPendentes = $pedidosPendentes->fetch();
-        // $pedidosPendentes = $pedidosPendentes["total"];
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND pc.data_vencimento BETWEEN '".$de."' AND '".$ate."' ";}
 
         $pedidos = $em->getConnection()->prepare("
-        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         FROM pedido p
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
@@ -81,9 +51,10 @@ class DefaultController extends Controller
         INNER JOIN pagamento pg ON pg.idPedido = p.id
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE p.status = 4 AND pc.status = 1
         ".$str."
-        ORDER BY p.id DESC");
+        ORDER BY pc.data_vencimento ASC");
         $pedidos->bindValue("para", $this->getUser()->getId());
         $pedidos->execute();
         $pedidos = $pedidos->fetchAll();
@@ -94,10 +65,6 @@ class DefaultController extends Controller
         return $this->render("FinanceiroBundle:Default:index.html.twig", [
             'pedidos'  => $pedidos,
             'hoje' => date("Y-m-d"),
-            // 'pedidosAprovados' => $pedidosAprovados,
-            // 'pedidosRecusados' => $pedidosRecusados,
-            // 'pedidosPagos' => $pedidosPagos,
-            // 'pedidosPendentes' => $pedidosPendentes,
             'de' => $de,
             'ate' => $ate
         ]);
@@ -117,7 +84,7 @@ class DefaultController extends Controller
 
         // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         $pedidos = $em->getConnection()->prepare("
-        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
@@ -128,6 +95,7 @@ class DefaultController extends Controller
         INNER JOIN pagamento pg ON pg.idPedido = p.id
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE p.status = 4 AND pc.status = 1
         ".$str."
         ORDER BY p.id DESC");
@@ -156,7 +124,7 @@ class DefaultController extends Controller
 
         // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         $pagamentos = $em->getConnection()->prepare("
-        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, pc.data_pagamento, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
@@ -167,9 +135,10 @@ class DefaultController extends Controller
         INNER JOIN pagamento pg ON pg.idPedido = p.id
         INNER JOIN tipo_pagamento tp ON pg.idTipo = tp.id
         INNER JOIN parcelas pc ON pc.idPagamento = pg.id
+        INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE pc.status = 2
         ".$str."
-        ORDER BY p.id DESC");
+        ORDER BY pc.data_pagamento ASC");
         $pagamentos->bindValue("para", $this->getUser()->getId());
         $pagamentos->execute();
         $pagamentos = $pagamentos->fetchAll();

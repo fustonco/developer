@@ -101,6 +101,7 @@
                                 <tr>
                                     <th>Código</th>
                                     <th>Favorecido</th>
+                                    <th>Empresa</th>
                                     <th>Valor</th>
                                     <th>Vencimento</th>
                                     <th>Pagamento</th>
@@ -108,20 +109,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            
                                 {% for p in pedidos %}
                                     <tr>
                                         <td>{{p.codigo}}</td>
                                         <td>{{p.fornecedor}}</td>
+                                        <td>{{p.empresa}}</td>
                                         <td>R$ {{p.valor}}</td>
                                         <td>{{p.data_vencimento | date("d/m/Y")}}</td>
                                         <td>{{p.tipo_pagamento}}</td>
                                         <td>
                                             <a class="btn-ver pointer" data-id="{{ p.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver">search</i></a>
+                                            <a class="btn-show-confirm pointer" data-id="{{p.parcela}}" data-value="{{p.valor}}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar pagamento">thumb_up</i></a>
                                         </td>
                                     </tr>
                                 {% endfor %}
-                            
                             </tbody>
                         </table>
                     </div>
