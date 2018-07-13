@@ -37,15 +37,16 @@ class DefaultController extends Controller
         $de = $request->get('de') ? $request->get('de') : '';
         $ate = $request->get('ate') ? $request->get('ate') : '';
         $str = "";
-        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND pc.data_vencimento BETWEEN '".$de."' AND '".$ate."' ";}
+        if(($de || $de != "") && ($ate || $ate != "")) {$str = " AND p.data_pedido BETWEEN '".$de."' AND '".$ate."' ";}
 
         $pedidos = $em->getConnection()->prepare("
-        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, p.data_pedido, pc.data_vencimento, sp.nome hStatus, th.nome status, pc.valor, tp.nome tipo_pagamento
         FROM pedido p
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN tipo_historico th ON th.id = h.tipo_historico_id
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN pagamento pg ON pg.idPedido = p.id
@@ -54,7 +55,7 @@ class DefaultController extends Controller
         INNER JOIN empresa e ON e.id = p.idEmpresa
         WHERE p.status = 4 AND pc.status = 1
         ".$str."
-        ORDER BY pc.data_vencimento ASC");
+        ORDER BY p.data_pedido DESC");
         $pedidos->bindValue("para", $this->getUser()->getId());
         $pedidos->execute();
         $pedidos = $pedidos->fetchAll();
@@ -84,12 +85,13 @@ class DefaultController extends Controller
 
         // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         $pedidos = $em->getConnection()->prepare("
-        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, pc.data_vencimento, sp.nome hStatus, th.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN tipo_historico th ON th.id = h.tipo_historico_id
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN pagamento pg ON pg.idPedido = p.id
@@ -124,12 +126,13 @@ class DefaultController extends Controller
 
         // SELECT f.nome funcionario, p.id, pc.id parcela, p.codigo, pc.data_pagamento, sp.nome status, pc.valor, tp.nome tipo_pagamento
         $pagamentos = $em->getConnection()->prepare("
-        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, pc.data_pagamento, pc.data_vencimento, sp.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
+        SELECT fo.nome fornecedor, f.nome funcionario, p.id, pc.id parcela, e.nome empresa, p.codigo, pc.data_pagamento, pc.data_vencimento, sp.nome hStatus, th.nome status, pc.valor, tp.nome tipo_pagamento, h.data_passagem data_aprovacao
         FROM pedido p
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN tipo_historico th ON th.id = h.tipo_historico_id
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN pagamento pg ON pg.idPedido = p.id
@@ -169,6 +172,7 @@ class DefaultController extends Controller
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
         INNER JOIN historico h ON ht.id = h.id AND h.idPara = :para
+        INNER JOIN tipo_historico th ON th.id = h.tipo_historico_id
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN pagamento pg ON pg.idPedido = p.id

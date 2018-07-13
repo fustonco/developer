@@ -103,6 +103,7 @@
                                     <th>Favorecido</th>
                                     <th>Empresa</th>
                                     <th>Valor</th>
+                                    <th>Criação</th>
                                     <th>Vencimento</th>
                                     <th>Pagamento</th>
                                     <th>Detalhes</th>
@@ -115,6 +116,7 @@
                                         <td>{{p.fornecedor}}</td>
                                         <td>{{p.empresa}}</td>
                                         <td>R$ {{p.valor}}</td>
+                                        <td>{{p.data_pedido | date("d/m/Y - H:m")}}</td>
                                         <td>{{p.data_vencimento | date("d/m/Y")}}</td>
                                         <td>{{p.tipo_pagamento}}</td>
                                         <td>
