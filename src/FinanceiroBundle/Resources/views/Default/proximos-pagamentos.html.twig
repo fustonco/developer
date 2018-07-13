@@ -79,7 +79,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="row clearfix">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12 no-print">
                             <div id="fotosPedido"></div>
                         </div>
                         <div class="col-sm-12"><br></div>
@@ -90,37 +90,36 @@
                         <div class="col-sm-4"><b>Data do Pedido:</b> <span id="dataPedido"></span></div>
                         <div class="col-sm-4"><b>Empresa:</b> <span id="empresaPedido"></span></div>
                         <div class="col-sm-12"><br></div>
-                        <div class="col-sm-12">
-                            <h4>Descrição</h4>
-                            <span id="descricaoPedido"></span>
+                        <div class="col-sm-4">
+                            <h6>Status do Pagamento: <span id="statusPagamento"></span></h6>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Encaminhado: <span id="encaminhadoPedido"></span></h6>
                         </div>
                         <div class="col-sm-12">
-                            <h6>Mensagem</h6>
-                            <p id="mensagemPedido"></p>
+                            <h6>Descrição: <span id="descricaoPedido"></span></h6>
+                        </div>
+                        <div class="col-sm-12">
+                            <h6>Mensagem: <span id="mensagemPedido"></span></h6>
                         </div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-12">
                             <h4>Informações do favorecido</h4>
                         </div>
                         <div class="col-sm-4">
-                            <h6>Nome</h6>
-                            <p id="fornecedorNome"></p>
+                            <h6>Nome: <span id="fornecedorNome"></span></h6>
                         </div>
-                        <div class="col-sm-4">
-                            <h6>CNPJ</h6>
-                            <p id="fornecedorCnpj"></p>
+                        <div class="col-sm-4 no-print">
+                            <h6>CNPJ: <span id="fornecedorCnpj"></span></h6>
                         </div>
-                        <div class="col-sm-4">
-                            <h6>CPF</h6>
-                            <p id="fornecedorCpf"></p>
+                        <div class="col-sm-4 no-print">
+                            <h6>CPF: <span id="fornecedorCpf"></span></h6>
                         </div>
-                        <div class="col-sm-4">
-                            <h6>Telefone</h6>
-                            <p id="fornecedorTelefone"></p>
+                        <div class="col-sm-4 no-print">
+                            <h6>Telefone: <span id="fornecedorTelefone"></span></h6>
                         </div>
-                        <div class="col-sm-8">
-                            <h6>Endereço</h6>
-                            <p id="fornecedorEndereco"></p>
+                        <div class="col-sm-8 no-print">
+                            <h6>Endereço: <span id="fornecedorEndereco"></span></h6>
                         </div>
                         <div class="col-sm-12"><br></div>
                         <div class="col-sm-12">
@@ -130,7 +129,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link waves-effect btn-show-historico">Histórico</button>
+                    <button type="button" class="btn btn-link waves-effect btn-show-historico">Remetentes</button>
                     <button class="btn btn-link waves-effect btn-contestar" data-id=""><span data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">Contestar</span></button>
                     <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Fechar</button>
                 </div>

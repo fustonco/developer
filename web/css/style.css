@@ -8107,3 +8107,13 @@ html.ie11 .bs-searchbox .form-control {
   border-radius: 50%;
   background-color: #2196F3;
 }
+
+h6 > span {
+  font-weight: normal !important;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
