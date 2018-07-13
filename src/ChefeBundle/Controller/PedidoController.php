@@ -261,17 +261,16 @@ class PedidoController extends Controller
         FROM pedido p
         INNER JOIN status_pedido sp ON sp.id = p.status
         INNER JOIN (SELECT MAX(id) id, idPedido FROM historico GROUP BY idPedido) ht ON ht.idPedido = p.id
-        INNER JOIN historico h ON ht.id = h.id AND h.idDe = :de
+        INNER JOIN historico h ON ht.id = h.id
         INNER JOIN tipo_historico th ON th.id = h.tipo_historico_id
         INNER JOIN funcionario f ON f.id = h.idPara
         INNER JOIN tipo_usuario tu ON tu.id = f.idTipo
         INNER JOIN empresa e ON p.idEmpresa = e.id
         INNER JOIN fornecedor fo ON fo.id = p.idFornecedor
-        WHERE p.status = 4
+        WHERE p.status = 4 OR p.status = 2
         ".$str."
         ORDER BY p.id DESC;
         ");
-        $entities->bindValue("de", $this->getUser()->getId());
         $entities->execute();
         $entities = $entities->fetchAll();
 

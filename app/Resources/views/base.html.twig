@@ -380,35 +380,33 @@
                                 <li class="{% if app.request.requestUri == "/chefe/pedido/new" %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_new') }}">Cadastrar</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/chefe/pedido/"
-                                %}active{% endif %}">
+                                <li class="{% if app.request.requestUri == "/chefe/pedido/" %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido') }}">Listar Meus Pedidos</a>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/chefe/pedido/recebido"
-                                %}active{% endif %}">
+                                <li class="{% if app.request.requestUri == "/chefe/pedido/recebido" %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_recebido') }}">Listar Pedidos Recebidos <span data-notification="recebido" class="notification-badge"></span></a>
                                     <span class="atualizarRecebidos" style="display: none !important;"></span>
                                 </li>
-                                <li class="{% if app.request.requestUri == "/chefe/pedido/recusados"
+                                {# <li class="{% if app.request.requestUri == "/chefe/pedido/recusados"
                                 %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_recusados') }}">Listar Recusados por Mim</a>
-                                </li>
-                                <li class="{% if app.request.requestUri == "/chefe/pedido/recusado"
+                                </li> #}
+                                {# <li class="{% if app.request.requestUri == "/chefe/pedido/recusado"
                                 %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_recusado') }}">Listar Pedidos Recusados <span data-notification="recusado" class="notification-badge"></span></a>
-                                </li>
-                                <li class="{% if app.request.requestUri == "/chefe/pedido/contestado"
+                                </li> #}
+                                {# <li class="{% if app.request.requestUri == "/chefe/pedido/contestado"
                                 %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_contestado') }}">Listar Pedidos Contestados <span data-notification="contestado" class="notification-badge"></span></a>
-                                </li>
-                                <li class="{% if app.request.requestUri == "/chefe/pedido/aprovados"
+                                </li> #}
+                                {# <li class="{% if app.request.requestUri == "/chefe/pedido/aprovados"
                                 %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_aprovados') }}">Listar Pedidos Aprovados</a>
-                                </li>
-                                <li class="{% if app.request.requestUri == "/chefe/pedido/aprovado"
+                                </li> #}
+                                {# <li class="{% if app.request.requestUri == "/chefe/pedido/aprovado"
                                 %}active{% endif %}">
                                     <a href="{{ path('chefe_pedido_aprovado') }}">Meus Pedidos Aprovados <span data-notification="aprovado" class="notification-badge"></span></a>
-                                </li>
+                                </li> #}
                             </ul>
                         </li>
 
