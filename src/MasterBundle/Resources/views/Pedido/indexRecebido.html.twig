@@ -59,7 +59,7 @@
                                         &nbsp;<a href="javascript:void(0);" class="btn-contestar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Contestar">gavel</i></a>
                                         &nbsp;<a href="javascript:void(0);" class="btn-confirmar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Confirmar">send</i></a>
                                         &nbsp;<a href="javascript:void(0);" class="btn-recusar" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Recusar">close</i></a>
-                                        {% if entity.id_tipo_funcionario != 3 %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">delete</i></a>{% endif %}
+                                        {% if entity.codigo == null %}&nbsp;<a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excluir">delete</i></a>{% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

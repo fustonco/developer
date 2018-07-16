@@ -301,6 +301,9 @@ class PedidoController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
 
+            $pedido = $em->getRepository('ChefeBundle:Pedido')->findOneById($request->get('id'));
+            if($pedido && $pedido->getCodigo()) { throw new \Exception("error_pedido"); }
+
             $pagamento = $em->getConnection()->prepare("SELECT * FROM pagamento WHERE idPedido = ".$request->get('id'));
             $pagamento->execute();
             $pagamento = $pagamento->fetchAll();
@@ -314,14 +317,14 @@ class PedidoController extends Controller
             $historico = $em->getConnection()->prepare("SELECT * FROM historico WHERE idPedido = ".$request->get('id'));
             $historico->execute();
             $historico = $historico->fetchAll();
+            $entities = $em->getConnection()->prepare("DELETE FROM historico WHERE idPedido = ".$request->get('id'));
+            $entities->execute();
             for($i = 0; $i < count($historico); $i++) {
                 if($historico[$i]["idMensagem"]) {
                     $entities = $em->getConnection()->prepare("DELETE FROM mensagem WHERE id = ".$historico[$i]["idMensagem"]);
                     $entities->execute();
                 }
             }
-            $historico = $em->getConnection()->prepare("DELETE FROM historico WHERE idPedido = ".$request->get('id'));
-            $historico->execute();
 
             $pedido_anexo = $em->getConnection()->prepare("SELECT * FROM pedido_anexo WHERE idPedido = ".$request->get('id'));
             $pedido_anexo->execute();
