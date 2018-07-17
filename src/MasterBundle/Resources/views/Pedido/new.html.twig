@@ -544,20 +544,20 @@ $('#form_validation').submit(function(e) {
     if($('[data-pagamento]').length == 0) { swal('Atenção', 'É necessário ter uma forma de pagamento', 'warning'); return false; }
     let myArray;
     let canPass = true;
-    let absoluto_valor = $('.absoluto-valor').val();
+    let absoluto_valor = $('.absoluto-valor').val().replace('.','').replace(',','.');
     let valor_absoluto = 0;
     $('[data-pagamento]').each(function(){
         if($(this).attr('data-ok') == "no") {
             canPass = false;
         }else if($(this).attr('data-ok') == "yes"){
             let idDP = $(this).attr('data-pagamento');
-            valor_absoluto += parseFloat($('.valor-integral-'+idDP).val());
+            valor_absoluto += parseFloat($('.valor-integral-'+idDP).val().replace('.','').replace(',','.'));
         }
     });
     if(!canPass) { swal('Atenção', 'Todos os pagamentos precisam estar OK', 'warning'); return false; }
 
-    valor_absoluto = parseFloat(valor_absoluto);
-    absoluto_valor = parseFloat(absoluto_valor);
+    valor_absoluto = Math.floor(parseFloat(valor_absoluto));
+    absoluto_valor = Math.floor(parseFloat(absoluto_valor));
 
     if(valor_absoluto != absoluto_valor){
         swal('Atenção', 'Todos os pagamentos precisam ter a soma igual ao Valor do Pedido', 'warning');
