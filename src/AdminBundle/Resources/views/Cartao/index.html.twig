@@ -15,10 +15,10 @@
                             <thead>
                                 <tr>
                                     <th>Id</th>
-                                    <th>Titulo</th>
-                                    <th>Número</th>
+                                    <th>Nome no Cartão</th>
+                                    <th>Número do Cartão</th>
                                     <th>Bandeira</th>
-                                    <th>Vencimento</th>
+                                    {# <th>Vencimento</th> #}
                                     <th>Editar</th>
                                     <th>Excluir</th>
                                 </tr>
@@ -30,7 +30,7 @@
                                     <td>{{ entity.titulo }}</td>
                                     <td>{{ entity.numero }}</td>
                                     <td>{{ entity.bandeira }}</td>
-                                    <td>{{ entity.vencimento | date("d/m/Y") }}</td>
+                                    {# <td>{{ entity.vencimento | date("d/m/Y") }}</td> #}
                                     <td><a href="{{ path('cartao_edit', { 'id': entity.id }) }}"><i class="material-icons">edit</i></a></td>
                                     <td><a href="javascript:void(0);" class="btn-excluir" data-id="{{ entity.id }}"><i class="material-icons">delete</i></a></td>
                                 </tr>

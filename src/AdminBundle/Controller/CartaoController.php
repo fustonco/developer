@@ -257,15 +257,15 @@ class CartaoController extends Controller
             if(!$request->get('titulo') || $request->get('titulo') == '') {throw new \Exception('error_titulo');}
             if(!$request->get('numero') || $request->get('numero') == '') {throw new \Exception('error_numero');}
             if(!$request->get('bandeira') || $request->get('bandeira') == '') {throw new \Exception('error_bandeira');}
-            if(!$request->get('vencimento') || $request->get('vencimento') == '') {throw new \Exception('error_vencimento');}
+            // if(!$request->get('vencimento') || $request->get('vencimento') == '') {throw new \Exception('error_vencimento');}
 
             $cartao = $em->getRepository("AdminBundle:Cartao")->findOneById($request->get('id'));
             $cartao->setTitulo($request->get('titulo'));
             $cartao->setNumero($request->get('numero'));
             $cartao->setBandeira($request->get('bandeira'));
-            $cartao->setVencimento(new \DateTime($request->get('vencimento')));
-            $cartao->setCvc($request->get('cvc'));
-            $cartao->setMelhorData(!empty($request->get('melhor_data')) ? new \DateTime($request->get('melhor_data')) : NULL);
+            $cartao->setVencimento(new \DateTime());
+            $cartao->setCvc(999);
+            $cartao->setMelhorData(new \DateTime());
             $em->persist($cartao);
             $em->flush();
             return new Response(json_encode([
@@ -331,15 +331,15 @@ class CartaoController extends Controller
             if(!$request->get('titulo') || $request->get('titulo') == '') {throw new \Exception('error_titulo');}
             if(!$request->get('numero') || $request->get('numero') == '') {throw new \Exception('error_numero');}
             if(!$request->get('bandeira') || $request->get('bandeira') == '') {throw new \Exception('error_bandeira');}
-            if(!$request->get('vencimento') || $request->get('vencimento') == '') {throw new \Exception('error_vencimento');}
+            // if(!$request->get('vencimento') || $request->get('vencimento') == '') {throw new \Exception('error_vencimento');}
 
             $cartao = new Cartao();
             $cartao->setTitulo($request->get('titulo'));
             $cartao->setNumero($request->get('numero'));
             $cartao->setBandeira($request->get('bandeira'));
-            $cartao->setVencimento(new \DateTime($request->get('vencimento')));
-            $cartao->setCvc($request->get('cvc'));
-            $cartao->setMelhorData(!empty($request->get('melhor_data')) ? new \DateTime($request->get('melhor_data')) : NULL);
+            $cartao->setVencimento(new \DateTime());
+            $cartao->setCvc(999);
+            $cartao->setMelhorData(new \DateTime());
             $cartao->setActive(true);
             $em->persist($cartao);
             $em->flush();
