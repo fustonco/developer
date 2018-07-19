@@ -7,7 +7,6 @@ class AppKernel extends Kernel
 {
     public function registerBundles()
     {
-        ini_set('upload_max_filesize', '50M');
         date_default_timezone_set( 'America/Sao_Paulo' );
 
         $bundles = array(

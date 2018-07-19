@@ -1233,20 +1233,22 @@ class PedidoController extends Controller
                 $path = $value['name'];
                 $ext = pathinfo($path, PATHINFO_EXTENSION);
                 $nome_file = $nome . "." . $ext;
-                move_uploaded_file($value['tmp_name'], './uploads/' . $nome_file);
-
-                $anexo = new Anexo();
-                $anexo->setCaminho($nome_file);
-                $anexo->setAtivo("S");
-                $em->persist($anexo);
-                $em->flush();
-    
-                $pedidoAnexo = new PedidoAnexo();
-                $pedidoAnexo->setIdanexo($anexo);
-                $pedidoAnexo->setIdpedido($pedido);
-                $pedidoAnexo->setAtivo("S");
-                $em->persist($pedidoAnexo);
-                $em->flush();
+                if(move_uploaded_file($value['tmp_name'], './uploads/' . $nome_file)){
+                    $anexo = new Anexo();
+                    $anexo->setCaminho($nome_file);
+                    $anexo->setAtivo("S");
+                    $em->persist($anexo);
+                    $em->flush();
+        
+                    $pedidoAnexo = new PedidoAnexo();
+                    $pedidoAnexo->setIdanexo($anexo);
+                    $pedidoAnexo->setIdpedido($pedido);
+                    $pedidoAnexo->setAtivo("S");
+                    $em->persist($pedidoAnexo);
+                    $em->flush();
+                } else {
+                    throw new \Exception('error_foto_upload');
+                }
             endforeach;
 
             $em->getConnection()->commit();
@@ -1256,6 +1258,11 @@ class PedidoController extends Controller
         } catch(\Exception $e) {
             $em->getConnection()->rollBack();
             switch($e->getMessage()) {
+                case 'error_foto_upload':
+                    return new Response(json_encode([
+                        'description' => 'Erro ao subir foto!'
+                    ]), 500);
+                break;
                 case 'error_empresa':
                     return new Response(json_encode([
                         'description' => 'Empresa não pode ser vazio!'
