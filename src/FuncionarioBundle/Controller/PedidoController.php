@@ -769,6 +769,9 @@ class PedidoController extends Controller
                 // $object = (object) [];
                 // $apibundle->sendSocketFromPHP("sendTo", [$para->getSocket(), "atualizarRecebidos", $object]);
             }
+
+            ini_set("post_max_size", "30M");
+            ini_set("upload_max_filesize", "20M");
             
             foreach ($_FILES as $value):
                 $nome = substr(str_shuffle(MD5(microtime())), 0, 20);
