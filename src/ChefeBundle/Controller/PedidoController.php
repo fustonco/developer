@@ -1260,7 +1260,7 @@ class PedidoController extends Controller
             switch($e->getMessage()) {
                 case 'error_foto_upload':
                     return new Response(json_encode([
-                        'description' => 'Erro ao subir foto!'
+                        'description' => 'Arquivo acima de 2MB, por favor reduza o arquivo.'
                     ]), 500);
                 break;
                 case 'error_empresa':
